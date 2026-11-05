@@ -38,7 +38,7 @@ docs/                   team plan, project instructions
 testbed/                original course notebook, untouched, for reference
 ```
 
-## Rules (short version, details in the plan)
+## Rules
 
 1. Get data **only** through `common.data.load_instance(seed)`. Tune on `TUNE_SEEDS` (0–4); report on `REPORT_SEEDS` (10–19).
 2. Never train on validation images. No early stopping on validation; fix epochs in advance.
