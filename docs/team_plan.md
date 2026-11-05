@@ -10,7 +10,6 @@
 
 - Each person owns **one Challenge 1 method + one Challenge 2 method + one shared deliverable**. All research work runs in parallel. The only hard dependencies are the shared evaluation harness (week 1) and the report / video / final evaluation at the end.
 - That gives us **4 methods for C1 and 4 for C2**, one more than the minimum for C2, so we're covered if the TA decides two of our methods count as one.
-- **Weekly sync:** Sundays, 30 min. **Mid-week update:** post in chat every Wednesday (numbers so far + blockers).
 
 ---
 
@@ -265,16 +264,6 @@ Chen et al. 2020 (SimCLR) · Chen & He 2021 (SimSiam) · Coates, Ng & Lee 2011 (
 7. Final submitted methods & final-split results (best + fast per challenge) — **Massimo**
 8. Conclusions — **Ryan**
 9. Member contributions — **Alvin** (everyone sends 2–3 sentences)
-
----
-
-## Questions for the TA (send by Fri Nov 6)
-
-1. For a team of 4, is the minimum 4 high-level methods for C1 and 3 for C2?
-2. Is CLIP (or DINOv2) allowed for C2, given its web-scale pretraining data?
-3. Does parameter-efficient fine-tuning (LoRA / VPT) count as a separate high-level method from fine-tuning?
-4. For C1: is a wavelet scattering transform (fixed, untrained filters) OK? Is self-supervised pretraining on only the 100 training images OK?
-5. When will the final evaluation split files be released, and in what format? What hardware should times be reported on? Required video length?
 
 ---
 
