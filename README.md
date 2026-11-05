@@ -1,9 +1,12 @@
 # COMP 433 Final Project — Learning from Limited Data
 
 **Team:** Massimo · Ryan · Ammar · Alvin
+
 **Deadline:** Sun Dec 6, 2026
+
 **Full plan:** [`docs/team_plan.md`](docs/team_plan.md) · **Instructions:** [`docs/project_instructions.pdf`](docs/project_instructions.pdf) · **Original testbed:** [`testbed/`](testbed/)
-**Overleaf:** TODO (Alvin) · **TA email thread:** TODO
+
+**Overleaf:** TODO (Alvin)
 
 ---
 
