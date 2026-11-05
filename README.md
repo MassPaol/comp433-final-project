@@ -54,7 +54,7 @@ testbed/                original course notebook, untouched, for reference
 ## Setup — local (for editing code)
 
 ```bash
-git clone https://github.com/OWNER/comp433-final-project.git
+git clone https://github.com/MassPaol/comp433-final-project.git
 cd comp433-final-project
 python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install torch torchvision                         # CPU build is fine for editing / small tests
@@ -73,7 +73,7 @@ First cell of every notebook:
 ```python
 from google.colab import userdata
 token = userdata.get("GH_TOKEN")
-!git clone -q https://{token}@github.com/OWNER/comp433-final-project.git /content/repo
+!git clone -q https://{token}@github.com/MassPaol/comp433-final-project.git /content/repo
 %cd /content/repo
 !pip install -q -e . -r requirements.txt
 !git config user.name "YOUR NAME" && git config user.email "YOUR_EMAIL"
