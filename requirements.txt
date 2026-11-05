@@ -1,0 +1,14 @@
+# torch / torchvision: NOT pinned here. Use the versions preinstalled on Colab
+# (pinning would replace Colab's CUDA build). The harness logs the GPU name.
+# Add what your method needs in your PR. We pin exact versions at feature freeze (Nov 29).
+
+timm==1.0.30          # pinned by the course testbed
+numpy
+scipy
+pandas
+matplotlib
+scikit-learn
+scikit-image          # HOG / LBP (Massimo)
+kymatio               # wavelet scattering (Massimo)
+xgboost               # gradient boosting (Massimo)
+open_clip_torch       # CLIP (Alvin, pending TA approval)

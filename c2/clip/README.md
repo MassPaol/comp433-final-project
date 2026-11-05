@@ -1,0 +1,18 @@
+# C2 — Vision-language few-shot (CLIP)
+
+**Owner:** Alvin
+
+## What this is
+TODO: one paragraph (the method, and why it fits the small-data setting).
+
+## Reproduce the reported numbers
+```bash
+# TODO: exact command, e.g.
+python -m c2.clip.run --config best
+```
+
+## Configs
+| config_id | description | train time | inference time |
+|---|---|---|---|
+| best | TODO | | |
+| fast | TODO | | |
