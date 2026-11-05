@@ -2,7 +2,7 @@
 
 > Note: AI was used for the planning and organizing of the project
 
-**Team:** Massimo Paolini (40280323) · Ryan Cheung (ID)· Ammar Ranko (ID)· Alvin Lastname (ID)
+**Team:** Massimo Paolini (40280323) · Ryan Cheung (ID)· Ammar Ranko (ID)· Alvin Biju (ID)
 
 **Deadline:** Sun Dec 6, 2026
 
