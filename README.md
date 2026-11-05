@@ -6,7 +6,7 @@
 
 **Deadline:** Sun Dec 6, 2026
 
-**Full plan:** [`docs/team_plan.md`](docs/team_plan.md) · **Instructions:** [`docs/project_instructions.pdf`](docs/project_instructions.pdf) · **Original testbed:** [`testbed/`](testbed/) · **Google Drive for Data**: [Link](https://drive.google.com/drive/folders/1WGMMhQERNFZqn9FZoWMekUS81dS8pRzo?usp=sharing)
+**Full plan:** [`docs/team_plan.md`](docs/team_plan.md) · **Instructions:** [`docs/project_instructions.pdf`](docs/project_instructions.pdf) · **Original testbed:** [`testbed/`](testbed/) · **Google Drive for Data**: [`Link`](https://drive.google.com/drive/folders/1WGMMhQERNFZqn9FZoWMekUS81dS8pRzo?usp=sharing)
 
 **Overleaf:** TODO (Alvin)
 
