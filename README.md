@@ -1,6 +1,6 @@
 # COMP 433 Final Project — Learning from Limited Data
 
-**Team:** Massimo · Ryan · Ammar · Alvin
+**Team:** Massimo Paolini (40280323) · Ryan Cheung (ID)· Ammar Ranko (ID)· Alvin Lastname (ID)
 
 **Deadline:** Sun Dec 6, 2026
 
