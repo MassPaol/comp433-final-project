@@ -27,13 +27,3 @@ class Timer:
         _sync()
         self.seconds = time.perf_counter() - self._t0
         return False
-
-
-def gpu_name():
-    try:
-        import torch
-        if torch.cuda.is_available():
-            return torch.cuda.get_device_name()
-    except ImportError:
-        pass
-    return "cpu"

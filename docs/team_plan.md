@@ -69,7 +69,7 @@ Each method does its own preprocessing inside `fit`/`predict`. The harness handl
 
 - **Train time** = wall-clock of `fit` on one problem instance. For frozen-feature methods, include feature extraction, and also log feature-extraction time separately.
 - **Inference time** = wall-clock of `predict` on the 700 validation images, also reported per image.
-- Call `torch.cuda.synchronize()` before stopping timers. Log `torch.cuda.get_device_name()`.
+- Call `torch.cuda.synchronize()` before stopping timers.
 - Final reported times must all come from the **same GPU type** (default: Colab T4).
 
 ### Results logging
@@ -77,7 +77,7 @@ Each method does its own preprocessing inside `fit`/`predict`. The harness handl
 One shared sheet / `results.csv`, one row per (method, config, seed):
 
 ```
-challenge, person, method, config_id, seed, class_pair, val_acc, train_time_s, infer_time_s, n_trainable_params, gpu, git_commit, notes
+challenge, person, method, config_id, seed, class_pair, val_acc, train_time_s, infer_time_s, n_trainable_params, notes
 ```
 
 Log bad and failed configs too. They belong in the report.

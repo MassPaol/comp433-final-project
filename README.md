@@ -18,7 +18,7 @@
 common/                 shared code — changes go through a PR reviewed by Massimo
   data.py               load_instance(seed), TUNE_SEEDS, REPORT_SEEDS (splits = testbed, don't change)
   method.py             Method interface: fit(X, y) / predict(X)
-  timing.py             GPU-synchronized Timer, gpu_name()
+  timing.py             GPU-synchronized Timer
   harness.py            run(...) over seeds -> results CSV        (Massimo, Nov 9)
   plots.py              shared figure style                       (Massimo)
   augment.py            shared augmentation                       (Ryan, Nov 15)
@@ -94,7 +94,7 @@ CACHE = "/content/drive/MyDrive/comp433_cache"   # add the team's shared folder 
 - `main` always works. Nobody pushes to `main` directly; open a pull request.
 - Branch names: `<name>/<topic>`, e.g. `ryan/cnn-augment-sweep`, `alvin/clip-zero-shot`.
 - PRs that touch `common/` need Massimo's review. PRs that only touch your own folders can be merged by you once they run.
-- Commit your results file with the code that produced it, so `git_commit` in each row points to real code.
+- Commit your results file with the code that produced it.
 
 ```bash
 git checkout -b ammar/vit-spt-lsa
