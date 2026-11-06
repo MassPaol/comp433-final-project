@@ -69,7 +69,7 @@ Each method does its own preprocessing inside `fit`/`predict`. The harness handl
 
 - **Train time** = wall-clock of `fit` on one problem instance. For frozen-feature methods, include feature extraction, and also log feature-extraction time separately.
 - **Inference time** = wall-clock of `predict` on the 700 validation images, also reported per image.
-- Call `torch.cuda.synchronize()` before stopping timers. Log `torch.cuda.get_device_name()`.
+- Call `torch.cuda.synchronize()` before stopping timers.
 - Final reported times must all come from the **same GPU type** (default: Colab T4).
 
 ### Results logging
@@ -77,7 +77,7 @@ Each method does its own preprocessing inside `fit`/`predict`. The harness handl
 One shared sheet / `results.csv`, one row per (method, config, seed):
 
 ```
-challenge, person, method, config_id, seed, class_pair, val_acc, train_time_s, infer_time_s, n_trainable_params, gpu, git_commit, notes
+challenge, person, method, config_id, seed, class_pair, val_acc, train_time_s, infer_time_s, n_trainable_params, notes
 ```
 
 Log bad and failed configs too. They belong in the report.
@@ -265,15 +265,3 @@ Chen et al. 2020 (SimCLR) · Chen & He 2021 (SimSiam) · Coates, Ng & Lee 2011 (
 8. Conclusions — **Ryan**
 9. Member contributions — **Alvin** (everyone sends 2–3 sentences)
 
----
-
-## Risks and what we do about them
-
-| Risk | Plan |
-|---|---|
-| TA rejects CLIP | Alvin switches to the DINO fallback (decision by Nov 13). |
-| Final splits released late | Methods frozen behind `fit`/`predict` by Nov 29; Massimo runs them within 48 h. |
-| Colab disconnects / usage limits | Log a results row as soon as each seed finishes; save checkpoints. Runs are short anyway (100 training images). |
-| Noisy comparisons | 10 reporting seeds, paired differences, never conclude anything from one seed. |
-| Someone falls behind | Raise it in the Wednesday update; buddy helps get at least the "fast config" numbers in. |
-| End-of-project crunch | Report subsections are due Nov 29, not Dec 5. |

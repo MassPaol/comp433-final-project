@@ -18,7 +18,7 @@
 common/                 shared code — changes go through a PR reviewed by Massimo
   data.py               load_instance(seed), TUNE_SEEDS, REPORT_SEEDS (splits = testbed, don't change)
   method.py             Method interface: fit(X, y) / predict(X)
-  timing.py             GPU-synchronized Timer, gpu_name()
+  timing.py             GPU-synchronized Timer
   harness.py            run(...) over seeds -> results CSV        (Massimo, Nov 9)
   plots.py              shared figure style                       (Massimo)
   augment.py            shared augmentation                       (Ryan, Nov 15)

@@ -1,5 +1,5 @@
 # torch / torchvision: NOT pinned here. Use the versions preinstalled on Colab
-# (pinning would replace Colab's CUDA build). The harness logs the GPU name.
+# (pinning would replace Colab's CUDA build).
 # Add what your method needs in your PR. We pin exact versions at feature freeze (Nov 29).
 
 timm==1.0.30          # pinned by the course testbed

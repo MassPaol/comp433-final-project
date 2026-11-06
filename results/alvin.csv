@@ -1,1 +1,1 @@
-challenge,person,method,config_id,seed,class_pair,val_acc,train_time_s,infer_time_s,n_trainable_params,gpu,git_commit,notes
+challenge,person,method,config_id,seed,class_pair,val_acc,train_time_s,infer_time_s,n_trainable_params,notes
