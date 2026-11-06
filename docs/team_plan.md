@@ -265,15 +265,3 @@ Chen et al. 2020 (SimCLR) · Chen & He 2021 (SimSiam) · Coates, Ng & Lee 2011 (
 8. Conclusions — **Ryan**
 9. Member contributions — **Alvin** (everyone sends 2–3 sentences)
 
----
-
-## Risks and what we do about them
-
-| Risk | Plan |
-|---|---|
-| TA rejects CLIP | Alvin switches to the DINO fallback (decision by Nov 13). |
-| Final splits released late | Methods frozen behind `fit`/`predict` by Nov 29; Massimo runs them within 48 h. |
-| Colab disconnects / usage limits | Log a results row as soon as each seed finishes; save checkpoints. Runs are short anyway (100 training images). |
-| Noisy comparisons | 10 reporting seeds, paired differences, never conclude anything from one seed. |
-| Someone falls behind | Raise it in the Wednesday update; buddy helps get at least the "fast config" numbers in. |
-| End-of-project crunch | Report subsections are due Nov 29, not Dec 5. |
