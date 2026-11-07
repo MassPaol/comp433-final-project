@@ -17,7 +17,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from c1.classical import configs  # noqa: E402
-from c1.classical.run import DEFAULT_HW, PERSON, SEED_SETS, hw_of  # noqa: E402
+from c1.classical.run import DEFAULT_HW, PERSON, SEED_SETS, hw_of, own_rows  # noqa: E402
 from c1.classical.select import select, summarize_configs  # noqa: E402
 from common import plots  # noqa: E402
 
@@ -157,6 +157,7 @@ def fig_acc_vs_time(summary):
 
 def fig_report_pairs(df, hw):
     seeds = SEED_SETS["report"]
+    df = own_rows(df)
     d = df[df["seed"].isin(seeds) & (df["notes"].map(hw_of) == hw)
            & df["config_id"].isin(["best", "fast"])]
     wide = d.pivot_table(index=["seed", "class_pair"], columns="config_id", values="val_acc")

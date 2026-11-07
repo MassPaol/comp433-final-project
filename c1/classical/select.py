@@ -14,7 +14,7 @@ import argparse
 import pandas as pd
 
 from c1.classical import configs
-from c1.classical.run import DEFAULT_HW, PERSON, SEED_SETS, hw_of
+from c1.classical.run import DEFAULT_HW, PERSON, SEED_SETS, hw_of, own_rows
 
 EPS = 1e-9
 
@@ -24,6 +24,7 @@ def summarize_configs(df, seeds, hw):
 
     Only configs that have a row for every seed are kept.
     """
+    df = own_rows(df)
     d = df[df["seed"].astype(int).isin(seeds) & (df["notes"].map(hw_of) == hw)].copy()
     d["time"] = d["train_time_s"].astype(float) + d["infer_time_s"].astype(float)
     g = d.groupby("config_id")

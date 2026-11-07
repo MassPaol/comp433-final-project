@@ -6,13 +6,14 @@ from c1.classical.select import select, summarize_configs
 SEEDS = [0, 1]
 
 
-def _df(spec, hw="local-3070", seeds=SEEDS):
+def _df(spec, hw="local-3070", seeds=SEEDS, challenge="c1", method="classical"):
     """spec: {config_id: (acc, total_time)} -> results rows on every seed."""
     rows = []
     for cid, (acc, t) in spec.items():
         for s in seeds:
-            rows.append({"config_id": cid, "seed": s, "val_acc": acc,
-                         "train_time_s": t / 2, "infer_time_s": t / 2, "notes": f"hw={hw}"})
+            rows.append({"challenge": challenge, "method": method, "config_id": cid, "seed": s,
+                         "val_acc": acc, "train_time_s": t / 2, "infer_time_s": t / 2,
+                         "notes": f"hw={hw}"})
     return pd.DataFrame(rows)
 
 
@@ -48,3 +49,16 @@ def test_filters_hw_and_incomplete():
     ])
     s = summarize_configs(df, SEEDS, "local-3070")
     assert list(s.index) == ["a"]
+
+
+def test_ignores_other_methods_and_empty_notes():
+    df = pd.concat([
+        _df({"a": (0.9, 1)}),
+        _df({"c2_best": (0.99, 0.1)}, challenge="c2", method="frozen_features"),
+        _df({"a": (0.1, 1)}, challenge="c2", method="frozen_features"),
+    ])
+    blank = _df({"untagged": (0.99, 1)})
+    blank["notes"] = float("nan")  # what pandas reads for an empty notes cell
+    s = summarize_configs(pd.concat([df, blank]), SEEDS, "local-3070")
+    assert list(s.index) == ["a"]
+    assert s.loc["a", "acc_mean"] == pytest.approx(0.9)
