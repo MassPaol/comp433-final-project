@@ -9,6 +9,7 @@ import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
+from sklearn.metrics.pairwise import rbf_kernel
 from sklearn.model_selection import StratifiedGroupKFold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
@@ -107,6 +108,12 @@ class ClassicalMethod(Method):
 
     def _scores(self, X):
         Z = self._transform(X)
+        if self.clf == "rbfsvm":
+            # Same values as SVC.decision_function (checked in tests), but via BLAS:
+            # libsvm's per-sample kernel loop is ~100x slower on 15k-dim features.
+            c = self.clf_
+            K = rbf_kernel(Z, c.support_vectors_, gamma=c.gamma)
+            return K @ c.dual_coef_[0] + c.intercept_[0], 0.0
         if hasattr(self.clf_, "decision_function"):
             return self.clf_.decision_function(Z), 0.0
         return self.clf_.predict_proba(Z)[:, 1], 0.5

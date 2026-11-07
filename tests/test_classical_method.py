@@ -89,6 +89,26 @@ def test_rbf_gamma_mult(data):
     assert m2.gamma_ == m2.clf_.gamma
 
 
+def test_rbf_scores_match_libsvm(data):
+    X, y = data
+    m = ClassicalMethod(features=[("hog", {})], clf="rbfsvm").fit(X, y)
+    scores, threshold = m._scores(X)
+    ref = m.clf_.decision_function(m._transform(X))
+    np.testing.assert_allclose(scores, ref, rtol=1e-6, atol=1e-9)
+    assert threshold == 0.0
+
+
+def test_rbf_scores_avoid_libsvm_predict(data, monkeypatch):
+    """libsvm's decision_function is ~100x slower on 15k-dim features; we use BLAS."""
+    X, y = data
+    m = ClassicalMethod(features=[("hog", {})], clf="rbfsvm").fit(X, y)
+
+    def boom(*a, **k):
+        raise AssertionError("libsvm decision_function called")
+    monkeypatch.setattr(m.clf_, "decision_function", boom)
+    assert m.predict(X).shape == (40,)
+
+
 def test_lr_cv_quiet_and_log_loss(data):
     import warnings
     X, y = data
