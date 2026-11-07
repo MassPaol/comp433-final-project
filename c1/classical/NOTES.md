@@ -120,14 +120,15 @@ No standardization (scale=False): scat+hog+hsv 87.17 (−0.8 vs scaled), scat+ho
 **Observations:**
 - Every combination containing both scattering and HOG beats every single feature (+1.4 pp over the
   best single). HSV adds a little on top (+0.1 with LR-CV).
-- Flip augmentation is the biggest single gain of the whole sweep: +1.8 to +2.1 pp from flip-train
-  alone, and train + TTA together are best everywhere.
+- Flip augmentation is the biggest single gain of the whole sweep for the LR-CV models: +1.8 to
+  +2.0 pp from flip-train alone (only +0.7 for the hog+hsv RBF-SVM), and train + TTA together are
+  best for all three bases.
 - Standardization matters (−0.8 to −1.0 pp without it): the features live on very different scales
   (HSV fractions vs HOG block norms vs scattering energies).
 
 ## 2026-11-06 · Selection (rule in `select.py`, fixed before any results)
 
-Over all 236 tuning configs (s1–s4):
+Over all 243 tuning configs (s1–s4):
 - top: `s4_scat+hog+hsv_lrcv_fliptrain_fliptta` 90.14 ± 2.64, 1.95 s
 - **best** = `s4_scat+hog+hsv_lrcv_fliptrain` 89.80 ± 3.15, 1.43 s: within 0.5 pp of top and
   faster (no TTA → half the inference feature extraction)
@@ -149,9 +150,9 @@ Paired (same seeds = same class pairs): best − fast = +1.33 ± 1.60 pp, best w
 signed-rank p = 0.020.
 
 **Observations:**
-- Both are ~4.5 pp lower than on the tuning seeds. Two reasons: (1) the report seeds include
+- Both are 4.0–4.7 pp lower than on the tuning seeds. Two reasons: (1) the report seeds include
   cat-dog (seed 13), the hardest CIFAR pair, at 64.4% / 63.4%; without it best = 87.4, fast = 86.1;
   (2) picking the max of 236 configs on 5 seeds is optimistically biased (winner's curse). This is
   exactly why report numbers come from separate seeds.
 - The std (≈ 8 pp) is variation across class pairs, not uncertainty of the mean.
-- fast trains 20× faster (0.05 vs 0.92 s); inference is dominated by HOG extraction in both.
+- fast trains 20× faster (0.05 vs 0.92 s) and infers 1.5× faster (0.35 vs 0.53 s).
