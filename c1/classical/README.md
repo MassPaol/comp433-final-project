@@ -32,7 +32,9 @@ because `kymatio.torch` also loads the 3D frontend, which breaks with SciPy ≥ 
 ## Reproduce the reported numbers
 On Colab (T4): open [`notebooks/massimo/c1_classical.ipynb`](../../notebooks/massimo/c1_classical.ipynb)
 and run all cells. It runs every stage, re-checks the selection with T4 times, runs `best`/`fast`
-on the report seeds and redraws the figures, all with `hw=colab-t4`.
+on the report seeds and redraws the figures, all with `hw=colab-t4`. Rows are logged to a copy of
+`results/massimo.csv` on Google Drive (survives a runtime reset; re-run all cells to resume) and
+merged back into the repo by the last code cell.
 
 Step by step (any machine; `--hw` tags the rows, default `local-3070`):
 ```bash

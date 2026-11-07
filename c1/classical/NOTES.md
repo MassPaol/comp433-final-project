@@ -37,7 +37,7 @@ where their S1 mean was within 5 pp of the S1 best (≥ 80.7): scattering rf/hgb
 
 **Why:** S1 used default settings; before comparing features further, give each classifier its fair
 shot. Grids: LR and linear-SVM C ∈ {0.001 … 100}; LR-CV (C picked by 5-fold CV on the 100 training
-images only); RBF-SVM C ∈ {0.1, 1, 10, 100} × gamma ∈ {0.25, 1, 4} × sklearn's "scale"; kNN k ∈ {1, 3,
+images only, scored by log-loss); RBF-SVM C ∈ {0.1, 1, 10, 100} × gamma ∈ {0.25, 1, 4} × sklearn's "scale"; kNN k ∈ {1, 3,
 5, 9, 15} × {euclidean, cosine}; tree models only where competitive in S1.
 
 | feature | best config | acc (%) | time (s) | runner-up / note |
@@ -152,7 +152,7 @@ signed-rank p = 0.020.
 **Observations:**
 - Both are 4.0–4.7 pp lower than on the tuning seeds. Two reasons: (1) the report seeds include
   cat-dog (seed 13), the hardest CIFAR pair, at 64.4% / 63.4%; without it best = 87.4, fast = 86.1;
-  (2) picking the max of 236 configs on 5 seeds is optimistically biased (winner's curse). This is
+  (2) picking the max of 243 configs on 5 seeds is optimistically biased (winner's curse). This is
   exactly why report numbers come from separate seeds.
 - The std (≈ 8 pp) is variation across class pairs, not uncertainty of the mean.
 - fast trains 20× faster (0.05 vs 0.92 s) and infers 1.5× faster (0.35 vs 0.53 s).
