@@ -32,3 +32,31 @@ Mean tuning accuracy (%):
 
 **Decision → S2:** tune classifiers on the top 3 feature sets (scattering, HOG, raw). Tree models only
 where their S1 mean was within 5 pp of the S1 best (≥ 80.7): scattering rf/hgb/xgb, HOG rf.
+
+## 2026-11-06 · S2: classifier hyperparameters on scattering, HOG, raw (117 configs)
+
+**Why:** S1 used default settings; before comparing features further, give each classifier its fair
+shot. Grids: LR and linear-SVM C ∈ {0.001 … 100}; LR-CV (C picked by 5-fold CV on the 100 training
+images only); RBF-SVM C ∈ {0.1, 1, 10, 100} × gamma ∈ {0.25, 1, 4} × sklearn's "scale"; kNN k ∈ {1, 3,
+5, 9, 15} × {euclidean, cosine}; tree models only where competitive in S1.
+
+| feature | best config | acc (%) | time (s) | runner-up / note |
+|---|---|---|---|---|
+| scattering | LR-CV | **86.09** ± 4.4 | 1.98 | RBF-SVM C=10 γ×0.25: 85.91 (1.24 s); LR C=0.01: 85.80 (0.54 s) |
+| HOG | RBF-SVM C=10, γ×1 | 84.66 ± 4.2 | 0.63 | LR C=0.001: 84.03; kNN k=9 cosine: 83.54 |
+| raw | RBF-SVM C=1, γ×1 | 80.00 ± 3.9 | 0.05 | all linear models ≤ 76.8 |
+
+**Observations:**
+- On scattering, every linear/RBF classifier lands within 0.5 pp (85.6–86.1). The representation
+  matters, the classifier barely does. Strong regularization (C = 0.001–0.01) is as good as C = 1,
+  as expected with 100 samples in 15k dims.
+- Cosine kNN beats euclidean kNN for every feature (the scale of the vector carries little class
+  information).
+- Tree models never beat the linear/RBF models: scattering RF 83.7, HGB 81.9, XGB 81.5, at 2–20×
+  the cost.
+- Differences of < 0.5 pp are far below the across-class-pair std (≈ 4–5 pp). They are not
+  meaningful on 5 seeds.
+
+**Decision → S3:** tune each family's feature parameters with its best classifier so far:
+scattering → LR-CV (adapts C to each variant's dimensionality), HOG → RBF-SVM C=10, raw → RBF-SVM C=1,
+HSV → RF, LBP → RBF-SVM.

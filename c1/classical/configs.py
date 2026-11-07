@@ -66,6 +66,51 @@ STAGES["s2"] = {**_s2("scat", trees=("rf", "hgb", "xgb")),
                 **_s2("hog", trees=("rf",)),
                 **_s2("raw", trees=())}
 
+
+# ---- S3: feature hyperparameters, each family with its best classifier so far ----
+# S2 result: scat best = lr_cv 86.09 (all linear/RBF within 0.5 pp); hog best = rbfsvm
+# C=10 gamma_mult=1 84.66; raw best = rbfsvm C=1 gamma_mult=1 80.00. Not tuned in S2,
+# so S1 best: hsv -> rf 78.26, lbp -> rbfsvm 71.29.
+# lr_cv picks C per feature variant on the training images, which keeps the
+# scattering comparison fair across very different feature dimensions.
+_HOG_CLF = {"clf": "rbfsvm", "clf_params": {"C": 10, "gamma_mult": 1}}
+_RAW_CLF = {"clf": "rbfsvm", "clf_params": {"C": 1, "gamma_mult": 1}}
+
+
+def _s3():
+    out = {}
+    for J in [1, 2, 3]:
+        for L in [4, 6, 8]:
+            for color in [False, True]:
+                out[f"s3_scat_J{J}_L{L}_{'rgb' if color else 'gray'}"] = {
+                    "features": [("scattering", {"J": J, "L": L, "color": color})], "clf": "lr_cv"}
+        # pool=2 at L=8 RGB for every J (instead of only the best J/L, so the
+        # stage has no internal dependency)
+        out[f"s3_scat_J{J}_L8_rgb_pool2"] = {
+            "features": [("scattering", {"J": J, "L": 8, "color": True, "pool": 2})], "clf": "lr_cv"}
+    for ppc in [4, 8]:
+        for cpb in [1, 2, 3]:
+            for ori in [9, 12]:
+                for color in [False, True]:
+                    params = {"orientations": ori, "pixels_per_cell": ppc,
+                              "cells_per_block": cpb, "color": color}
+                    out[f"s3_hog_p{ppc}_b{cpb}_o{ori}_{'rgb' if color else 'gray'}"] = {
+                        "features": [("hog", params)], **_HOG_CLF}
+    for bins in [8, 16, 32]:
+        out[f"s3_hsv_b{bins}"] = {"features": [("hsv_hist", {"bins": bins})], "clf": "rf"}
+    for P, R in [(8, 1), (16, 2), (24, 3)]:
+        for grid in [1, 2, 4]:
+            out[f"s3_lbp_P{P}_R{R}_g{grid}"] = {
+                "features": [("lbp", {"P": P, "R": R, "grid": grid})], "clf": "rbfsvm"}
+    for pca in [10, 20, 50, None]:
+        for gray in [False, True]:
+            out[f"s3_raw_pca{pca}_{'gray' if gray else 'rgb'}"] = {
+                "features": [("raw", {"gray": gray})], "pca": pca, **_RAW_CLF}
+    return out
+
+
+STAGES["s3"] = _s3()
+
 FINAL = {}
 
 
