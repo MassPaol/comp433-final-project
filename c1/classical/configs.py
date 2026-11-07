@@ -111,6 +111,33 @@ def _s3():
 
 STAGES["s3"] = _s3()
 
+
+# ---- S4: combinations, flip augmentation, scaling ---------------------------
+# S3 result (best variant per family): scat J=3 L=4 RGB 86.51 (lr_cv); hog 8px cells,
+# 2x2 blocks, 9 orient., RGB 85.94 (rbfsvm C=10); raw 80.00; hsv 8 bins 78.66; lbp
+# P8 R1 4x4 grid 75.17.
+# Part 1, concatenations: scattering + HOG (top 2) + HSV. HSV replaces raw (3rd) because
+# raw is redundant with scattering (its order-0 coefficients are a low-pass copy of the
+# image), while HSV adds color statistics neither shape feature has. Each combination is
+# tried with both winning classifiers.
+SCAT = ("scattering", {"J": 3, "L": 4, "color": True})
+HOG = ("hog", {"orientations": 9, "pixels_per_cell": 8, "cells_per_block": 2, "color": True})
+HSV = ("hsv_hist", {"bins": 8})
+_LRCV = {"clf": "lr_cv"}
+
+
+def _s4_concat():
+    combos = {"scat+hog": [SCAT, HOG], "scat+hsv": [SCAT, HSV],
+              "hog+hsv": [HOG, HSV], "scat+hog+hsv": [SCAT, HOG, HSV]}
+    out = {}
+    for name, feats in combos.items():
+        out[f"s4_{name}_lrcv"] = {"features": feats, **_LRCV}
+        out[f"s4_{name}_rbfsvm"] = {"features": feats, **_HOG_CLF}
+    return out
+
+
+STAGES["s4"] = _s4_concat()
+
 FINAL = {}
 
 

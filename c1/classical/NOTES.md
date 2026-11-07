@@ -50,8 +50,9 @@ images only); RBF-SVM C ∈ {0.1, 1, 10, 100} × gamma ∈ {0.25, 1, 4} × sklea
 - On scattering, every linear/RBF classifier lands within 0.5 pp (85.6–86.1). The representation
   matters, the classifier barely does. Strong regularization (C = 0.001–0.01) is as good as C = 1,
   as expected with 100 samples in 15k dims.
-- Cosine kNN beats euclidean kNN for every feature (the scale of the vector carries little class
-  information).
+- Cosine kNN beats euclidean kNN in all 15 (feature, k) pairs, by up to +11 pp on raw pixels (k=9:
+  74.2 vs 63.4): the direction of the feature vector carries the class information, its overall
+  magnitude (brightness, contrast) mostly does not.
 - Tree models never beat the linear/RBF models: scattering RF 83.7, HGB 81.9, XGB 81.5, at 2–20×
   the cost.
 - Differences of < 0.5 pp are far below the across-class-pair std (≈ 4–5 pp). They are not
@@ -60,3 +61,30 @@ images only); RBF-SVM C ∈ {0.1, 1, 10, 100} × gamma ∈ {0.25, 1, 4} × sklea
 **Decision → S3:** tune each family's feature parameters with its best classifier so far:
 scattering → LR-CV (adapts C to each variant's dimensionality), HOG → RBF-SVM C=10, raw → RBF-SVM C=1,
 HSV → RF, LBP → RBF-SVM.
+
+## 2026-11-06 · S3: feature hyperparameters (65 configs)
+
+**Why:** S1/S2 used each feature's default parameters; the representation turned out to matter more
+than the classifier, so tune it. Each family uses its best classifier so far (scattering → LR-CV, HOG →
+RBF-SVM C=10, raw → RBF-SVM C=1, HSV → RF, LBP → RBF-SVM).
+
+| family | searched | best | acc (%) | time (s) |
+|---|---|---|---|---|
+| scattering | J ∈ {1,2,3} × L ∈ {4,6,8} × {gray, RGB}, + 2×2 avg-pool at L=8 | J=3, L=4, RGB (2928 dims) | **86.51** ± 3.9 | 0.77 |
+| HOG | cell {4,8} px × block {1,2,3} × orient. {9,12} × {gray, RGB} | 8 px cells, 2×2 blocks, 9 orient., RGB (324 dims) | 85.94 ± 4.7 | 0.25 |
+| raw | PCA {10,20,50,none} × {gray, RGB} | no PCA, RGB | 80.00 ± 3.9 | 0.04 |
+| HSV | bins {8,16,32} | 8 bins | 78.66 ± 4.1 | 0.77 (RF) |
+| LBP | (P,R) {(8,1),(16,2),(24,3)} × grid {1,2,4} | P=8, R=1, 4×4 grid | 75.17 ± 5.9 | 0.17 |
+
+**Observations:**
+- Scattering is remarkably flat: all 21 variants within 84.1–86.5. Coarser scales (J=3) with fewer
+  orientations (L=4) are as good as the default J=2, L=8 at 1/5 of the dimensions (2928 vs 15552) and
+  a third of the time. RGB beats gray at every (J, L) setting (+0.1 to +1.1 pp).
+- HOG gains +1.3 pp from coarser cells: 8×8 px cells (a 4×4 cell grid on a 32×32 image) beat 4×4 px
+  cells for every block size. Cells that small mostly measure noise. Color HOG ≥ gray.
+- LBP needs spatial layout: a 4×4 grid of histograms (75.2) beats one global histogram (≈ 66–70).
+- Raw pixels: PCA never helps (fewer dims = worse), gray is worse than RGB.
+
+**Decision → S4:** concatenate scattering + HOG + HSV (raw dropped as redundant with scattering's
+low-pass coefficients; HSV kept as the color complement promised in S1), with both LR-CV and the HOG
+RBF-SVM; then flip augmentation and scaling on the winners.
