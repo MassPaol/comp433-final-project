@@ -26,6 +26,12 @@ def test_ids_unique_across_stages():
     assert not set(ids) & set(configs.FINAL)
 
 
+def test_final_points_at_stage_configs():
+    assert set(configs.FINAL) == {"best", "fast"} == set(configs.FINAL_SOURCE)
+    for name, cid in configs.FINAL_SOURCE.items():
+        assert configs.FINAL[name] == configs.get(cid)
+
+
 def test_get_finds_stage_config_and_rejects_unknown():
     assert configs.get("s1_hog_lr") == configs.STAGES["s1"]["s1_hog_lr"]
     with pytest.raises(KeyError):

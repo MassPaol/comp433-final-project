@@ -167,10 +167,8 @@ STAGES["s4"] = {**_s4_concat(), **_s4_flip_scale()}
 # best: s4_scat+hog+hsv_lrcv_fliptrain          89.80 +/- 3.15  1.43 s  (within 0.5 pp of top, faster)
 # fast: s4_hog+hsv_rbfsvm                       87.83 +/- 4.78  0.37 s  (fastest with acc >= best - 2 pp)
 # Both picks hinge on time margins < 2x, so the Colab T4 re-run re-checks the rule.
-FINAL = {
-    "best": STAGES["s4"]["s4_scat+hog+hsv_lrcv_fliptrain"],
-    "fast": STAGES["s4"]["s4_hog+hsv_rbfsvm"],
-}
+FINAL_SOURCE = {"best": "s4_scat+hog+hsv_lrcv_fliptrain", "fast": "s4_hog+hsv_rbfsvm"}
+FINAL = {name: STAGES["s4"][cid] for name, cid in FINAL_SOURCE.items()}
 
 
 def get(config_id):
