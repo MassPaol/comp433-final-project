@@ -156,3 +156,21 @@ signed-rank p = 0.020.
   exactly why report numbers come from separate seeds.
 - The std (≈ 8 pp) is variation across class pairs, not uncertainty of the mean.
 - fast trains 20× faster (0.05 vs 0.92 s) and infers 1.5× faster (0.35 vs 0.53 s).
+
+# Source log (paper → what was taken from it)
+
+| source | used for |
+|---|---|
+| Dalal & Triggs 2005, *Histograms of Oriented Gradients for Human Detection*, CVPR | HOG features: cells, overlapping blocks, L2-Hys block normalization |
+| Ojala, Pietikäinen & Mäenpää 2002, *Multiresolution gray-scale and rotation invariant texture classification with local binary patterns*, IEEE TPAMI 24(7) | uniform LBP codes with (P, R) neighborhoods |
+| Swain & Ballard 1991, *Color indexing*, IJCV 7(1) | color histograms as an image descriptor |
+| Mallat 2012, *Group invariant scattering*, Comm. Pure Appl. Math. 65(10) | scattering transform: fixed wavelet cascade, stable to small deformations |
+| Bruna & Mallat 2013, *Invariant scattering convolution networks*, IEEE TPAMI 35(8) | scattering features + linear/SVM classifiers for images; the J (scale) and L (orientations) parameters |
+| Oyallon, Belilovsky & Zagoruyko 2017, *Scaling the scattering transform: Deep hybrid networks*, ICCV | motivation: scattering helps most when training data is scarce (small CIFAR-10 subsets) |
+| Andreux et al. 2020, *Kymatio: Scattering transforms in Python*, JMLR 21(60) | scattering implementation (`Scattering2D`, torch frontend, GPU) |
+| Cortes & Vapnik 1995, *Support-vector networks*, Machine Learning 20(3) | linear and RBF SVMs |
+| Breiman 2001, *Random forests*, Machine Learning 45(1) | random forest baseline |
+| Chen & Guestrin 2016, *XGBoost: A scalable tree boosting system*, KDD | gradient-boosted trees (XGBoost) |
+| Ke et al. 2017, *LightGBM*, NeurIPS | histogram-based gradient boosting (sklearn's HistGradientBoosting follows it) |
+| Krizhevsky, Sutskever & Hinton 2012, *ImageNet classification with deep convolutional neural networks*, NeurIPS | horizontal-flip augmentation; averaging predictions over flipped copies at test time |
+| Pedregosa et al. 2011, *Scikit-learn: Machine learning in Python*, JMLR 12 | all classifiers, StandardScaler, PCA, cross-validation |
