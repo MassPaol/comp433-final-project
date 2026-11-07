@@ -80,11 +80,78 @@ RBF-SVM C=10, raw → RBF-SVM C=1, HSV → RF, LBP → RBF-SVM).
 - Scattering is remarkably flat: all 21 variants within 84.1–86.5. Coarser scales (J=3) with fewer
   orientations (L=4) are as good as the default J=2, L=8 at 1/5 of the dimensions (2928 vs 15552) and
   a third of the time. RGB beats gray at every (J, L) setting (+0.1 to +1.1 pp).
-- HOG gains +1.3 pp from coarser cells: 8×8 px cells (a 4×4 cell grid on a 32×32 image) beat 4×4 px
-  cells for every block size. Cells that small mostly measure noise. Color HOG ≥ gray.
-- LBP needs spatial layout: a 4×4 grid of histograms (75.2) beats one global histogram (≈ 66–70).
+- HOG gains +1.3 pp from coarser cells: with block normalization over 2×2 or 3×3 cells, 8×8 px cells
+  (a 4×4 cell grid on a 32×32 image) beat 4×4 px cells in all 8 (block, orientation, color) settings.
+  Without block normalization (1×1 blocks) it's a wash. Color HOG beats gray in all 12 settings
+  (+0.1 to +1.9 pp).
+- LBP needs spatial layout: a 4×4 grid of histograms beats one global histogram for every (P, R);
+  best 75.2 vs 68–70 for global histograms.
 - Raw pixels: PCA never helps (fewer dims = worse), gray is worse than RGB.
 
 **Decision → S4:** concatenate scattering + HOG + HSV (raw dropped as redundant with scattering's
 low-pass coefficients; HSV kept as the color complement promised in S1), with both LR-CV and the HOG
 RBF-SVM; then flip augmentation and scaling on the winners.
+
+## 2026-11-06 · S4: combinations, flip augmentation, scaling (19 configs)
+
+**Why:** the best single features describe different things (scattering: multi-scale texture/shape;
+HOG: edge orientations; HSV: color), so combining them may help. Mirrored images are a free, label-
+preserving way to double the 100 training images (CIFAR objects are left-right symmetric).
+
+Part 1, concatenations (scattering J=3 L=4 RGB, HOG 8px/2×2/RGB, HSV 8 bins):
+
+| combination | LR-CV | RBF-SVM C=10 |
+|---|---|---|
+| scat + hog | 87.91 | 87.29 |
+| scat + hsv | 86.89 | 86.37 |
+| hog + hsv | 85.77 | **87.83** (0.04 s fit) |
+| scat + hog + hsv | **88.00** | 87.46 |
+
+Part 2, flip augmentation (train = append mirrored copies; TTA = average scores of image and mirror):
+
+| base | none | flip-train | flip-TTA | both |
+|---|---|---|---|---|
+| scat (LR-CV) | 86.51 | 88.49 | 87.91 | 88.89 |
+| scat+hog+hsv (LR-CV) | 88.00 | 89.80 | 89.26 | **90.14** |
+| hog+hsv (RBF-SVM) | 87.83 | 88.54 | 88.34 | 88.57 |
+
+No standardization (scale=False): scat+hog+hsv 87.17 (−0.8 vs scaled), scat+hog 86.91 (−1.0).
+
+**Observations:**
+- Every combination containing both scattering and HOG beats every single feature (+1.4 pp over the
+  best single). HSV adds a little on top (+0.1 with LR-CV).
+- Flip augmentation is the biggest single gain of the whole sweep: +1.8 to +2.1 pp from flip-train
+  alone, and train + TTA together are best everywhere.
+- Standardization matters (−0.8 to −1.0 pp without it): the features live on very different scales
+  (HSV fractions vs HOG block norms vs scattering energies).
+
+## 2026-11-06 · Selection (rule in `select.py`, fixed before any results)
+
+Over all 236 tuning configs (s1–s4):
+- top: `s4_scat+hog+hsv_lrcv_fliptrain_fliptta` 90.14 ± 2.64, 1.95 s
+- **best** = `s4_scat+hog+hsv_lrcv_fliptrain` 89.80 ± 3.15, 1.43 s: within 0.5 pp of top and
+  faster (no TTA → half the inference feature extraction)
+- **fast** = `s4_hog+hsv_rbfsvm` 87.83 ± 4.78, 0.37 s: fastest config with acc ≥ best − 2 pp
+  (= 87.80; it clears that by 0.03 pp)
+
+Close calls, to re-check with T4 times: best vs top is a 1.36× time margin, and fast vs its
+flip-train variant (88.54, 0.43 s) is 1.16×. The Colab notebook re-applies the rule with
+`hw=colab-t4`.
+
+## 2026-11-06 · Report seeds 10–19 (`hw=local-3070`)
+
+| config | acc (%) | train (s) | inference (s / 700 img) | per image |
+|---|---|---|---|---|
+| best | **85.13 ± 8.10** | 0.92 | 0.53 | 0.75 ms |
+| fast | 83.80 ± 7.99 | 0.05 | 0.35 | 0.50 ms |
+
+Paired (same seeds = same class pairs): best − fast = +1.33 ± 1.60 pp, best wins 9/10, Wilcoxon
+signed-rank p = 0.020.
+
+**Observations:**
+- Both are ~4.5 pp lower than on the tuning seeds. Two reasons: (1) the report seeds include
+  cat-dog (seed 13), the hardest CIFAR pair, at 64.4% / 63.4%; without it best = 87.4, fast = 86.1;
+  (2) picking the max of 236 configs on 5 seeds is optimistically biased (winner's curse). This is
+  exactly why report numbers come from separate seeds.
+- The std (≈ 8 pp) is variation across class pairs, not uncertainty of the mean.
+- fast trains 20× faster (0.05 vs 0.92 s); inference is dominated by HOG extraction in both.

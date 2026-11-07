@@ -136,9 +136,41 @@ def _s4_concat():
     return out
 
 
-STAGES["s4"] = _s4_concat()
+# Part 2, written after part 1: every concatenation with scattering + HOG beats every single
+# feature (best: scat+hog+hsv LR-CV 88.00; best single: scat 86.51). hog+hsv RBF-SVM reaches 87.83
+# with a 0.04 s fit, the natural fast candidate. Flip augmentation (train: append mirrored
+# images; test: average scores over image and mirror) on the best single feature, the best
+# concatenation and the fast candidate; scale=False on the top 2 concatenations.
+_S4_FLIP_BASES = {
+    "scat": {"features": [SCAT], **_LRCV},
+    "scat+hog+hsv_lrcv": {"features": [SCAT, HOG, HSV], **_LRCV},
+    "hog+hsv_rbfsvm": {"features": [HOG, HSV], **_HOG_CLF},
+}
 
-FINAL = {}
+
+def _s4_flip_scale():
+    out = {}
+    for name, base in _S4_FLIP_BASES.items():
+        for ft, tta in [(True, False), (False, True), (True, True)]:
+            tag = "_".join(t for t, on in (("fliptrain", ft), ("fliptta", tta)) if on)
+            out[f"s4_{name}_{tag}"] = {**base, "flip_train": ft, "flip_tta": tta}
+    out["s4_scat+hog+hsv_lrcv_noscale"] = {"features": [SCAT, HOG, HSV], **_LRCV, "scale": False}
+    out["s4_scat+hog_lrcv_noscale"] = {"features": [SCAT, HOG], **_LRCV, "scale": False}
+    return out
+
+
+STAGES["s4"] = {**_s4_concat(), **_s4_flip_scale()}
+
+
+# ---- FINAL: chosen by `python -m c1.classical.select` (rule in select.py), hw=local-3070 ----
+# top:  s4_scat+hog+hsv_lrcv_fliptrain_fliptta  90.14 +/- 2.64  1.95 s
+# best: s4_scat+hog+hsv_lrcv_fliptrain          89.80 +/- 3.15  1.43 s  (within 0.5 pp of top, faster)
+# fast: s4_hog+hsv_rbfsvm                       87.83 +/- 4.78  0.37 s  (fastest with acc >= best - 2 pp)
+# Both picks hinge on time margins < 2x, so the Colab T4 re-run re-checks the rule.
+FINAL = {
+    "best": STAGES["s4"]["s4_scat+hog+hsv_lrcv_fliptrain"],
+    "fast": STAGES["s4"]["s4_hog+hsv_rbfsvm"],
+}
 
 
 def get(config_id):
