@@ -162,11 +162,12 @@ def _s4_flip_scale():
 STAGES["s4"] = {**_s4_concat(), **_s4_flip_scale()}
 
 
-# ---- FINAL: chosen by `python -m c1.classical.select` (rule in select.py), hw=local-3070 ----
-# top:  s4_scat+hog+hsv_lrcv_fliptrain_fliptta  90.14 +/- 2.64  1.95 s
-# best: s4_scat+hog+hsv_lrcv_fliptrain          89.80 +/- 3.15  1.43 s  (within 0.5 pp of top, faster)
-# fast: s4_hog+hsv_rbfsvm                       87.83 +/- 4.78  0.37 s  (fastest with acc >= best - 2 pp)
-# Both picks hinge on time margins < 2x, so the Colab T4 re-run re-checks the rule.
+# ---- FINAL: chosen by `python -m c1.classical.select` (rule in select.py) ----
+# Picked on the laptop run (hw=local-3070); the Colab T4 re-run (hw=colab-t4) picks the same two:
+# top:  s4_scat+hog+hsv_lrcv_fliptrain_fliptta  89.97 +/- 3.17  5.97 s
+# best: s4_scat+hog+hsv_lrcv_fliptrain          89.83 +/- 3.25  5.65 s  (within 0.5 pp of top, faster)
+# fast: s4_hog+hsv_rbfsvm                       87.83 +/- 4.78  0.53 s  (fastest with acc >= best - 2 pp;
+#                                                                  exactly on the cutoff, see NOTES.md)
 FINAL_SOURCE = {"best": "s4_scat+hog+hsv_lrcv_fliptrain", "fast": "s4_hog+hsv_rbfsvm"}
 FINAL = {name: STAGES["s4"][cid] for name, cid in FINAL_SOURCE.items()}
 
