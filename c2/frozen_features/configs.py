@@ -53,6 +53,64 @@ def _s2(b):
 STAGES["s2"] = {cid: kw for b in S2_BACKBONES for cid, kw in _s2(b).items()}
 
 
+# ---- S3: feature source (which tokens, which blocks, which crop) -----------
+# S2 result (best config per backbone): vitb linsvm C=0.001 99.83; vits lr norm=none 99.51;
+# cnxt lr C=100 99.49; vitti lr C=0.01 99.23. Head tuning moved accuracy by <= 0.14 pp.
+# -> top 2 backbones with their best head. Both are ViTs: pool (CLS / mean of patch tokens /
+#    both) x last-k blocks concatenated, each block after the final norm (DINO's linear-eval
+#    recipe; Head2Toe: intermediate layers), plus the whole image instead of the checkpoint's
+#    center crop (crop_pct = 1.0). pool=cls, layers=1 is the S2 config itself.
+S3_BASES = {
+    "vitb": {"backbone": "vitb", "head": "linsvm", "head_params": {"C": 0.001}},
+    "vits": {"backbone": "vits", "head": "lr", "norm": "none"},
+}
+
+
+def _s3(b, base):
+    out = {}
+    for pool in ["cls", "mean", "cls+mean"]:
+        for layers in [1, 2, 4]:
+            if (pool, layers) != ("cls", 1):
+                out[f"s3_{b}_{pool}_L{layers}"] = {**base, "pool": pool, "layers": layers}
+    out[f"s3_{b}_crop1"] = {**base, "crop_pct": 1.0}
+    return out
+
+
+STAGES["s3"] = {cid: kw for b, base in S3_BASES.items() for cid, kw in _s3(b, base).items()}
+
+
+# ---- S4: flip augmentation, backbone concatenation, fp16 --------------------
+# S3 result: no pool/layers variant beats the plain CLS token of the last block (all within
+# -0.23..+0.03 pp); the whole image (crop_pct 1.0) lifts vits to 99.77 (+0.26), not vitb (-0.06).
+# Bases: the top config (vitb + linsvm), the best small config (vits + LR, whole image) and the
+# fast candidate (vitti + LR C=0.01, the best vitti config in S2).
+S4_BASES = {
+    "vitb": S3_BASES["vitb"],
+    "vits": {**S3_BASES["vits"], "crop_pct": 1.0},
+    "vitti": {"backbone": "vitti", "head": "lr", "head_params": {"C": 0.01}},
+}
+
+
+def _s4():
+    out = {}
+    for b, base in S4_BASES.items():
+        # flip: train = add mirrored training images; tta = average scores of image and mirror
+        for ft, tta in [(True, False), (False, True), (True, True)]:
+            tag = "_".join(t for t, on in (("fliptrain", ft), ("fliptta", tta)) if on)
+            out[f"s4_{b}_{tag}"] = {**base, "flip_train": ft, "flip_tta": tta}
+        # fp16 (autocast) feature extraction: speed knob
+        out[f"s4_{b}_fp16"] = {**base, "precision": "fp16"}
+    # the whole image on vitti too (helped vits in S3)
+    out["s4_vitti_crop1"] = {**S4_BASES["vitti"], "crop_pct": 1.0}
+    # concatenated features of two backbones (each with its own preprocessing), vitb's head
+    for other in ["vits", "cnxt"]:
+        out[f"s4_vitb+{other}"] = {**S3_BASES["vitb"], "backbone": ["vitb", other]}
+    return out
+
+
+STAGES["s4"] = _s4()
+
+
 # ---- FINAL ------------------------------------------------------------------
 # baseline: the testbed's C2 example (ViT-Tiny, CLS features, AdamW head, 10 epochs),
 # fixed before any results, so best and fast can be compared with it on the report seeds.

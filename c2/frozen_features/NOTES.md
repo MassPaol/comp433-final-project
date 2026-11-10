@@ -67,16 +67,18 @@ default is not repeated (its S1 config is the default point of the curve).
 
 **Observations:**
 - Tuning the head buys at most +0.14 pp (5 of 3,500 tuning predictions), within noise. Most grids are
-  flat: on ViT-B every linear-SVM C from 0.01 to 100 gives the same 99.74 %; LR is within 0.15 pp for
-  C ∈ [0.001, 100] on every backbone. With 100 images in 192–768 dims the classes are linearly separable,
-  so the regularization strength barely moves the boundary. LR-CV never beats a fixed C.
+  flat: on ViT-B every linear-SVM C from 0.01 to 100 gives the same 99.74 %; LR spans ≤ 0.2 pp over
+  C ∈ [0.001, 100] on ViT-B, ViT-S and ConvNeXt-T. With 100 images in 384–768 dims the classes are
+  linearly separable, so the regularization strength barely moves the boundary. Only the smallest
+  backbone (ViT-Ti, 192 dims) prefers strong regularization: C = 0.01 → 99.23, C = 100 → 98.80.
+  LR-CV never beats a fixed C.
 - The testbed head is under-trained: 100 epochs instead of 10 (lr 1e-3) adds +0.08 to +0.31 pp on every
   backbone (ViT-Ti: 98.69 → 99.00), but even then it does not beat LR on the same features. A 10× larger
   learning rate (1e-2) is worse than 1e-3 at every epoch count on ViT-B and ViT-S.
-- Normalization: for LR it changes ≤ 0.1 pp (z-score vs none vs L2 vs CL2N). For NCM, cosine geometry
+- Normalization: for LR it changes ≤ 0.2 pp (z-score vs none vs L2 vs CL2N). For NCM, cosine geometry
   matters: z-scoring hurts NCM on ViT-B (99.43 vs 99.69 with L2), and CL2N is no better than plain L2.
 - RBF-SVM never beats the linear heads; with C = 0.1 it underfits (ConvNeXt-T: 96.00). kNN prefers small
-  k (k = 3 best or tied on 3 of 4 backbones; k = 15 is worst on every backbone).
+  k (k = 3 best or tied on 3 of 4 backbones; k = 15 is worst or tied-worst on every backbone).
 - Timing: within a backbone every head trains in < 0.05 s, so time differences between configs of one
   backbone are run-to-run drift, not cost. S2 ran ViT-S and ViT-Ti ~25–30 % slower than S1 for identical
   work (inference 1.38 vs 1.08 s, 0.54 vs 0.41 s), while ViT-B and ConvNeXt-T stayed within 3 %; the
@@ -87,3 +89,38 @@ default is not repeated (its S1 config is the default point of the curve).
 (C = 0.001), ViT-S + LR (no normalization). Both are ViTs, so: token pooling (CLS / mean of patch tokens
 / both) × number of last blocks concatenated (1, 2, 4), plus the full image instead of the checkpoint's
 center crop (crop_pct = 1.0).
+
+## 2026-11-10 · S3: feature source (18 configs)
+
+**Why:** S1/S2 used each model's own pre-logits (CLS token of the last block). DINO's linear-eval recipe
+concatenates the CLS tokens of the last 4 blocks (ViT-S) or adds the mean of the patch tokens (ViT-B),
+and Head2Toe argues that intermediate layers carry information the last layer drops, most of all when
+the target images differ from the pretraining images (as upsampled 32 px CIFAR images do). Also: the
+checkpoints' preprocessing resizes to 248 px and center-crops 224 px (crop_pct 0.9), which cuts ~5 % of
+each border; CIFAR objects fill the frame, so the whole image (crop_pct 1.0) may help. Bases: the best
+S2 config of the top 2 backbones, ViT-B + linear SVM (C = 0.001) and ViT-S + LR (no normalization).
+
+| feature source | ViT-B/16 | ViT-S/16 |
+|---|---|---|
+| CLS, last block (S2 base) | **99.83** ± 0.23 | 99.51 ± 0.43 |
+| CLS, last 2 / 4 blocks | 99.77 / 99.71 | 99.54 / 99.51 |
+| mean of patch tokens, last 1 / 2 / 4 blocks | 99.60 / 99.63 / 99.71 | 99.43 / 99.43 / 99.37 |
+| CLS + patch mean, last 1 / 2 / 4 blocks | 99.69 / 99.74 / 99.74 | 99.51 / 99.51 / 99.49 |
+| CLS, last block, whole image (crop_pct 1.0) | 99.77 ± 0.26 | **99.77** ± 0.17 |
+
+**Observations:**
+- Neither more blocks nor patch-token pooling helps at this ceiling: every variant is within −0.23 to
+  +0.03 pp of the plain CLS token. Mean-pooled patch tokens are the weakest on both backbones (−0.1 to
+  −0.2 pp); adding them to CLS recovers most of that, so the CLS token already carries what is needed for
+  a 2-class problem. The intermediate-layer idea (Head2Toe) does not pay off here; it was proposed for
+  harder, more varied VTAB tasks.
+- Feature extraction cost is the same for every variant (one forward pass), so the choice is free in time.
+- The whole image (no center crop) is the only change that moves ViT-S: +0.26 pp (99.51 → 99.77), mostly on
+  dog-deer (98.71 → 99.43, 5 more of 700 images right). On ViT-B it is −0.06 (2 images). With 5 seeds and
+  differences of a few images, this is suggestive, not established.
+
+**Decision → S4:** keep CLS / last block. Flip augmentation (train / TTA / both) on three bases: ViT-B +
+linear SVM (top config), ViT-S + LR on the whole image (best small config), ViT-Ti + LR C = 0.01 (best
+ViT-Ti, the fast candidate). The crop is also tried on ViT-Ti. Feature concatenation of ViT-B with ViT-S
+(the top 2) and with ConvNeXt-T (a different architecture family, 0.02 pp behind ViT-S in S2). fp16
+inference on the three bases.
