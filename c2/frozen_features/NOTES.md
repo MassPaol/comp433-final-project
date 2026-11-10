@@ -1,6 +1,7 @@
 # C2 frozen features: experiment log
 
-All numbers below: tuning seeds 0–4 unless stated, `hw=local-3070` (RTX 3070 Laptop GPU). Accuracy =
+All numbers below: tuning seeds 0–4 unless stated, `hw=local-3070` (RTX 3070 Laptop GPU; the Colab T4
+re-run in `notebooks/massimo/c2_frozen_features.ipynb` gives the times for the report). Accuracy =
 mean ± std of validation accuracy over the seeds (std = spread across class pairs). Time = train +
 inference seconds per seed, where train includes loading the backbone from local disk and extracting
 the 100 training images' features, and inference extracts the 700 validation images' features. Raw rows:
@@ -34,11 +35,11 @@ every head trains in well under 0.1 s.
 - Near the ceiling: every config is between 97.4 and 99.8 %. Differences of 0.1 pp are 3–4 of the 3,500
   tuning predictions, far below the across-pair std (0.3–1.5 pp). Only dog-deer (seed 3) is hard
   (95.1–99.4 % for the best head per backbone; the other pairs are 98.4–100 %).
-- The backbone matters more than the head: within a backbone the heads span 0.3–0.7 pp (except RBF
+- The backbone matters more than the head: within a backbone the heads span 0.2–0.6 pp (except RBF
   SVM, which drops on DeiT-S and ConvNeXt-T), across backbones the best heads span 1.8 pp.
 - Bigger and more pretraining data both help: ViT-B > ViT-S > ViT-Ti (99.77 > 99.46 > 99.09), and the
   same ViT-S/16 recipe pretrained on IN-21k beats its IN-1k-only twin by +0.2 pp (LR: 99.46 vs 99.23).
-  ResNet-50 (IN-1k) is clearly last, 1.3 pp below the next backbone.
+  ResNet-50 (IN-1k) is clearly last, 1.1 pp below the next backbone (ViT-Ti).
 - The testbed head (AdamW, 10 epochs) is the worst or second-worst head on 4 of the 7 backbones: on
   the testbed's own ViT-Ti, LR/NCM on the same features beat it by +0.3/+0.4 pp, almost all of it on
   dog-deer (96.6 → 97.6/97.9). With 100 images and batch 32, 10 epochs are only 40 AdamW steps at
@@ -199,3 +200,48 @@ Paired over the 10 report seeds (same seeds = same class pairs):
 - Both best and fast are faster than the testbed baseline at inference (fp16) and train in under 0.5 s,
   most of which is loading the backbone from disk.
 - Pretraining is worth +13.6 pp over the best method without it (C1), on every pair.
+
+# Backbones and their pretraining data
+
+None of these checkpoints was trained or fine-tuned on CIFAR-10 (C2 rule). Weights: the timm repos on
+the Hugging Face hub, loaded with each checkpoint's own preprocessing (`timm.data.resolve_model_data_config`).
+
+| key | timm checkpoint | params | pretraining data | model card |
+|---|---|---|---|---|
+| `vitti` | `vit_tiny_patch16_224.augreg_in21k_ft_in1k` (testbed) | 5.7M | ImageNet-21k, fine-tuned on ImageNet-1k (AugReg, Steiner et al. 2021) | https://huggingface.co/timm/vit_tiny_patch16_224.augreg_in21k_ft_in1k |
+| `vits` | `vit_small_patch16_224.augreg_in21k_ft_in1k` | 22.1M | ImageNet-21k, fine-tuned on ImageNet-1k (AugReg) | https://huggingface.co/timm/vit_small_patch16_224.augreg_in21k_ft_in1k |
+| `vits1k` | `vit_small_patch16_224.augreg_in1k` | 22.1M | ImageNet-1k only (AugReg; same architecture and recipe as `vits`) | https://huggingface.co/timm/vit_small_patch16_224.augreg_in1k |
+| `vitb` | `vit_base_patch16_224.augreg_in21k_ft_in1k` | 86.6M | ImageNet-21k, fine-tuned on ImageNet-1k (AugReg) | https://huggingface.co/timm/vit_base_patch16_224.augreg_in21k_ft_in1k |
+| `deits` | `deit_small_patch16_224.fb_in1k` | 22.1M | ImageNet-1k only (DeiT, Touvron et al. 2021) | https://huggingface.co/timm/deit_small_patch16_224.fb_in1k |
+| `rn50` | `resnet50.tv_in1k` | 25.6M | ImageNet-1k only (original torchvision weights) | https://huggingface.co/timm/resnet50.tv_in1k |
+| `cnxt` | `convnext_tiny.fb_in22k_ft_in1k` | 28.6M | ImageNet-22k, fine-tuned on ImageNet-1k (Liu et al. 2022) | https://huggingface.co/timm/convnext_tiny.fb_in22k_ft_in1k |
+
+Params are the full models with their ImageNet classifier; the frozen feature extractors (classifier removed)
+are slightly smaller.
+
+# Source log (paper → what was taken from it)
+
+| source | used for |
+|---|---|
+| Razavian, Azizpour, Sullivan & Carlsson 2014, *CNN features off-the-shelf: an astounding baseline for recognition*, CVPR Workshops | frozen pretrained features + a linear classifier (SVM) as a strong transfer baseline |
+| Kornblith, Shlens & Le 2019, *Do better ImageNet models transfer better?*, CVPR | logistic regression on fixed features of many ImageNet backbones; the backbone sweep and comparing backbones by transfer accuracy |
+| Dosovitskiy et al. 2021, *An image is worth 16x16 words: Transformers for image recognition at scale*, ICLR | ViT; the paper evaluates few-shot transfer on frozen features ("Few-shot accuracies are obtained by solving a regularized least-squares regression problem that maps the (frozen) representation of a subset of training images to {−1,1}^K target vectors", Sec. 4.1) |
+| Steiner et al. 2022, *How to train your ViT? Data, augmentation, and regularization in vision transformers*, TMLR (arXiv 2021) | the AugReg checkpoints (incl. the testbed's ViT-Ti); more pretraining data (IN-21k vs IN-1k) transfers better, tested here with the `vits` / `vits1k` pair |
+| Touvron et al. 2021, *Training data-efficient image transformers & distillation through attention*, ICML | DeiT-S (ViT-S trained on ImageNet-1k only) |
+| He, Zhang, Ren & Sun 2016, *Deep residual learning for image recognition*, CVPR | ResNet-50 |
+| Liu et al. 2022, *A ConvNet for the 2020s*, CVPR | ConvNeXt-T |
+| Chen, Liu, Kira, Wang & Huang 2019, *A closer look at few-shot classification*, ICLR | a simple head on a frozen pretrained embedding is competitive with meta-learning |
+| Tian, Wang, Krishnan, Tenenbaum & Isola 2020, *Rethinking few-shot image classification: a good embedding is all you need?*, ECCV | logistic regression on a frozen embedding as the few-shot method; L2-normalizing the features helps |
+| Mensink, Verbeek, Perronnin & Csurka 2013, *Distance-based image classification: generalizing to new classes at near-zero cost*, IEEE TPAMI 35(11) | nearest class mean (NCM) classifier |
+| Snell, Swersky & Zemel 2017, *Prototypical networks for few-shot learning*, NeurIPS | class prototypes (mean embedding per class) for few-shot classification |
+| Wang, Chao, Weinberger & van der Maaten 2019, *SimpleShot: Revisiting nearest-neighbor classification for few-shot learning*, arXiv 1911.04623 | CL2N normalization: subtract a mean feature, then L2-normalize, before a nearest-neighbor / nearest-centroid classifier (they use the base-class mean; here the 100 training images' mean) |
+| Caron et al. 2021, *Emerging properties in self-supervised vision transformers* (DINO), ICCV | cosine k-NN evaluation of frozen features; the linear-probe feature recipe: CLS tokens of the last n blocks, each after the final norm, concatenated (`eval_linear.py`: n = 4 for ViT-Small, n = 1 + average-pooled patch tokens for ViT-Base) → our `layers` and `pool = cls+mean` |
+| Evci, Dumoulin, Larochelle & Mozer 2022, *Head2Toe: Utilizing intermediate representations for better transfer learning*, ICML | features from intermediate layers of a frozen backbone, not only the last; matches fine-tuning on VTAB-1k and helps most when the target data differs from the pretraining data (originality hook: multi-layer features) |
+| Krizhevsky, Sutskever & Hinton 2012, *ImageNet classification with deep convolutional neural networks*, NeurIPS | horizontal-flip augmentation; averaging predictions over flipped copies at test time |
+| Demšar 2006, *Statistical comparisons of classifiers over multiple data sets*, JMLR 7 | Wilcoxon signed-rank test for paired comparisons of two classifiers over many problem instances |
+| Wightman 2019, *PyTorch Image Models (timm)*, GitHub | all checkpoints and their preprocessing configs |
+| Pedregosa et al. 2011, *Scikit-learn: Machine learning in Python*, JMLR 12 | LR, LR-CV, SVMs, kNN, StandardScaler, grouped cross-validation |
+
+Not from the literature (our choices, reported as such): the staged sweep and the best/fast selection rule
+(shared with C1), the timing policy (backbone loading counted inside `fit`), fp16 inference, and
+`crop_pct = 1.0`.
