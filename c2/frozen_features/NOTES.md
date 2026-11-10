@@ -77,11 +77,14 @@ default is not repeated (its S1 config is the default point of the curve).
   backbone (ViT-Ti: 98.69 → 99.00), but even then it does not beat LR on the same features. A 10× larger
   learning rate (1e-2) is worse than 1e-3 at every epoch count on ViT-B and ViT-S.
 - Normalization: for LR it changes ≤ 0.2 pp (z-score vs none vs L2 vs CL2N). For NCM, cosine geometry
-  matters: z-scoring hurts NCM on ViT-B (99.43 vs 99.69 with L2), and CL2N is no better than plain L2.
+  matters: z-scoring hurts NCM on ViT-B (99.43 vs 99.69 with L2). CL2N vs plain L2 for NCM is within
+  ±0.06 pp on ViT-B, ViT-S and ConvNeXt-T, and clearly worse on ViT-Ti (98.74 vs 99.09).
 - RBF-SVM never beats the linear heads; with C = 0.1 it underfits (ConvNeXt-T: 96.00). kNN prefers small
   k (k = 3 best or tied on 3 of 4 backbones; k = 15 is worst or tied-worst on every backbone).
-- Timing: within a backbone every head trains in < 0.05 s, so time differences between configs of one
-  backbone are run-to-run drift, not cost. S2 ran ViT-S and ViT-Ti ~25–30 % slower than S1 for identical
+- Timing: LR, the SVMs, NCM and kNN train in ≤ 0.05 s, so time differences between those configs of
+  one backbone are run-to-run drift, not cost. The heads that fit many times are real costs: LR-CV
+  ~0.23 s (5 folds × 11 values of C), the AdamW head 0.07 / 0.17 / 0.49 s for 10 / 30 / 100 epochs.
+  S2 ran ViT-S and ViT-Ti ~25–30 % slower than S1 for identical
   work (inference 1.38 vs 1.08 s, 0.54 vs 0.41 s), while ViT-B and ConvNeXt-T stayed within 3 %; the
   small models are bound by CPU-side kernel launches, so laptop background load shows up there. The
   report's times come from the Colab T4 re-run.
@@ -162,7 +165,10 @@ Over all 191 tuning configs (s1–s4), local times:
 - top: `s4_vitb_fp16` (and `s2_vitb_linsvm_C0.001`, `s4_vitb_fliptrain`, same accuracy) 99.83 ± 0.23, 2.80 s
 - **best** = `s4_vits_fp16`: ViT-S/16 (IN-21k) + LR (no normalization), whole image, fp16 —
   99.77 ± 0.17, 0.96 s. Within 0.5 pp of top (−0.06) and 2.9× faster; the next-fastest config within
-  0.5 pp (`s1_vits_lr`, 99.46) takes 1.56 s.
+  0.5 pp (`s1_vits_lr`, 99.46) takes 1.56 s. **Deviation:** `best` skips the checkpoint's center crop
+  (crop_pct 1.0 instead of 0.9), i.e. it does not use the checkpoint's preprocessing exactly (team rule
+  #5 / project instructions); its edge from the crop (+0.26 pp, S3) is within noise. No ViT-S fp16 config
+  with the checkpoint's crop was run; without the crop configs the rule would pick `s1_vits_lr`.
 - **fast** = `s4_vitti_fp16`: ViT-Ti/16 (the testbed checkpoint) + LR (C = 0.01), fp16 — 99.23 ± 0.38,
   0.47 s. The fastest config overall (next: 0.58 s), 0.54 pp below best (cutoff: best − 2 pp).
 - **baseline** = `s1_vitti_adamw`, the testbed's C2 example, fixed in advance: 98.69 ± 1.10, 0.62 s.

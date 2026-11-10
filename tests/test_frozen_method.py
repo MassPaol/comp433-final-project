@@ -37,7 +37,9 @@ def test_fit_predict_shape(data):
 def test_predict_single_image(data):
     X, y = data
     m = _m().fit(X, y)
-    assert m.predict(X[:1]).shape == (1,)
+    pred = m.predict(X[:1])
+    assert pred.shape == (1,)
+    assert pred.dtype == np.int64
 
 
 def test_flip_train_doubles(data):
@@ -55,8 +57,10 @@ def test_flip_tta_shape(data):
 def test_lr_cv_groups_flips(data):
     X, y = data
     m = _m(head="lr_cv", flip_train=True).fit(X, y)
-    y2 = np.concatenate([y, y])
-    for tr, te in heads.cv_splits(y2, m.groups_):
+    np.testing.assert_array_equal(m.groups_, np.arange(80) % 40)
+    folds = m.head_.clf_.cv  # the folds the fitted LR-CV actually used
+    assert len(folds) == 5
+    for tr, te in folds:
         assert not {i % 40 for i in tr} & {i % 40 for i in te}
 
 
