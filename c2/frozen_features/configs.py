@@ -111,10 +111,14 @@ def _s4():
 STAGES["s4"] = _s4()
 
 
-# ---- FINAL ------------------------------------------------------------------
+# ---- FINAL: chosen by `python -m c2.frozen_features.select` (rule in select.py) ----
+# Over all 191 tuning configs (s1-s4), local run (hw=local-3070):
+# top:  s4_vitb_fp16   99.83 +/- 0.23  2.80 s
+# best: s4_vits_fp16   99.77 +/- 0.17  0.96 s  (within 0.5 pp of top, fastest of those)
+# fast: s4_vitti_fp16  99.23 +/- 0.38  0.47 s  (fastest with acc >= best - 2 pp)
 # baseline: the testbed's C2 example (ViT-Tiny, CLS features, AdamW head, 10 epochs),
 # fixed before any results, so best and fast can be compared with it on the report seeds.
-FINAL_SOURCE = {"baseline": "s1_vitti_adamw"}
+FINAL_SOURCE = {"best": "s4_vits_fp16", "fast": "s4_vitti_fp16", "baseline": "s1_vitti_adamw"}
 
 
 def get(config_id):

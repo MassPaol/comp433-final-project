@@ -124,3 +124,46 @@ linear SVM (top config), ViT-S + LR on the whole image (best small config), ViT-
 ViT-Ti, the fast candidate). The crop is also tried on ViT-Ti. Feature concatenation of ViT-B with ViT-S
 (the top 2) and with ConvNeXt-T (a different architecture family, 0.02 pp behind ViT-S in S2). fp16
 inference on the three bases.
+
+## 2026-11-10 · S4: flip augmentation, fp16, backbone concatenation (15 configs)
+
+**Why:** mirrored images are a free, label-preserving way to double the 100 training images (and to
+average two views at test time); in C1 flip-training was the biggest single gain. fp16 (autocast)
+feature extraction is a pure speed knob: the backbone is frozen, so lower precision can only change
+the features slightly. Concatenating two backbones' features tests whether they make different
+mistakes. Bases: ViT-B + linear SVM (top config), ViT-S + LR on the whole image (best small config),
+ViT-Ti + LR C = 0.01 (fast candidate).
+
+| base | plain | flip-train | flip-TTA | both | fp16 | inference plain → fp16 (s / 700 img) |
+|---|---|---|---|---|---|---|
+| ViT-B + lin. SVM | 99.83 | 99.83 | 99.80 | 99.80 | **99.83** | 3.95 → 1.40 |
+| ViT-S + LR, whole image | 99.77 | 99.77 | 99.77 | 99.77 | **99.77** | 1.33 → 0.51 |
+| ViT-Ti + LR C = 0.01 | 99.23 | 99.17 | 99.20 | 99.26 | **99.23** | 0.53 → 0.27 |
+
+Also: ViT-Ti on the whole image 99.17 (−0.06); ViT-B + ViT-S features 99.74, ViT-B + ConvNeXt-T 99.66
+(both below ViT-B alone).
+
+**Observations:**
+- fp16 gives exactly the same per-seed accuracy on all three bases and makes inference 1.9–2.8× faster
+  (more for bigger models: GPU tensor cores do the matrix products in half precision); training-image
+  extraction drops the same way (ViT-B 0.58 → 0.18 s). It is the largest time saving of the sweep, at
+  no accuracy cost. On ViT-B, loading the weights (1.2 s) now costs more than extracting the features.
+- Flip augmentation does nothing at this ceiling (−0.06 to +0.03 pp), unlike C1 (+1.8 to +2.1 pp): the
+  pretrained features are already close to invariant to a horizontal flip, so the mirrored copy adds
+  almost no new information. Flip-TTA doubles inference time for nothing.
+- Concatenating backbones is worse than the better backbone alone, and costs both backbones' time.
+- The whole image helped ViT-S in S3 (+0.26) but not ViT-Ti (−0.06) or ViT-B (−0.06): the crop effect
+  is within noise.
+
+## 2026-11-10 · Selection (rule in `select.py`, fixed before any results; same rule as C1)
+
+Over all 191 tuning configs (s1–s4), local times:
+- top: `s4_vitb_fp16` (and `s2_vitb_linsvm_C0.001`, `s4_vitb_fliptrain`, same accuracy) 99.83 ± 0.23, 2.80 s
+- **best** = `s4_vits_fp16`: ViT-S/16 (IN-21k) + LR (no normalization), whole image, fp16 —
+  99.77 ± 0.17, 0.96 s. Within 0.5 pp of top (−0.06) and 2.9× faster; the next-fastest config within
+  0.5 pp (`s1_vits_lr`, 99.46) takes 1.56 s.
+- **fast** = `s4_vitti_fp16`: ViT-Ti/16 (the testbed checkpoint) + LR (C = 0.01), fp16 — 99.23 ± 0.38,
+  0.47 s. The fastest config overall (next: 0.58 s), 0.54 pp below best (cutoff: best − 2 pp).
+- **baseline** = `s1_vitti_adamw`, the testbed's C2 example, fixed in advance: 98.69 ± 1.10, 0.62 s.
+
+Neither choice is a close call on time (fp16 roughly halves it), unlike C1's fast pick.
