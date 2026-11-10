@@ -167,3 +167,35 @@ Over all 191 tuning configs (s1–s4), local times:
 - **baseline** = `s1_vitti_adamw`, the testbed's C2 example, fixed in advance: 98.69 ± 1.10, 0.62 s.
 
 Neither choice is a close call on time (fp16 roughly halves it), unlike C1's fast pick.
+
+## 2026-11-10 · Report seeds 10–19 (`hw=local-3070`)
+
+| config | acc (%) | train (s) = load + extract + head | inference (s / 700 img) | per image | trained params |
+|---|---|---|---|---|---|
+| best: ViT-S/16 + LR, whole image, fp16 | **98.69 ± 2.65** | 0.40 = 0.32 + 0.06 + 0.02 | 0.42 | 0.60 ms | 385 |
+| fast: ViT-Ti/16 + LR (C = 0.01), fp16 | 97.33 ± 3.96 | 0.16 = 0.11 + 0.03 + 0.01 | 0.21 | 0.30 ms | 193 |
+| baseline: testbed (ViT-Ti/16 + AdamW head, 10 epochs) | 96.04 ± 5.02 | 0.24 = 0.11 + 0.07 + 0.06 | 0.45 | 0.65 ms | 386 |
+
+Per class pair (%): ship-bird 99.86 / 99.29 / 99.29 · horse-ship 99.86 / 99.57 / 98.57 · dog-ship 99.86 /
+99.71 / 99.00 · **cat-dog 90.86 / 86.00 / 81.86** · cat-truck 99.86 / 98.86 / 98.71 · bird-frog 99.00 /
+97.00 / 95.00 · frog-bird 98.43 / 95.86 / 94.29 · horse-bird 99.29 / 98.29 / 96.57 · horse-truck 99.86 /
+99.43 / 98.14 · automobile-horse 100.00 / 99.29 / 99.00 (best / fast / baseline).
+
+Paired over the 10 report seeds (same seeds = same class pairs):
+- best − baseline = +2.64 ± 2.44 pp, best wins 10/10, Wilcoxon signed-rank p = 0.002
+- best − fast = +1.36 ± 1.38 pp, best wins 10/10, p = 0.002
+- fast − baseline = +1.29 pp, fast wins 9/10 (1 tie), p = 0.004
+- vs Massimo's C1 best (hand-crafted features, `hw=colab-t4`, 85.09 %): C2 best − C1 best = +13.60 pp,
+  10/10, p = 0.002 (from +6.3 pp on horse-ship to +26.4 pp on cat-dog).
+
+**Observations:**
+- The ranking from the tuning seeds holds on every report seed: best ≥ fast ≥ baseline on all 10 pairs
+  (one tie). p = 0.002 is the smallest a two-sided Wilcoxon test can give with 10 pairs.
+- The report seeds are harder than the tuning seeds (cat-dog, bird-frog, frog-bird), and that is where
+  the configs separate: on cat-dog best is +9.0 pp over the testbed baseline and +4.9 pp over fast,
+  while on the easy pairs all three are within ~1 pp. The near-ceiling tuning seeds hid most of this
+  (tuning: best − fast = +0.54 pp; report: +1.36 pp).
+- The std (2.7–5.0 pp) is variation across class pairs (driven by cat-dog), not uncertainty of the mean.
+- Both best and fast are faster than the testbed baseline at inference (fp16) and train in under 0.5 s,
+  most of which is loading the backbone from disk.
+- Pretraining is worth +13.6 pp over the best method without it (C1), on every pair.
