@@ -48,3 +48,42 @@ every head trains in well under 0.1 s.
 
 **Decision → S2:** tune heads on the top 3 backbones by best-head accuracy (ViT-B, ViT-S, ConvNeXt-T),
 plus ViT-Ti (the testbed backbone: how far does a better head take it?).
+
+## 2026-11-10 · S2: head hyperparameters and feature normalization (116 configs)
+
+**Why:** S1 used each head's defaults; before comparing feature variants, give every head its fair
+shot. Backbones: ViT-B, ViT-S, ConvNeXt-T (top 3 in S1) and ViT-Ti (the testbed backbone). Grids per
+backbone: LR and linear-SVM C ∈ {0.001 … 100}; LR-CV (C chosen by 5-fold CV on the 100 training images
+only); RBF-SVM C ∈ {0.1, 1, 10, 100}; testbed AdamW head epochs ∈ {10, 30, 100} × lr ∈ {1e-3, 1e-2};
+normalization ∈ {none, L2, z-score, CL2N} for LR and NCM; kNN k ∈ {1, 3, 5, 9, 15}. Each knob's S1
+default is not repeated (its S1 config is the default point of the curve).
+
+| backbone | best config | acc (%) | S1 best | head tuning gain | testbed head: 10 → 100 epochs |
+|---|---|---|---|---|---|
+| ViT-B/16 | linear SVM, C = 0.001 | **99.83** ± 0.23 | 99.77 (LR) | +0.06 | 99.40 → 99.57 |
+| ViT-S/16 | LR, no normalization | 99.51 ± 0.43 | 99.46 (LR) | +0.05 | 99.23 → 99.31 |
+| ConvNeXt-T | LR, C = 100 | 99.49 ± 0.26 | 99.43 (lin. SVM) | +0.06 | 99.34 → 99.46 |
+| ViT-Ti/16 | LR, C = 0.01 | 99.23 ± 0.38 | 99.09 (NCM) | +0.14 | 98.69 → 99.00 |
+
+**Observations:**
+- Tuning the head buys at most +0.14 pp (5 of 3,500 tuning predictions), within noise. Most grids are
+  flat: on ViT-B every linear-SVM C from 0.01 to 100 gives the same 99.74 %; LR is within 0.15 pp for
+  C ∈ [0.001, 100] on every backbone. With 100 images in 192–768 dims the classes are linearly separable,
+  so the regularization strength barely moves the boundary. LR-CV never beats a fixed C.
+- The testbed head is under-trained: 100 epochs instead of 10 (lr 1e-3) adds +0.08 to +0.31 pp on every
+  backbone (ViT-Ti: 98.69 → 99.00), but even then it does not beat LR on the same features. A 10× larger
+  learning rate (1e-2) is worse than 1e-3 at every epoch count on ViT-B and ViT-S.
+- Normalization: for LR it changes ≤ 0.1 pp (z-score vs none vs L2 vs CL2N). For NCM, cosine geometry
+  matters: z-scoring hurts NCM on ViT-B (99.43 vs 99.69 with L2), and CL2N is no better than plain L2.
+- RBF-SVM never beats the linear heads; with C = 0.1 it underfits (ConvNeXt-T: 96.00). kNN prefers small
+  k (k = 3 best or tied on 3 of 4 backbones; k = 15 is worst on every backbone).
+- Timing: within a backbone every head trains in < 0.05 s, so time differences between configs of one
+  backbone are run-to-run drift, not cost. S2 ran ViT-S and ViT-Ti ~25–30 % slower than S1 for identical
+  work (inference 1.38 vs 1.08 s, 0.54 vs 0.41 s), while ViT-B and ConvNeXt-T stayed within 3 %; the
+  small models are bound by CPU-side kernel launches, so laptop background load shows up there. The
+  report's times come from the Colab T4 re-run.
+
+**Decision → S3:** feature source on the top 2 backbones, each with its best S2 head: ViT-B + linear SVM
+(C = 0.001), ViT-S + LR (no normalization). Both are ViTs, so: token pooling (CLS / mean of patch tokens
+/ both) × number of last blocks concatenated (1, 2, 4), plus the full image instead of the checkpoint's
+center crop (crop_pct = 1.0).

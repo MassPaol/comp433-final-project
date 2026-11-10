@@ -33,6 +33,17 @@ def test_final_points_at_stage_configs():
         assert configs.FINAL[name] == configs.get(cid)
 
 
+def test_no_config_repeated_across_stages():
+    kws = [repr(sorted(kw.items())) for stage in configs.STAGES.values() for kw in stage.values()]
+    assert len(kws) == len(set(kws))
+
+
+def test_every_stage_config_builds():
+    for stage in configs.STAGES.values():
+        for kw in stage.values():
+            FrozenFeatureMethod(**kw)
+
+
 def test_get_rejects_unknown():
     with pytest.raises(KeyError):
         configs.get("does_not_exist")
