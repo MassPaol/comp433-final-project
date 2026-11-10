@@ -27,3 +27,10 @@ class Method:
     def n_trainable_params(self):
         """Optional: number of trainable parameters, logged in the results table."""
         return None
+
+    def extra_notes(self):
+        """Optional: extra values for this run's notes column, e.g. {"extract_s": 0.41}.
+
+        Called after `predict`; the harness appends them as "key=value".
+        """
+        return {}
