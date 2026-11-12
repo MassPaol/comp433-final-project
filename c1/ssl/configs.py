@@ -113,10 +113,10 @@ STAGES["ss4"] = _ss4()
 # ---- FINAL: chosen by `python -m c1.ssl.select` (rule in select.py) ----
 # PLACEHOLDERS: replace with the ids printed by select.py, then record them in NOTES.md.
 FINAL_SOURCE = {
-    "kmeans_best": "k2_scat+hog+hsv_fliptrain",
-    "kmeans_fast": "k1_hog+hsv_k8_vote",
+    "kmeans_best": "k2_hog+hsv_noscale",
+    "kmeans_fast": "k1_hog+hsv_k16_dist",
     "simsiam_best": "ss1_e200_lr",
-    "simsiam_fast": "ss1_e50_knn",
+    "simsiam_fast": "ss2_w16_p128",
 }
 
 
