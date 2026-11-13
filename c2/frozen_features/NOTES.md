@@ -72,7 +72,10 @@ default is not repeated (its S1 config is the default point of the curve).
   C ∈ [0.001, 100] on ViT-B, ViT-S and ConvNeXt-T. With 100 images in 384–768 dims the classes are
   linearly separable, so the regularization strength barely moves the boundary. Only the smallest
   backbone (ViT-Ti, 192 dims) prefers strong regularization: C = 0.01 → 99.23, C = 100 → 98.80.
-  LR-CV never beats a fixed C.
+  LR-CV never beats a fixed C. (2026-11-13: LR-CV's folds were changed from StratifiedGroupKFold to
+  StratifiedKFold over images + their flips, because Colab's scikit-learn 1.6 StratifiedGroupKFold does not
+  stratify and crashed the T4 run. The local LR-CV rows above used the old folds; the T4 rows use the new
+  ones, which are identical in every scikit-learn version. No selected config uses LR-CV.)
 - The testbed head is under-trained: 100 epochs instead of 10 (lr 1e-3) adds +0.08 to +0.31 pp on every
   backbone (ViT-Ti: 98.69 → 99.00), but even then it does not beat LR on the same features. A 10× larger
   learning rate (1e-2) is worse than 1e-3 at every epoch count on ViT-B and ViT-S.

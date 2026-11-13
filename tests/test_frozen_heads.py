@@ -110,6 +110,38 @@ def test_cv_splits_keep_groups_together():
         assert not set(groups[tr]) & set(groups[te])
 
 
+def _label_orders():
+    """(y, groups) pairs: the warm-up's alternating labels, real sorted labels, random orders, flips."""
+    out = [(np.array([0, 1] * 10), np.arange(20)),
+           (np.array([0] * 50 + [1] * 50), np.arange(100))]
+    for s in range(5):
+        base = np.random.RandomState(s).permutation([0] * 50 + [1] * 50)
+        out.append((base, np.arange(100)))
+        out.append((np.concatenate([base, base]), np.arange(200) % 100))
+    return out
+
+
+def test_cv_splits_stratified_for_any_label_order():
+    # Older scikit-learn (1.6, Colab's) StratifiedGroupKFold(shuffle=True) did not stratify:
+    # the warm-up's 20 alternating labels got a one-class test fold and LR-CV crashed.
+    for y, groups in _label_orders():
+        folds = cv_splits(y, groups)
+        assert len(folds) == 5
+        assert sorted(np.concatenate([te for _, te in folds]).tolist()) == list(range(len(y)))
+        for tr, te in folds:
+            for c in (0, 1):
+                expected = (y == c).sum() / 5
+                assert abs((y[te] == c).sum() - expected) <= 2  # a group (image + flip) is 2 samples
+            assert not set(groups[tr]) & set(groups[te])
+
+
+def test_lr_cv_fits_on_warm_up_sized_data():
+    rng = np.random.RandomState(0)
+    y = np.array([0, 1] * 10)
+    Z = rng.randn(20, 16).astype(np.float32) + y[:, None]
+    make_head("lr_cv").fit(Z, y)  # must not raise
+
+
 def test_lr_cv_uses_groups(data):
     Z, y = data
     h = make_head("lr_cv").fit(np.concatenate([Z, Z]), np.concatenate([y, y]),

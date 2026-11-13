@@ -9,7 +9,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from sklearn.linear_model import LogisticRegression, LogisticRegressionCV
-from sklearn.model_selection import StratifiedGroupKFold
+from sklearn.model_selection import StratifiedKFold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC, LinearSVC
@@ -55,9 +55,21 @@ class FeatureNorm:
 
 
 def cv_splits(y, groups):
-    """5 stratified folds that never split a group (an image and its flipped copy)."""
-    cv = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=0)
-    return list(cv.split(np.zeros(len(y)), y, groups))
+    """5 stratified folds that never split a group (an image and its flipped copy).
+
+    Folds are drawn over the groups (one label each) with StratifiedKFold and then
+    expanded to the groups' members. Not StratifiedGroupKFold(shuffle=True): in older
+    scikit-learn (1.6, Colab's) it does not stratify, and on small inputs it left a
+    one-class test fold, which crashes LR-CV's log-loss scoring.
+    """
+    y, groups = np.asarray(y), np.asarray(groups)
+    uniq, first = np.unique(groups, return_index=True)
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
+    folds = []
+    for _, te in cv.split(uniq, y[first]):
+        test = np.isin(groups, uniq[te])
+        folds.append((np.flatnonzero(~test), np.flatnonzero(test)))
+    return folds
 
 
 class AdamWHead:
