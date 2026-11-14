@@ -11,7 +11,7 @@ METHOD_OF_STAGE = {"k1": "kmeans", "k2": "kmeans",
 
 # K1: dictionary size x patch size (normalization, whitening and stride at their defaults)
 STAGES["k1"] = {f"k1_k{k}_p{p}": {"n_clusters": k, "patch_size": p}
-                for k in [50, 100, 200, 400, 800] for p in [4, 6, 8]}
+                for k in [10,15,25,50,75,100] for p in [4, 6, 8]}
 
 # K2: preprocessing on the best K1 setting (EDIT KMEANS_BASE after K1)
 KMEANS_BASE = {"n_clusters": 200, "patch_size": 6}
