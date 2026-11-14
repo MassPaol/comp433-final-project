@@ -4,30 +4,31 @@ Hardware tag, seeds and metric definitions are the same as in `c1/classical/NOTE
 0–4, report seeds 10–19, accuracy = mean ± std over seeds (std = spread across class pairs), time =
 train + inference seconds per seed. Raw rows: `results/<person>.csv`.
 
-(Write one section per stage, only after its results are in. Template below.)
+Write one section per stage, only after its results are in.
 
-## <date> · K1: features × k × cluster head (60 configs)
-**Why:** which fixed features cluster well, and does naming clusters by vote beat a logistic regression
-on centroid distances?
+## <date> · K1: dictionary size × patch size (15 configs)
+**Why:** how does the dictionary size interact with the receptive field?
 
-| feature | k=2 vote | k=8 vote | k=32 vote | k=2 dist | k=8 dist | k=32 dist |
-|---|---|---|---|---|---|---|
-| ... | | | | | | |
+| patch | K=50 | K=100 | K=200 | K=400 | K=800 |
+|---|---|---|---|---|---|
+| 4 | | | | | |
+| 6 | | | | | |
+| 8 | | | | | |
 
-**Observations:** (what changed with k, vote vs dist, which feature won)
+**Observations:**
 
-**Decision → K2:** (top 3 feature sets and their best k / mode; copy them into `K2_BASES`)
+**Decision → K2:** (chosen K and patch; copy into `KMEANS_BASE`)
 
-## <date> · K2: flip augmentation, standardization, PCA
+## <date> · K2: contrast and whitening constants
 **Why / results / decision:**
 
-## <date> · SS1: pretraining length × head
+## <date> · SS1: pretraining length
 **Why:** does SimSiam pretraining on 100 images beat a random-init backbone (epochs=0)?
 Check `collapse_std_` (≈ 1/sqrt(proj_dim) healthy, ≈ 0 collapsed) for the longest runs.
 
-**Decision → SS2:** (write the epochs/head chosen into `SS_BASE`)
+**Decision → SS2:** (epochs chosen; copy into `SS_BASE`)
 
-## <date> · SS2 / SS3 / SS4: architecture, optimization + augmentation, heads
+## <date> · SS2 / SS3: architecture, optimization and augmentation
 **Results and decisions:**
 
 ## <date> · Selection (rule in `select.py`, fixed before any results)
@@ -43,14 +44,13 @@ Check `collapse_std_` (≈ 1/sqrt(proj_dim) healthy, ≈ 0 collapsed) for the lo
 | simsiam_best | | | |
 | simsiam_fast | | | |
 
-# Source log (paper → what was taken from it)
+# Source log
 
 | source | used for |
 |---|---|
+| Coates, Ng & Lee 2011, *An analysis of single-layer networks in unsupervised feature learning*, AISTATS | the whole k-means pipeline, quadrant sum pooling, linear SVM |
 | Chen & He 2021, *Exploring Simple Siamese Representation Learning*, CVPR | SimSiam: stop-gradient, predictor, negative cosine loss |
-| Chen, Kornblith, Norouzi & Hinton 2020, *A simple framework for contrastive learning of visual representations*, ICML | augmentation recipe (random resized crop, color jitter, grayscale) |
-| Ioffe & Szegedy 2015, *Batch normalization*, ICML | BatchNorm in backbone / projector / predictor |
-| Arthur & Vassilvitskii 2007, *k-means++: the advantages of careful seeding*, SODA | k-means initialization (scikit-learn default) |
-| Coates, Lee & Ng 2011, *An analysis of single-layer networks in unsupervised feature learning*, AISTATS | k-means centroid distances as features for a linear classifier ("dist" mode) |
-| Pedregosa et al. 2011, *Scikit-learn: Machine learning in Python*, JMLR 12 | k-means, logistic regression, kNN, StandardScaler, PCA |
-| (reused from `c1/classical/NOTES.md`) | HOG, HSV histograms, scattering features |
+| Chen, Kornblith, Norouzi & Hinton 2020, *A simple framework for contrastive learning*, ICML | augmentation recipe (random resized crop, color jitter, grayscale) |
+| Ioffe & Szegedy 2015, *Batch normalization*, ICML | BatchNorm in backbone, projector and predictor |
+| Pedregosa et al. 2011, *Scikit-learn*, JMLR | KMeans, LinearSVC, GridSearchCV, StandardScaler |
+| Lightly (version pinned in `requirements.txt`) | SimSiamTransform augmentations and projection/prediction heads |

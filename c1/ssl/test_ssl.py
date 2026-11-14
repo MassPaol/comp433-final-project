@@ -1,4 +1,4 @@
-"""Smoke tests for c1.ssl (put in tests/). Synthetic data, runs in seconds on CPU."""
+"""Smoke tests for c1.ssl. Synthetic data, runs in about a minute on CPU."""
 import numpy as np
 import pytest
 
@@ -16,34 +16,35 @@ def toy():
     return X, y
 
 
-@pytest.mark.parametrize("mode", ["vote", "dist"])
-def test_kmeans_fit_predict(toy, mode):
+def test_kmeans_extract_patches_shape(toy):
+    X, _ = toy
+    m = KMeansMethod(patch_size=6, n_clusters=8, num_patches=500)
+    assert m.extract_patches(X[:5]).shape == (5 * 27 * 27, 6 * 6 * 3)
+
+
+def test_kmeans_fit_predict(toy):
     X, y = toy
-    m = KMeansMethod(features=[("raw", {})], k=4, mode=mode, flip_train=True, flip_tta=True).fit(X, y)
+    m = KMeansMethod(patch_size=6, n_clusters=16, num_patches=2000, n_init=2,
+                     C_grid=(0.1, 1.0)).fit(X, y)
     pred = m.predict(X)
     assert pred.shape == y.shape and set(pred) <= {0, 1}
-    assert (pred == y).mean() > 0.8
+    assert (pred == y).mean() > 0.7
+    assert m.encode(X[:3]).shape == (3, 4 * 16)
     assert m.n_trainable_params() > 0
 
 
-@pytest.mark.parametrize("head", ["lr", "knn", "kmeans"])
-def test_simsiam_fit_predict(toy, head):
+@pytest.mark.parametrize("epochs", [0, 2])
+def test_simsiam_fit_predict(toy, epochs):
     X, y = toy
-    params = {"k": 4} if head == "kmeans" else {}
-    m = SimSiamMethod(epochs=2, width=8, proj_dim=16, batch_size=20, head=head,
-                      head_params=params).fit(X, y)
+    m = SimSiamMethod(epochs=epochs, width=8, proj_dim=16, proj_hidden=32, pred_hidden=8,
+                      batch_size=20, C_grid=(0.1, 1.0)).fit(X, y)
     pred = m.predict(X)
     assert pred.shape == y.shape and set(pred) <= {0, 1}
     assert np.isfinite(m.collapse_std_)
+    assert m.n_trainable_params() > 0
 
 
-def test_simsiam_random_init_baseline(toy):
-    X, y = toy
-    m = SimSiamMethod(epochs=0, width=8, proj_dim=16, head="lr", flip_head=True).fit(X, y)
-    assert m.predict(X).shape == y.shape
-
-
-def test_every_config_resolves_and_constructs():
+def test_every_config_constructs():
     cls = {"kmeans": KMeansMethod, "simsiam": SimSiamMethod}
     for stage in configs.STAGES.values():
         for cid in stage:
@@ -51,6 +52,11 @@ def test_every_config_resolves_and_constructs():
             cls[method](**kw)  # constructor only: must accept every kwarg
     for name in configs.FINAL_SOURCE:
         assert configs.get(name)[0] in cls
+
+
+def test_final_names_exist_in_stages():
+    for name, cid in configs.FINAL_SOURCE.items():
+        assert any(cid in stage for stage in configs.STAGES.values()), (name, cid)
 
 
 def test_unknown_config_raises():

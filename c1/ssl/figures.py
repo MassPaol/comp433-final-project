@@ -1,10 +1,10 @@
-"""Report figures for the C1 self-supervised methods (k-means, SimSiam).
+"""Report figures for the C1 self-supervised methods (Coates k-means pipeline, SimSiam).
 
     python -m c1.ssl.figures                  # local rows
     python -m c1.ssl.figures --hw colab-t4    # rows from the Colab T4 run
 
-Writes report/figures/c1_ssl_*.{pdf,png}. Config parameters are read from
-configs.STAGES / configs.FINAL_SOURCE, never parsed from the config-id strings.
+Writes report/figures/c1_ssl_*.{pdf,png}. Config parameters are read from configs.STAGES and
+configs.FINAL_SOURCE, never parsed from config-id strings.
 """
 import argparse
 
@@ -22,6 +22,7 @@ from c1.ssl.select import pick_all, summarize_configs, tuning_rows  # noqa: E402
 from common import plots  # noqa: E402
 
 TUNE_LABEL = "tuning seeds 0–4"
+PATCH_SIZES = [4, 6, 8]
 
 
 def _stage_table(summary, stage):
@@ -31,50 +32,81 @@ def _stage_table(summary, stage):
 
 
 def fig_kmeans_sweep(summary):
+    """Accuracy against dictionary size K, one line per patch size (stage k1)."""
     s = _stage_table(summary, "k1")
-    fig, axes = plt.subplots(1, 2, figsize=(10, 3.6), sharey=True)
-    for ax, mode, title in zip(axes, ["vote", "dist"],
-                               ["(a) cluster = majority label", "(b) centroid distances → LR"]):
-        for i, (fname, feats) in enumerate(configs.K_FEATURES.items()):
-            rows = [(r.kw["k"], r.acc_mean, r.acc_std) for _, r in s.iterrows()
-                    if r.kw["mode"] == mode and r.kw["features"] == feats]
-            if not rows:
-                continue
-            k, m, sd = map(np.array, zip(*sorted(rows)))
-            plots.errorbar_sweep(ax, k, m * 100, sd * 100, label=fname, color=plots.SERIES[i])
-        ax.set_xscale("log", base=2)
-        ax.set_xlabel("Number of clusters k (log scale)")
-        ax.set_title(title)
-    axes[0].set_ylabel("Validation accuracy (%)")
-    axes[0].legend(loc="lower right", fontsize=7)
-    fig.suptitle(f"k-means: features × k, mean ± std over {TUNE_LABEL}", y=1.02)
+    fig, ax = plt.subplots(figsize=(6.2, 3.8))
+    for i, p in enumerate(PATCH_SIZES):
+        rows = sorted((r.kw["n_clusters"], r.acc_mean, r.acc_std)
+                      for _, r in s.iterrows() if r.kw["patch_size"] == p)
+        if not rows:
+            continue
+        k, m, sd = map(np.array, zip(*rows))
+        plots.errorbar_sweep(ax, k, m * 100, sd * 100, label=f"patch {p}", color=plots.SERIES[i])
+    ax.set_xscale("log", base=2)
+    ax.set_xlabel("Dictionary size K (log scale)")
+    ax.set_ylabel("Validation accuracy (%)")
+    ax.set_title(f"Coates et al.: K × patch size ({TUNE_LABEL})", fontsize=10)
+    ax.legend(loc="lower right", title="patch size")
+    fig.tight_layout()
+    return fig
+
+
+def fig_kmeans_preprocessing(summary):
+    """Preprocessing sensitivity on the chosen K and patch size (stage k2), with error bars."""
+    s = _stage_table(summary, "k2")
+    fig, ax = plt.subplots(figsize=(6.4, 3.6))
+    x = np.arange(len(s))
+    ax.errorbar(x, s.acc_mean * 100, yerr=s.acc_std * 100, fmt="o", color=plots.SERIES[0],
+                capsize=3, markersize=5)
+    ax.set_xticks(x, [c.replace("k2_", "") for c in s.index], rotation=30, ha="right")
+    ax.set_ylabel("Validation accuracy (%)")
+    ax.set_title(f"Coates et al.: contrast and whitening constants ({TUNE_LABEL})", fontsize=10)
     fig.tight_layout()
     return fig
 
 
 def fig_simsiam_epochs(summary):
+    """Accuracy against SimSiam pretraining epochs; epochs=0 is the random-init baseline (ss1)."""
     s = _stage_table(summary, "ss1")
-    epochs = sorted({r.kw["epochs"] for _, r in s.iterrows()})
-    fig, ax = plt.subplots(figsize=(6.2, 3.8))
-    for i, head in enumerate(configs.HEADS):
-        rows = {r.kw["epochs"]: (r.acc_mean, r.acc_std) for _, r in s.iterrows()
-                if r.kw["head"] == head}
-        xs = [j for j, e in enumerate(epochs) if e in rows]
-        if not xs:
-            continue
-        m = np.array([rows[epochs[j]][0] for j in xs]) * 100
-        sd = np.array([rows[epochs[j]][1] for j in xs]) * 100
-        plots.errorbar_sweep(ax, np.array(xs) + (i - 1) * 0.05, m, sd, label=head,
-                             color=plots.SERIES[i])
-    ax.set_xticks(range(len(epochs)), [("0 (random init)" if e == 0 else str(e)) for e in epochs])
+    s = s.assign(epochs=[r.kw["epochs"] for _, r in s.iterrows()]).sort_values("epochs")
+    fig, ax = plt.subplots(figsize=(6.0, 3.6))
+    x = np.arange(len(s))
+    plots.errorbar_sweep(ax, x, s.acc_mean.to_numpy() * 100, s.acc_std.to_numpy() * 100,
+                         label="SimSiam + linear SVM", color=plots.SERIES[1])
+    ax.set_xticks(x, [("0\n(random init)" if e == 0 else str(e)) for e in s.epochs])
     ax.set_xlabel("SimSiam pretraining epochs")
     ax.set_ylabel("Validation accuracy (%)")
-    ax.set_title(f"SimSiam: pretraining length × head ({TUNE_LABEL})")
-    ax.legend(loc="lower right", title="head")
+    ax.set_title(f"SimSiam: pretraining length ({TUNE_LABEL})", fontsize=10)
+    return fig
+
+
+def fig_simsiam_arch(summary):
+    """Heatmap of backbone width x projection dimension (stage ss2)."""
+    s = _stage_table(summary, "ss2")
+    widths = sorted({r.kw["width"] for _, r in s.iterrows()})
+    projs = sorted({r.kw["proj_dim"] for _, r in s.iterrows()})
+    grid = np.full((len(widths), len(projs)), np.nan)
+    for _, r in s.iterrows():
+        grid[widths.index(r.kw["width"]), projs.index(r.kw["proj_dim"])] = r.acc_mean * 100
+    fig, ax = plt.subplots(figsize=(5.2, 3.8))
+    im = ax.imshow(grid, cmap="viridis")
+    for i in range(len(widths)):
+        for j in range(len(projs)):
+            if not np.isnan(grid[i, j]):
+                ax.text(j, i, f"{grid[i, j]:.1f}", ha="center", va="center",
+                        color="white", fontsize=7)
+    ax.set_xticks(range(len(projs)), projs)
+    ax.set_yticks(range(len(widths)), widths)
+    ax.set_xlabel("Projection dimension")
+    ax.set_ylabel("Backbone width")
+    ax.set_title(f"SimSiam: architecture ({TUNE_LABEL})", fontsize=10)
+    fig.colorbar(im, ax=ax, label="Validation accuracy (%)")
+    fig.tight_layout()
     return fig
 
 
 def fig_acc_vs_time(summary):
+    """Accuracy against train + inference time for every tuning config, with the Pareto front."""
     s = tuning_rows(summary)
     picks = pick_all(s)
     t, a = s["time_mean"].to_numpy(), s["acc_mean"].to_numpy() * 100
@@ -87,7 +119,8 @@ def fig_acc_vs_time(summary):
         ax.scatter(t[sel], a[sel], s=16, color=plots.SERIES[i], alpha=0.6, linewidths=0,
                    label=f"{m} configs (n = {sel.sum()})")
     order = np.argsort(t[front])
-    ax.plot(t[front][order], a[front][order], "-", color=plots.TEXT, linewidth=1, label="Pareto front")
+    ax.plot(t[front][order], a[front][order], "-", color=plots.TEXT, linewidth=1,
+            label="Pareto front")
     for name, cid in picks.items():
         r = s.loc[cid]
         ax.scatter([r.time_mean], [r.acc_mean * 100], s=90, facecolor="none",
@@ -97,12 +130,13 @@ def fig_acc_vs_time(summary):
     ax.set_xscale("log")
     ax.set_xlabel("Train + inference time per problem instance (s, log scale)")
     ax.set_ylabel("Validation accuracy (%)")
-    ax.set_title(f"C1 self-supervised: accuracy vs time ({TUNE_LABEL})")
+    ax.set_title(f"C1 self-supervised: accuracy vs time ({TUNE_LABEL})", fontsize=10)
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3, fontsize=8)
     return fig
 
 
 def fig_report(df, hw):
+    """Frozen best and fast configs on the report seeds: one dot per seed, diamond = mean ± std."""
     seeds = SEED_SETS["report"]
     df = own_rows(df)
     names = list(configs.FINAL_SOURCE)
@@ -133,10 +167,13 @@ def main(argv=None):
     plots.apply_style()
     df = pd.read_csv(a.results)
     summary = summarize_configs(df, SEED_SETS["tune"], a.hw)
-    for name, fig in [("c1_ssl_kmeans_sweep", fig_kmeans_sweep(summary)),
-                      ("c1_ssl_simsiam_epochs", fig_simsiam_epochs(summary)),
-                      ("c1_ssl_acc_vs_time", fig_acc_vs_time(summary)),
-                      ("c1_ssl_report", fig_report(df, a.hw))]:
+    figs = [("c1_ssl_kmeans_sweep", fig_kmeans_sweep(summary)),
+            ("c1_ssl_kmeans_preprocessing", fig_kmeans_preprocessing(summary)),
+            ("c1_ssl_simsiam_epochs", fig_simsiam_epochs(summary)),
+            ("c1_ssl_simsiam_arch", fig_simsiam_arch(summary)),
+            ("c1_ssl_acc_vs_time", fig_acc_vs_time(summary)),
+            ("c1_ssl_report", fig_report(df, a.hw))]
+    for name, fig in figs:
         for path in plots.save(fig, name, a.outdir):
             print("wrote", path)
         plt.close(fig)

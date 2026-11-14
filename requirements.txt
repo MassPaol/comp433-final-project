@@ -12,3 +12,4 @@ scikit-image          # HOG / LBP (Massimo)
 kymatio               # wavelet scattering (Massimo)
 xgboost               # gradient boosting (Massimo)
 open_clip_torch       # CLIP (Alvin, pending TA approval)
+lightly==1.6.1
