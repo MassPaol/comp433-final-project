@@ -11,10 +11,10 @@ METHOD_OF_STAGE = {"k1": "kmeans", "k2": "kmeans",
 
 # K1: dictionary size x patch size (normalization, whitening and stride at their defaults)
 STAGES["k1"] = {f"k1_k{k}_p{p}": {"n_clusters": k, "patch_size": p}
-                for k in [10,15,25,50,75,100] for p in [4, 6, 8]}
+                for k in [5,10,15,25,50,75,100] for p in [4, 6, 8]}
 
 # K2: preprocessing on the best K1 setting (EDIT KMEANS_BASE after K1)
-KMEANS_BASE = {"n_clusters": 200, "patch_size": 6}
+KMEANS_BASE = {"n_clusters": 10, "patch_size": 4}
 STAGES["k2"] = {
     **{f"k2_eps{e:g}": {**KMEANS_BASE, "epsilon": e} for e in [0.01, 0.1, 1.0, 10.0]},
     **{f"k2_wzca{w:g}": {**KMEANS_BASE, "whitening_epsilon": w} for w in [1e-5, 1e-3, 1e-1, 1.0]},
@@ -24,7 +24,7 @@ STAGES["k2"] = {
 SS_BASE = {}
 
 # SS1: pretraining length (epochs=0 is the random-init backbone baseline)
-STAGES["ss1"] = {f"ss1_e{e}": {**SS_BASE, "epochs": e} for e in [0, 50, 100, 200, 400]}
+STAGES["ss1"] = {f"ss1_e{e}": {**SS_BASE, "epochs": e} for e in [0, 50, 100,150,200]}
 
 # SS2: architecture size (backbone width x projection dimension)
 STAGES["ss2"] = {f"ss2_w{w}_p{p}": {**SS_BASE, "width": w, "proj_dim": p}
