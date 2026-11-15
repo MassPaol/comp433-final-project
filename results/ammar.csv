@@ -1,1 +1,11 @@
 challenge,person,method,config_id,seed,class_pair,val_acc,train_time_s,infer_time_s,n_trainable_params,notes
+c1,ammar,vit_scratch,baseline,0,bird-ship,0.7871428571428571,23.878347899997607,0.2595695999916643,412674,hw=local-cpu
+c1,ammar,vit_scratch,baseline,1,bird-truck,0.7842857142857143,24.156235400005244,0.2688786000944674,412674,hw=local-cpu
+c1,ammar,vit_scratch,baseline,2,deer-automobile,0.8328571428571429,26.194435100071132,0.25827099999878556,412674,hw=local-cpu
+c1,ammar,vit_scratch,baseline,3,dog-deer,0.6385714285714286,25.145658700028434,0.3260576000902802,412674,hw=local-cpu
+c1,ammar,vit_scratch,baseline,4,cat-ship,0.8214285714285714,24.097360500018112,0.24604249990079552,412674,hw=local-cpu
+c1,ammar,vit_scratch,baseline_flip,0,bird-ship,0.7857142857142857,25.178451300016604,0.2566793999867514,412674,hw=local-cpu
+c1,ammar,vit_scratch,baseline_flip,1,bird-truck,0.8057142857142857,24.743537400034256,0.26367289992049336,412674,hw=local-cpu
+c1,ammar,vit_scratch,baseline_flip,2,deer-automobile,0.8257142857142857,24.646125900093466,0.26019950001500547,412674,hw=local-cpu
+c1,ammar,vit_scratch,baseline_flip,3,dog-deer,0.6414285714285715,24.720627499977127,0.2505947999889031,412674,hw=local-cpu
+c1,ammar,vit_scratch,baseline_flip,4,cat-ship,0.8328571428571429,29.334384299931116,0.2858823999995366,412674,hw=local-cpu
