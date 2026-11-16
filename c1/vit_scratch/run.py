@@ -3,29 +3,38 @@
     python -m c1.vit_scratch.run --stage s0 --seeds tune --hw colab-t4
     python -m c1.vit_scratch.run --config baseline --seeds tune
 
-Rows are appended to results/ammar.csv with notes "hw=<tag>".
+Rows are appended to results/ammar.csv with notes "hw=<tag>". Resumable: (config,
+seed) pairs that already have a row for that hw tag are skipped.
 """
 import argparse
+import os
 
 import numpy as np
 
 from c1.vit_scratch import configs
 from c1.vit_scratch.method import ViTScratch
 from common import data, harness
+from c1.vit_scratch.resume import missing_seeds
 
 SEED_SETS = {"tune": data.TUNE_SEEDS, "report": data.REPORT_SEEDS}
 
 
 def run_configs(config_ids, seeds, hw, results_dir="results"):
+    path = os.path.join(results_dir, "ammar.csv")
     for i, cid in enumerate(config_ids, 1):
         kw = configs.get(cid)
-        rows = harness.run(lambda kw=kw: ViTScratch(**kw), seeds,
+        todo = missing_seeds(path, "c1", "vit_scratch", cid, seeds, hw)
+        if not todo:
+            print(f"[{i}/{len(config_ids)}] {cid}: already done, skipped", flush=True)
+            continue
+        seeds_run = todo
+        rows = harness.run(lambda kw=kw: ViTScratch(**kw), seeds_run,
                            challenge="c1", person="ammar", method_name="vit_scratch",
                            config_id=cid, notes=f"hw={hw}", results_dir=results_dir)
         acc = np.array([r["val_acc"] for r in rows])
         fit = np.mean([r["train_time_s"] for r in rows])
         print(f"[{i}/{len(config_ids)}] {cid}: acc {acc.mean():.4f} +/- {acc.std():.4f} "
-              f"| fit {fit:.1f}s | seeds {list(seeds)}", flush=True)
+              f"| fit {fit:.1f}s | seeds {seeds_run}", flush=True)
 
 
 def main(argv=None):
