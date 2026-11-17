@@ -2,7 +2,7 @@
 Set PROBE_BASE and TIP_BASE from the previous stage's best, and FINAL after selection."""
 STAGES = {}
 PROBE_BASE = {"lr": 0.001, "steps": 300}
-TIP_BASE = {"alpha": 1.0, "beta": 5.5}
+TIP_BASE = {"alpha": 0.5, "beta": 1.0}
 
 STAGES["zeroshot"] = {"c2_zeroshot": {}}
 STAGES["probe"] = {f"c2_probe_lr{lr:g}_s{s}": {"lr": lr, "steps": s}
