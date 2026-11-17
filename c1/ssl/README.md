@@ -4,14 +4,6 @@
 
 ## What this is
 Two methods that learn from the 100 training images only (no pretrained models, no external data):
-
-1. **Coates et al. (2011)** single-layer features: random patches, contrast normalization, ZCA
-   whitening, k-means dictionary, triangle encoding, quadrant sum pooling, linear SVM. This is the
-   fast variant.
-2. **SimSiam** (Chen & He 2021): a small CNN pretrained without labels on the 100 training images
-   (two augmented views, negative cosine similarity, stop-gradient), then frozen, with a linear SVM
-   on the embeddings. This is the deep variant.
-
 In both, the classifier's C is chosen by 5-fold cross-validation on the training features inside
 `fit`. The search (stages k1, k2 for Coates; ss1–ss3 for SimSiam) and the reasoning behind each step
 go in [NOTES.md](NOTES.md).

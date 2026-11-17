@@ -23,6 +23,7 @@ from common import plots  # noqa: E402
 
 TUNE_LABEL = "tuning seeds 0–4"
 PATCH_SIZES = [4, 6, 8]
+ALVIN = plots.METHOD_COLORS["c1_ssl"]   # your method family's color, from common/plots.py
 
 
 def _stage_table(summary, stage):
@@ -56,7 +57,7 @@ def fig_kmeans_preprocessing(summary):
     s = _stage_table(summary, "k2")
     fig, ax = plt.subplots(figsize=(6.4, 3.6))
     x = np.arange(len(s))
-    ax.errorbar(x, s.acc_mean * 100, yerr=s.acc_std * 100, fmt="o", color=plots.SERIES[0],
+    ax.errorbar(x, s.acc_mean * 100, yerr=s.acc_std * 100, fmt="o", color=ALVIN,
                 capsize=3, markersize=5)
     ax.set_xticks(x, [c.replace("k2_", "") for c in s.index], rotation=30, ha="right")
     ax.set_ylabel("Validation accuracy (%)")
@@ -72,7 +73,7 @@ def fig_simsiam_epochs(summary):
     fig, ax = plt.subplots(figsize=(6.0, 3.6))
     x = np.arange(len(s))
     plots.errorbar_sweep(ax, x, s.acc_mean.to_numpy() * 100, s.acc_std.to_numpy() * 100,
-                         label="SimSiam + linear SVM", color=plots.SERIES[1])
+                         label="SimSiam + linear SVM", color=ALVIN)
     ax.set_xticks(x, [("0\n(random init)" if e == 0 else str(e)) for e in s.epochs])
     ax.set_xlabel("SimSiam pretraining epochs")
     ax.set_ylabel("Validation accuracy (%)")
@@ -114,10 +115,10 @@ def fig_acc_vs_time(summary):
     front = plots.pareto_front(t, a)
 
     fig, ax = plt.subplots(figsize=(6.4, 4.4))
-    for i, m in enumerate(["kmeans", "simsiam"]):
+    for m, marker in [("kmeans", "o"), ("simsiam", "s")]:
         sel = method == m
-        ax.scatter(t[sel], a[sel], s=16, color=plots.SERIES[i], alpha=0.6, linewidths=0,
-                   label=f"{m} configs (n = {sel.sum()})")
+        ax.scatter(t[sel], a[sel], s=16, color=ALVIN, marker=marker, alpha=0.6,
+                   linewidths=0, label=f"{m} configs (n = {sel.sum()})")
     order = np.argsort(t[front])
     ax.plot(t[front][order], a[front][order], "-", color=plots.TEXT, linewidth=1,
             label="Pareto front")
@@ -147,8 +148,7 @@ def fig_report(df, hw):
         v = d[d["config_id"] == name]["val_acc"].to_numpy() * 100
         if len(v) == 0:
             continue
-        color = plots.SERIES[0] if name.startswith("kmeans") else plots.SERIES[1]
-        ax.plot(i + rng.uniform(-0.12, 0.12, len(v)), v, "o", color=color, alpha=0.6, markersize=5)
+        ax.plot(i + rng.uniform(-0.12, 0.12, len(v)), v, "o", color=ALVIN, alpha=0.6, markersize=5)
         ax.errorbar([i], [v.mean()], yerr=[v.std(ddof=0)], fmt="D", color=plots.TEXT,
                     capsize=4, markersize=6)
     ax.set_xticks(range(len(names)), [n.replace("_", "\n") for n in names])
