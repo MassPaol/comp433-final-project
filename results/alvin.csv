@@ -1,4 +1,6 @@
-challenge,person,method,config_id,seed,class_pair,val_acc,train_time_s,infer_time_s,n_trainable_params,notesc2,alvin,zeroshot_clip,c2_zeroshot,1,bird-truck,0.9942857142857143,0.06500532899997324,2.0781307590000324,0,hw=colab-t4
+challenge,person,method,config_id,seed,class_pair,val_acc,train_time_s,infer_time_s,n_trainable_params,notes
+c2,alvin,zeroshot_clip,c2_zeroshot,0,bird-ship,0.9942857142857143,2.956297143000029,2.3347404979999737,0,hw=colab-t4
+c2,alvin,zeroshot_clip,c2_zeroshot,1,bird-truck,0.9942857142857143,0.06500532899997324,2.0781307590000324,0,hw=colab-t4
 c2,alvin,zeroshot_clip,c2_zeroshot,2,deer-automobile,1.0,0.06788963600001807,2.0902294729999085,0,hw=colab-t4
 c2,alvin,zeroshot_clip,c2_zeroshot,3,dog-deer,0.9814285714285714,0.06461504699996112,2.1031310419999727,0,hw=colab-t4
 c2,alvin,zeroshot_clip,c2_zeroshot,4,cat-ship,0.9871428571428571,0.06708640299996205,2.4654788789999884,0,hw=colab-t4
@@ -22,7 +24,6 @@ c2,alvin,linear_probe_clip,c2_probe_lr0.01_s300,1,bird-truck,0.9928571428571429,
 c2,alvin,linear_probe_clip,c2_probe_lr0.01_s300,2,deer-automobile,1.0,0.770741949000012,2.384388094000087,1024,hw=colab-t4
 c2,alvin,linear_probe_clip,c2_probe_lr0.01_s300,3,dog-deer,0.9785714285714285,0.855028682000011,2.7675935209999807,1024,hw=colab-t4
 c2,alvin,linear_probe_clip,c2_probe_lr0.01_s300,4,cat-ship,0.9985714285714286,0.7691627429999244,2.4276622239999597,1024,hw=colab-t4
-c2,alvin,zeroshot_clip,c2_zeroshot,0,bird-ship,0.9942857142857143,2.2638315439999133,2.356925507999904,0,hw=colab-t4
 c2,alvin,wiseft_clip,c2_wiseft_m0.25,0,bird-ship,0.9942857142857143,3.572914073999982,2.361815007000132,1024,hw=colab-t4
 c2,alvin,wiseft_clip,c2_wiseft_m0.25,1,bird-truck,0.9942857142857143,0.8242075709999881,2.6147826429998986,1024,hw=colab-t4
 c2,alvin,wiseft_clip,c2_wiseft_m0.25,2,deer-automobile,1.0,0.7402239180000834,2.233342106000009,1024,hw=colab-t4
