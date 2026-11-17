@@ -13,10 +13,9 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
-import pandas as pd  # noqa: E402
 
 from c2.clip.configs import FINAL, STAGES  # noqa: E402
-from c2.clip.run import PERSON, summarize  # noqa: E402
+from c2.clip.run import PERSON, load_rows, summarize  # noqa: E402
 from common import data, plots  # noqa: E402
 
 COLOR = plots.METHOD_COLORS["c2_clip"]
@@ -144,7 +143,7 @@ def fig_time_vs_acc(summary):
 def fig_report(df, hw):
     """Frozen configs on reporting seeds 10-19: one dot per seed, diamond = mean ± std."""
     d = df[(df.challenge == "c2") & df.seed.isin(data.REPORT_SEEDS)
-           & df.notes.fillna("").str.contains(f"hw={hw}")
+           & df.notes.str.contains(f"hw={hw}")
            & df.config_id.isin(list(FINAL.values()))]
     names = list(FINAL.values())
     fig, ax = plt.subplots(figsize=(6.4, 3.8))
@@ -172,7 +171,7 @@ def main(argv=None):
     a = p.parse_args(argv)
 
     plots.apply_style()
-    df = pd.read_csv(a.results)
+    df = load_rows(a.results)
     tune = summarize(a.results, data.TUNE_SEEDS, a.hw)
     zs = tune.acc.get("c2_zeroshot", np.nan) * 100
 

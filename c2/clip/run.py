@@ -21,6 +21,18 @@ METHOD = {"zeroshot": ZeroShotMethod, "probe": LinearProbe, "wiseft": WiSEFT,
           "tip": TipAdapter, "tipf": TipAdapterF}
 
 
+def load_rows(path):
+    """Read the results CSV, tolerating a mangled notes header (e.g. 'notesc2')."""
+    df = pd.read_csv(path)
+    bad = [c for c in df.columns if c.startswith("notes") and c != "notes"]
+    if bad:
+        df = df.rename(columns={bad[0]: "notes"})
+    if "notes" not in df.columns:
+        raise RuntimeError(f"{path} has no notes column; columns are {list(df.columns)}")
+    df["notes"] = df["notes"].fillna("")
+    return df
+
+
 def stage_of(config_id):
     for stage, configs in STAGES.items():
         if config_id in configs:
@@ -37,8 +49,8 @@ def factory(stage, kwargs, seed):
 def done_pairs(path, hw):
     if not os.path.exists(path):
         return set()
-    df = pd.read_csv(path)
-    df = df[(df.challenge == CHALLENGE) & df.notes.fillna("").str.contains(f"hw={hw}")]
+    df = load_rows(path)
+    df = df[(df.challenge == CHALLENGE) & df.notes.str.contains(f"hw={hw}")]
     return set(zip(df.config_id, df.seed))
 
 
@@ -55,9 +67,9 @@ def run(config_ids, seeds, hw, results_dir="results"):
 
 
 def summarize(path, seeds, hw):
-    df = pd.read_csv(path)
+    df = load_rows(path)
     df = df[(df.challenge == CHALLENGE) & df.seed.isin(seeds)
-            & df.notes.fillna("").str.contains(f"hw={hw}")].copy()
+            & df.notes.str.contains(f"hw={hw}")].copy()
     df["time"] = df.train_time_s + df.infer_time_s
     g = df.groupby("config_id")
     s = pd.DataFrame({"acc": g.val_acc.mean(), "std": g.val_acc.std(ddof=0),
