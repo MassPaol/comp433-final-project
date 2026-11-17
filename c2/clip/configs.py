@@ -13,4 +13,14 @@ STAGES["tip"] = {f"c2_tip_a{a:g}_b{b:g}": {"alpha": a, "beta": b}
 STAGES["tipf"] = {f"c2_tipf_lr{lr:g}_s{s}": {**TIP_BASE, "lr": lr, "steps": s}
                   for lr in [1e-4, 1e-3] for s in [100, 300]}
 
-FINAL = {}
+FINAL = {
+    "zeroshot": "c2_zeroshot",
+    "probe_best": "c2_probe_lr0.001_s300",
+    "probe_fast": "c2_probe_lr0.01_s100",
+    "wiseft_best": "c2_wiseft_m0.5",
+    "wiseft_fast": "c2_wiseft_m0.75",
+    "tip_best": "c2_tip_a0.5_b1",
+    "tip_fast": "c2_tip_a0.5_b5.5",
+    "tipf_best": "c2_tipf_lr0.0001_s100",
+    "tipf_fast": "c2_tipf_lr0.001_s100",
+}
