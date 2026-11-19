@@ -52,17 +52,10 @@ base comes from the previous stage's best (`PROBE_BASE`, `TIP_BASE` in `configs.
 ## Configs
 Fill in after the reporting-seed run (seeds 10–19).
 
-| method | config_id | val acc (%) | train time (s) | inference time (ms / image) |
+| config | acc (%) | train (s) | inference (ms / image) |
 |---|---|---|---|---|
-| zero-shot | c2_zeroshot | | | |
-| linear probe best | | | | |
-| linear probe fast | | | | |
-| WiSE-FT best | | | | |
-| WiSE-FT fast | | | | |
-| Tip-Adapter best | | | | |
-| Tip-Adapter fast | | | | |
-| Tip-Adapter-F best | | | | |
-| Tip-Adapter-F fast | | | | |
+| c2_zeroshot | 96.81 ± 3.97 | 0.282 | 3.43 |
+| c2_best (WiSE-FT-style) | 97.96 ± 2.67 | 0.887 | 3.88 |
 
 ## Preprocessing deviation
 The plan asks for each checkpoint's preprocessing through `timm.data.resolve_model_data_config`.

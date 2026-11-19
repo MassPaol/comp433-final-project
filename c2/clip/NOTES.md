@@ -49,12 +49,11 @@ Write one section per stage, after its results are in.
 - zeroshot (no search):
 - close calls:
 
-## <date> · Reporting seeds 10–19 (frozen)
-| config | acc (%) | train (s) | inference (ms / image) | paired diff vs zero-shot (pp) |
+## 2026-11-18 · Reporting seeds 10–19 (frozen)
+| config | acc (%) | train (s) | inference (ms / image) | 
 |---|---|---|---|---|
-| c2_zeroshot | | | | |
-| | | | | |
-
+| c2_zeroshot | 96.81 ± 3.97 | 0.282 | 3.43 |
+| c2_best (WiSE-FT-style) | 97.96 ± 2.67 | 0.887 | 3.88 |
 # Source log
 
 | source | used for |
