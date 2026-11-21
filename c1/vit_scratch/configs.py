@@ -47,13 +47,33 @@ S2 = {
     "s2_depth4": {**AUG, "depth": 4},
 }
 
-STAGES = {"s0": S0, "s1": S1, "s2": S2}
+# ---- S3: optimiser settings and training length, on the S2 winners -----------
+# S2 result (T4): conv tokenizer + seq pooling 82.7%, conv tokenizer 82.2%, both
+# clearly ahead of flip + crop (79.1%). Learning rate and weight decay were never
+# varied, and longer training was only tried without augmentation (S1), where
+# it could overfit; with flip + crop it may help. So S3 changes one of these at
+# a time on both S2 winners.
+CONV = {**AUG, "tokenizer": "conv"}
+CONV_SEQ = {**CONV, "pool": "seq"}
+S3_KNOBS = {
+    "lr1e-4": {"lr": 1e-4},
+    "lr1e-3": {"lr": 1e-3},
+    "wd0.05": {"weight_decay": 0.05},
+    "wd0.1": {"weight_decay": 0.1},
+    "ep200": {"epochs": 200},
+    "ep300": {"epochs": 300},
+}
+S3 = {f"s3_{base}_{knob}": {**kw, **change}
+      for base, kw in (("conv", CONV), ("convseq", CONV_SEQ))
+      for knob, change in S3_KNOBS.items()}
 
-# ---- FINAL: the submitted configs (chosen on the tuning seeds, see NOTES.md) ---
-# best = s2_conv: top on both the CPU and the T4 tuning runs. No separate fast
-# config: best trains in about 3 s on a T4, and the fastest config is 6 pp worse.
-# Report seeds (T4): 78.96 +/- 9.11 %, train 3.3 s, predict 0.04 s / 700 images.
-FINAL_SOURCE = {"best": "s2_conv"}
+STAGES = {"s0": S0, "s1": S1, "s2": S2, "s3": S3}
+
+# ---- FINAL: chosen by `python -m c1.vit_scratch.select --hw colab-t4` ----------
+# Team rule (common/sweep.py select) on the T4 tuning rows: best = top mean
+# accuracy, unless a faster config is within 0.5 pp; fast = fastest config within
+# 2 pp of best. tests/test_vit_scratch.py checks this matches results/ammar.csv.
+FINAL_SOURCE = {"best": "s2_conv_seq", "fast": "s2_conv"}
 
 
 def all_configs():
@@ -67,7 +87,7 @@ FINAL = {name: all_configs()[cid] for name, cid in FINAL_SOURCE.items()}
 
 
 def get(config_id):
-    """kwargs for a config id; also accepts the FINAL names ("best")."""
+    """kwargs for a config id; also accepts the FINAL names ("best", "fast")."""
     if config_id in FINAL:
         return FINAL[config_id]
     return all_configs()[config_id]

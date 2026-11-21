@@ -21,8 +21,9 @@ from common import data, plots  # noqa: E402
 
 COLOR = plots.METHOD_COLORS["c1_vit_scratch"]
 STAGE_OF = {cid: st for st, cfgs in configs.STAGES.items() for cid in cfgs}
-STAGE_LABEL = {"s0": "S0 baseline", "s1": "S1 one knob", "s2": "S2 small-data ViT"}
-STAGE_COLOR = {"s0": plots.NEUTRAL, "s1": plots.SERIES[0], "s2": COLOR}
+STAGE_LABEL = {"s0": "S0 baseline", "s1": "S1 one knob", "s2": "S2 small-data ViT",
+               "s3": "S3 lr / wd / epochs"}
+STAGE_COLOR = {"s0": plots.NEUTRAL, "s1": plots.SERIES[0], "s2": COLOR, "s3": plots.SERIES[3]}
 
 
 def load(hw, path="results/ammar.csv", seeds=data.TUNE_SEEDS):
@@ -32,21 +33,29 @@ def load(hw, path="results/ammar.csv", seeds=data.TUNE_SEEDS):
     return df[df.seed.isin(seeds)]
 
 
-REPORT_CONFIGS = [("baseline", "Testbed baseline"), ("s1_flip_crop", "+ flip + crop"),
-                  ("s2_conv", "+ conv tokenizer (best)")]
+def report_configs():
+    """(config_id, label) for the report-seed figure: two references, then fast and best."""
+    out = [("baseline", "Testbed baseline"), ("s1_flip_crop", "+ flip + crop")]
+    final = configs.FINAL_SOURCE
+    if final["fast"] != final["best"]:
+        out.append((final["fast"], f"{final['fast']} (fast)"))
+    out.append((final["best"], f"{final['best']} (best)"))
+    return out
 
 
 def fig_report_pairs(df):
     """Report seeds: accuracy per class pair for baseline -> + augmentation -> best."""
+    rc = report_configs()
     acc = df.pivot_table(index=["seed", "class_pair"], columns="config_id", values="val_acc") * 100
-    acc = acc[[c for c, _ in REPORT_CONFIGS]].sort_values("s2_conv")
+    acc = acc[[c for c, _ in rc]].sort_values(configs.FINAL_SOURCE["best"])
     labels = [f"{p} ({s})" for s, p in acc.index]
-    colors = [plots.NEUTRAL, plots.SERIES[0], COLOR]
+    colors = [plots.NEUTRAL, plots.SERIES[0], plots.SERIES[3], COLOR][-len(rc):]
+    offsets = np.linspace(-0.24, 0.24, len(rc))
     fig, ax = plt.subplots(figsize=(6.4, 4.4))
     y = np.arange(len(acc))
     ax.hlines(y, acc.min(axis=1), acc.max(axis=1), color=plots.GRID, linewidth=2, zorder=1)
     # small vertical offsets + distinct markers so tied points stay visible
-    for (cid, name), col, dy, mk in zip(REPORT_CONFIGS, colors, (-0.18, 0, 0.18), "osD"):
+    for (cid, name), col, dy, mk in zip(rc, colors, offsets, "os^D"):
         ax.scatter(acc[cid], y + dy, color=col, marker=mk, zorder=3, s=34,
                    label=f"{name}: {acc[cid].mean():.1f} ± {acc[cid].std(ddof=0):.1f}%")
     ax.axvline(50, color=plots.TEXT_SECONDARY, linewidth=1, linestyle=":")
@@ -74,7 +83,7 @@ def fig_paired_deltas(df):
     ax.set_yticks(range(len(order)), order)
     ax.set_xlabel("Accuracy difference vs testbed baseline (pp), paired per seed")
     handles = [plt.Line2D([], [], marker="D", color=STAGE_COLOR[s], linestyle="none",
-                          label=STAGE_LABEL[s]) for s in ("s0", "s1", "s2")]
+                          label=STAGE_LABEL[s]) for s in STAGE_LABEL]
     handles.append(plt.Line2D([], [], marker="o", color=plots.NEUTRAL, linestyle="none",
                               markersize=4, label="single seed"))
     ax.legend(handles=handles, loc="lower right")
@@ -88,7 +97,7 @@ def fig_acc_vs_time(df):
     s[["acc", "sd"]] *= 100
     front = plots.pareto_front(s.t, s.acc)
     fig, ax = plt.subplots(figsize=(6.4, 4.0))
-    for st in ("s0", "s1", "s2"):
+    for st in STAGE_LABEL:
         m = s.index.map(lambda c: STAGE_OF.get(c) == st)
         ax.scatter(s.t[m], s.acc[m], color=STAGE_COLOR[st], label=STAGE_LABEL[st], zorder=3)
     for cid, r in s[front].iterrows():
@@ -115,7 +124,7 @@ def main(argv=None):
     figs = [("c1_vit_paired_deltas", fig_paired_deltas(df)),
             ("c1_vit_acc_vs_time", fig_acc_vs_time(df))]
     rep = load(a.hw, a.results, seeds=data.REPORT_SEEDS)
-    if set(c for c, _ in REPORT_CONFIGS) <= set(rep.config_id):
+    if set(c for c, _ in report_configs()) <= set(rep.config_id):
         figs.append(("c1_vit_report_pairs", fig_report_pairs(rep)))
     for name, fig in figs:
         print(plots.save(fig, name))

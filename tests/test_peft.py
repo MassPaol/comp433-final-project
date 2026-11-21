@@ -23,6 +23,13 @@ def test_final_configs_resolve():
         PEFTMethod(**configs.get(name))      # builds without error
 
 
+def test_final_matches_team_rule_on_logged_t4_rows():
+    import pandas as pd
+    from c2.peft import configs, select
+    df = pd.read_csv("results/ammar.csv")
+    assert select.pick(df, "colab-t4") == configs.FINAL_SOURCE
+
+
 def test_unknown_mode_rejected():
     with pytest.raises(ValueError):
         PEFTMethod(mode="nope")

@@ -17,9 +17,9 @@ stage are in [NOTES.md](NOTES.md).
 |---|---|
 | `method.py` | `ViTScratch`: uint8 images → normalize → [flip / random crop] → ViT, trained with AdamW |
 | `layers.py` | Shifted Patch Tokenizer, Locality Self-Attention, conv tokenizer, sequence pooling |
-| `configs.py` | every config of every stage |
+| `configs.py` | every config of every stage, plus `FINAL` (`best`, `fast`) |
 | `run.py` | runs configs through `common.harness.run`, rows → `results/ammar.csv`; resumable |
-| `resume.py` | skip already-logged (config, seed, hw) rows; merge a results copy (also used by `c2/peft`) |
+| `select.py` | ranks configs on the tuning seeds and applies the team rule (`common/sweep.py`) |
 | `figures.py` | report figures → `report/figures/c1_vit_*` |
 | `NOTES.md` | experiment log + source log |
 

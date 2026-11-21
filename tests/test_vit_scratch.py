@@ -65,8 +65,23 @@ def test_lsa_masks_self_attention():
 
 def test_final_configs_resolve():
     from c1.vit_scratch import configs
-    assert configs.get("best") == configs.get(configs.FINAL_SOURCE["best"])
-    ViTScratch(**configs.get("best"))       # builds without error
+    for name in ("best", "fast"):
+        assert configs.get(name) == configs.get(configs.FINAL_SOURCE[name])
+        ViTScratch(**configs.get(name))     # builds without error
+
+
+def test_s3_configs_build():
+    from c1.vit_scratch import configs
+    assert len(configs.S3) == 12
+    for kw in configs.S3.values():
+        ViTScratch(**kw)
+
+
+def test_final_matches_team_rule_on_logged_t4_rows():
+    import pandas as pd
+    from c1.vit_scratch import configs, select
+    df = pd.read_csv("results/ammar.csv")
+    assert select.pick(df, "colab-t4") == configs.FINAL_SOURCE
 
 
 def test_bad_options_rejected():

@@ -85,7 +85,7 @@ def fig_acc_vs_params_time(df):
     return fig
 
 
-REPORT_CONFIGS = [("head", "Head only (fast)", 386), ("lora_r2", "LoRA r2 (best)", 18818),
+REPORT_CONFIGS = [("head", "Head only (best = fast)", 386), ("lora_r2", "LoRA r2", 18818),
                   ("vpt_shallow10_lr3e-3", "VPT shallow, 10 prompts", 2306)]
 
 

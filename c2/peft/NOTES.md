@@ -124,7 +124,7 @@ PEFT costs about 2.2× the head's training time on the T4 (3.3–3.4 s vs 1.5 s)
 for all (about 1.6 s per 700 images, 2.3 ms/image, dominated by the 224 px forward pass and
 preprocessing).
 
-**Selection (for the report seeds):**
+**Selection (for the report seeds)** (superseded on 2026-11-21, see below: the team rule picks `head`):
 - **best = `lora_r2`**: highest mean, wins 5/5 vs head.
 - **fast = `head`**: 2.2× faster to train, −0.5 pp.
 - also `vpt_shallow10_lr3e-3`: equal to LoRA within noise with 8× fewer trainable parameters; worth a
@@ -155,12 +155,26 @@ Configs fixed before this run (selection above). `hw=colab-t4`, notebook cell 8.
   0.04% of the backbone).
 - Cat-dog is the hard pair for every method (84–86%) and no PEFT variant fixes it; the other nine
   pairs are all at 95.3% or above.
-- For comparison on the same seeds (Massimo's `c2/frozen_features` README on his branch, measured
-  on an RTX 3070, T4 re-run pending): his `best` uses a larger backbone (ViT-S/16) and gets 98.69%; on
-  the same ViT-Tiny backbone his `fast` (cached CLS features → logistic regression) gets 97.33% and
-  trains in well under a second. PEFT on ViT-Tiny is slightly below that (not tested paired), at a
-  much higher training cost, because it back-propagates through the backbone every step. So in C2 the
-  bigger lever is the backbone, not how it is adapted. To check once his T4 rows are merged.
+- (A comparison with Massimo's C2 frozen-features numbers was removed: they were measured on an RTX
+  3070 and his T4 re-run is still pending. Compare once his T4 rows are on main.)
+
+### 2026-11-21: selection redone with the team rule (review on PR #4)
+The selection above picked best by highest mean only. The team rule (`common/sweep.py select`, also
+used by Massimo's methods) is: best = top mean accuracy, but a config within 0.5 pp of the top wins if
+it is faster (train + inference time); fast = fastest config within 2 pp of best.
+`python -m c2.peft.select --hw colab-t4` on the T4 tuning rows:
+
+| config | acc (%) | T4 train + predict (s) |
+|---|---|---|
+| lora_r2 | 99.23 | 5.24 |
+| vpt_shallow10_lr3e-3 | 99.20 | 4.99 |
+| head | 98.74 | 3.56 |
+
+head is 0.49 pp behind lora_r2 (inside the 0.5 pp margin) and the fastest config, so
+**best = fast = `head`**. No new runs needed: head already has report-seed rows (96.56 ± 4.07%).
+LoRA and VPT stay in the report as a finding (+0.59 pp on 9/10 report seeds for LoRA), not as the
+submitted config. Plain reading: PEFT adapts the backbone a little, but on these tasks not by enough
+to pay for about 2× the training time.
 
 ## Source log
 

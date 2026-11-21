@@ -40,11 +40,13 @@ P1 = {
 
 STAGES = {"p0": P0, "p1": P1}
 
-# ---- FINAL: the submitted configs (chosen on the tuning seeds, see NOTES.md) ---
-# best = lora_r2: highest tuning mean, wins 5/5 vs head. fast = head: 2.2x faster
-# to train on a T4. Report seeds (T4): best 97.14 +/- 4.04 % (train 3.4 s),
-# fast 96.56 +/- 4.07 % (train 1.5 s); predict 1.7 s / 700 images for both.
-FINAL_SOURCE = {"best": "lora_r2", "fast": "head"}
+# ---- FINAL: chosen by `python -m c2.peft.select --hw colab-t4` ------------------
+# Team rule (common/sweep.py select) on the T4 tuning rows: the top config is
+# lora_r2 (99.23%), but head (98.74%) is within 0.5 pp and faster (3.6 s vs 5.2 s
+# train + inference), so head is best; it is also the fastest config, so fast too.
+# tests/test_peft.py checks this matches results/ammar.csv.
+# Report seeds (T4): head 96.56 +/- 4.07 % (train 1.5 s, predict 1.7 s / 700 images).
+FINAL_SOURCE = {"best": "head", "fast": "head"}
 
 
 def all_configs():

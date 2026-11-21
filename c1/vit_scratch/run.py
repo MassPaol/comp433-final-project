@@ -14,7 +14,7 @@ import numpy as np
 from c1.vit_scratch import configs
 from c1.vit_scratch.method import ViTScratch
 from common import data, harness
-from c1.vit_scratch.resume import missing_seeds
+from common.sweep import missing_seeds
 
 SEED_SETS = {"tune": data.TUNE_SEEDS, "report": data.REPORT_SEEDS}
 
@@ -23,7 +23,7 @@ def run_configs(config_ids, seeds, hw, results_dir="results"):
     path = os.path.join(results_dir, "ammar.csv")
     for i, cid in enumerate(config_ids, 1):
         kw = configs.get(cid)
-        todo = missing_seeds(path, "c1", "vit_scratch", cid, seeds, hw)
+        todo = missing_seeds(path, cid, seeds, hw, challenge="c1", method="vit_scratch")
         if not todo:
             print(f"[{i}/{len(config_ids)}] {cid}: already done, skipped", flush=True)
             continue

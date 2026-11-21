@@ -155,7 +155,7 @@ conclusion.
 GPU, model size barely changes the time (dim 64 is no faster than dim 128), so the CPU "fast"
 candidate (`s1_dim64`) has no speed advantage on the reporting hardware.
 
-**Selection (for the report seeds):**
+**Selection (for the report seeds)** (superseded on 2026-11-21, see below):
 - **best = `s2_conv`** (flip + crop, conv tokenizer, class token): top on both runs, simpler than
   conv_seq at equal accuracy.
 - **No separate fast config needed**: best trains in about 3 s on a T4, and the fastest config
@@ -190,6 +190,24 @@ Configs fixed before this run (selection above). `hw=colab-t4`, notebook cell 8.
 - Augmentation alone helps less here (+1.5 pp over the baseline) than on the tuning seeds.
 - For comparison, C1 classical (Massimo) on the same seeds: 85.09 ± 8.22%. The ViT closes about half
   of the original gap (from 14.4 pp to 6.1 pp) but stays behind hand-crafted features.
+
+### 2026-11-21: selection redone with the team rule, and S3 (review on PR #4)
+**Why:** the selection above was by judgement ("top on both runs"), not by the team rule
+(`common/sweep.py select`): best = top mean accuracy, but a config within 0.5 pp of the top wins if it
+is faster (train + inference); fast = fastest config within 2 pp of best. The review also pointed out
+two gaps in the search: learning rate and weight decay were never varied, and longer training was only
+tried *without* augmentation (S1), where extra epochs mostly memorize the 100 images.
+
+`python -m c1.vit_scratch.select --hw colab-t4` on S0–S2: best = `s2_conv_seq` (82.74%), fast =
+`s2_conv` (82.20%, 0.54 pp behind, just outside the tie margin, and faster). The two are within noise
+of each other (the order flips on the CPU run), but the rule is fixed in advance, so it decides.
+
+**S3** changes one setting at a time on both S2 winners (`s3_conv_*`, `s3_convseq_*`): lr 1e-4 / 1e-3
+(base 3e-4), weight decay 0.05 / 0.1 (base 0.01), 200 / 300 epochs (base 100). 12 configs, tuning seeds,
+T4 only (notebook cell 6). Then the rule is applied again over S0–S3 and the picks run on the report
+seeds (cell 8).
+
+S3 results: pending the T4 run.
 
 ## Source log
 
