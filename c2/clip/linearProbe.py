@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from c2.clip.loadClip import DEVICE, SCALE, class_text_features, image_features
+from c2.clip.loadClip import DEVICE, SCALE, class_text_features, fresh_clip, image_features
 from common.method import Method
 
 
@@ -17,8 +17,10 @@ class LinearProbe(Method):
         self.class_names = tuple(class_names)
         self.lr, self.steps, self.mix, self.seed = lr, steps, mix, seed
         self.init_ = self.head_ = None
+        self.timing_ = {}
 
     def fit(self, X, y):
+        fresh_clip()
         y = torch.as_tensor(np.asarray(y), dtype=torch.long, device=DEVICE)
         feats = image_features(X)
         head = nn.Linear(feats.shape[1], 2, bias=False).to(DEVICE)
@@ -37,7 +39,8 @@ class LinearProbe(Method):
     @torch.no_grad()
     def predict(self, X):
         W = (1 - self.mix) * self.init_ + self.mix * self.head_
-        return (image_features(X) @ W.T).argmax(dim=1).cpu().numpy().astype(np.int64)
+        feats = image_features(X, timing=self.timing_)
+        return (feats @ W.T).argmax(dim=1).cpu().numpy().astype(np.int64)
 
     def n_trainable_params(self):
         return int(self.head_.numel())

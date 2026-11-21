@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from c2.clip.loadClip import DEVICE, SCALE, class_text_features, image_features
+from c2.clip.loadClip import DEVICE, SCALE, class_text_features, fresh_clip, image_features
 from common.method import Method
 
 
@@ -22,8 +22,10 @@ class TipAdapter(Method):
         self.class_names = tuple(class_names)
         self.alpha, self.beta, self.seed = alpha, beta, seed
         self.text_ = self.keys_ = self.values_ = None
+        self.timing_ = {}
 
     def fit(self, X, y):
+        fresh_clip()
         y = torch.as_tensor(np.asarray(y), dtype=torch.long, device=DEVICE)
         self.text_ = class_text_features(self.class_names)
         self.keys_ = image_features(X)
@@ -32,8 +34,8 @@ class TipAdapter(Method):
 
     @torch.no_grad()
     def predict(self, X):
-        logits = tip_logits(image_features(X), self.keys_, self.values_,
-                            self.text_, self.alpha, self.beta)
+        feats = image_features(X, timing=self.timing_)
+        logits = tip_logits(feats, self.keys_, self.values_, self.text_, self.alpha, self.beta)
         return logits.argmax(dim=1).cpu().numpy().astype(np.int64)
 
     def n_trainable_params(self):
@@ -48,7 +50,7 @@ class TipAdapterF(TipAdapter):
         self.lr, self.steps = lr, steps
 
     def fit(self, X, y):
-        super().fit(X, y)
+        super().fit(X, y)  # reloads CLIP and builds the cache
         feats, labels = self.keys_, self.values_.argmax(dim=1)
         keys = nn.Parameter(feats.clone())
         opt = torch.optim.AdamW([keys], lr=self.lr, weight_decay=0.0)
