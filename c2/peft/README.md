@@ -43,7 +43,14 @@ python -m c2.peft.figures --hw colab-t4
 ```
 
 ## Configs
-| config_id | description | val acc (%) | train time | inference time (700 img) |
-|---|---|---|---|---|
-| best | TODO | | | |
-| fast | TODO | | | |
+Report seeds 10–19, `hw=colab-t4` (Colab T4 GPU). Mean ± std across the 10 problem instances.
+
+| config_id | description | trainable | val acc (%) | train time | inference time (700 img) |
+|---|---|---|---|---|---|
+| **lora_r2** (best) | LoRA rank 2 on every block's attention qkv + new head, AdamW lr 1e-3, 10 epochs | 18,818 | **97.14 ± 4.04** | 3.42 s | 1.74 s (2.48 ms/img) |
+| vpt_shallow10_lr3e-3 | 10 shallow prompt tokens + new head, lr 3e-3, 10 epochs | 2,306 | 97.17 ± 4.43 | 3.32 s | 1.69 s (2.42 ms/img) |
+| **head** (fast) | testbed C2 example: frozen backbone, new linear head | 386 | 96.56 ± 4.07 | 1.51 s | 1.74 s (2.48 ms/img) |
+
+Paired over the 10 report seeds: lora_r2 − head = **+0.59 pp, wins 9/10** (Wilcoxon p = 0.006);
+lora_r2 − vpt_shallow = −0.03 pp (4 wins, 2 ties; p = 0.77), i.e. a tie, with VPT training 8× fewer
+parameters. Hardest pair: cat-dog (head 85.1, LoRA 85.6, VPT 84.4%).

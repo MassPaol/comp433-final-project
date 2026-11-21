@@ -107,6 +107,61 @@ far fewer parameters). fast = `head` (the control, 3× faster to train). Decide 
 **Next (P2), optional:** VPT with fewer / more prompts (5, 20) at lr 3e-3; LoRA r2 on qkv + proj or on
 the last blocks only; the `crop_pct = 1.0` deviation. Then the chosen configs on the report seeds.
 
+### 2026-11-20: T4 re-run of P0–P1 (tuning seeds), and selection
+All 16 configs re-run on seeds 0–4 with `hw=colab-t4`. **Accuracies are identical to the CPU run**
+for every config and seed (unlike C1: a frozen pretrained backbone with few trainable parameters and
+10 epochs is far less sensitive to tiny numeric differences). Only the times change. The laptop-sleep
+time in `bitfit_lr1e-3_flip` is replaced by a clean T4 measurement.
+
+| config | trainable | acc (%) | T4 fit (s, median) | T4 predict 700 (s) |
+|---|---|---|---|---|
+| lora_r2 | 18,818 | 99.23 | 3.43 | 1.67 |
+| vpt_shallow10_lr3e-3 | 2,306 | 99.20 | 3.27 | 1.61 |
+| bitfit_lr1e-3 | 26,114 | 98.91 | 3.29 | 1.57 |
+| head | 386 | 98.74 | 1.52 | 1.65 |
+
+PEFT costs about 2.2× the head's training time on the T4 (3.3–3.4 s vs 1.5 s); inference is the same
+for all (about 1.6 s per 700 images, 2.3 ms/image, dominated by the 224 px forward pass and
+preprocessing).
+
+**Selection (for the report seeds):**
+- **best = `lora_r2`**: highest mean, wins 5/5 vs head.
+- **fast = `head`**: 2.2× faster to train, −0.5 pp.
+- also `vpt_shallow10_lr3e-3`: equal to LoRA within noise with 8× fewer trainable parameters; worth a
+  report-seed row because it is the most parameter-efficient result.
+
+### 2026-11-20: report seeds 10–19 (T4), final numbers
+Configs fixed before this run (selection above). `hw=colab-t4`, notebook cell 8.
+
+| pair | head | **lora_r2** | vpt_shallow10 |
+|---|---|---|---|
+| 10 ship-bird | 99.4 | 99.1 | 99.6 |
+| 11 horse-ship | 98.6 | 99.3 | 99.6 |
+| 12 dog-ship | 99.4 | 99.7 | 99.4 |
+| 13 cat-dog | 85.1 | 85.6 | 84.4 |
+| 14 cat-truck | 98.6 | 99.1 | 99.1 |
+| 15 bird-frog | 96.0 | 96.9 | 96.7 |
+| 16 frog-bird | 95.3 | 96.1 | 95.9 |
+| 17 horse-bird | 96.0 | 97.1 | 98.0 |
+| 18 horse-truck | 98.3 | 98.7 | 99.3 |
+| 19 automobile-horse | 98.9 | 99.7 | 99.7 |
+| **mean ± std** | 96.56 ± 4.07 | **97.14 ± 4.04** | 97.17 ± 4.43 |
+| trainable params | 386 | 18,818 | 2,306 |
+| train / predict (s) | 1.51 / 1.74 | 3.42 / 1.74 | 3.32 / 1.69 |
+
+- **LoRA r2 beats the head-only control on 9/10 report seeds: +0.59 pp** (Wilcoxon p = 0.006). The
+  gain is small but consistent, as on the tuning seeds.
+- **LoRA and shallow VPT tie** (−0.03 pp, p = 0.77), with VPT training 8× fewer parameters (2,306,
+  0.04% of the backbone).
+- Cat-dog is the hard pair for every method (84–86%) and no PEFT variant fixes it; the other nine
+  pairs are all at 95.3% or above.
+- For comparison on the same seeds (Massimo's `c2/frozen_features` README on his branch, measured
+  on an RTX 3070, T4 re-run pending): his `best` uses a larger backbone (ViT-S/16) and gets 98.69%; on
+  the same ViT-Tiny backbone his `fast` (cached CLS features → logistic regression) gets 97.33% and
+  trains in well under a second. PEFT on ViT-Tiny is slightly below that (not tested paired), at a
+  much higher training cost, because it back-propagates through the backbone every step. So in C2 the
+  bigger lever is the backbone, not how it is adapted. To check once his T4 rows are merged.
+
 ## Source log
 
 | source | idea taken |

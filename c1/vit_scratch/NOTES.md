@@ -119,6 +119,78 @@ help now that augmentation stops memorizing), learning rate, weight decay, label
 stronger augmentation from `common/augment.py` once it lands. Candidates so far: best = `s2_conv`,
 fast = `s1_dim64` (77.5%, 14 s) or `s2_spt` if the time gap matters less.
 
+### 2026-11-20: T4 re-run of S0–S2 (tuning seeds), and selection
+**Why:** every reported time has to come from a Colab T4 (team rule), and a second full run of
+every config also shows how much a ViT result moves when nothing changes but the hardware.
+All 20 configs were re-run on seeds 0–4 with `hw=colab-t4`
+(`notebooks/ammar/ammar_colab_t4.ipynb`, cell 6).
+
+**Run-to-run noise is large for the ViT.** The same config and seed gives a different accuracy on
+CPU and on T4 (GPU kernels are not bit-identical, and 100 epochs on 100 images amplify the difference):
+mean |T4 − CPU| = 1.7 pp per (config, seed), max 16.7 pp. The worst case is the *unaugmented* baseline,
+seed 1 (bird-truck): 78.4% on CPU, 61.7% on T4, so the baseline's T4 mean drops to 73.8%. The
+augmented configs move much less (flip + crop: within 1 pp on every seed). So augmentation also
+makes training **more stable**, not just more accurate, and any difference below about 2 pp on 5
+seeds should be treated as noise.
+
+T4, tuning seeds, top configs vs flip + crop (paired):
+
+| config | T4 acc (%) | Δ vs flip+crop (wins) | CPU + T4 pooled: Δ (wins / 10) | T4 fit (s) | T4 predict 700 (s) |
+|---|---|---|---|---|---|
+| s2_conv_seq | 82.7 | +3.69 (5/5) | +2.87 (8/10) | 3.3 | 0.04 |
+| **s2_conv** | 82.2 | +3.14 (4/5) | **+2.91 (8/10)** | 3.2 | 0.04 |
+| s2_spt_lsa | 80.5 | +1.40 (3/5) | | 4.0 | 0.04 |
+| s2_spt | 80.1 | +1.09 (3/5) | +1.36 (8/10) | 3.1 | 0.03 |
+| s1_crop | 79.7 | +0.60 (4/5) | | 2.9 | 0.03 |
+| s1_flip_crop | 79.1 | – | – | 3.0 | 0.03 |
+| baseline | 73.8 | | | 2.7 | 0.03 |
+
+**What holds on both runs:** the conv tokenizer is the clear winner (+2.9 pp over flip + crop, better
+in 8 of 10 paired runs); SPT helps less (+1.4 pp); sequence pooling on top of the conv tokenizer is a
+tie (conv_seq is ahead on T4, behind on CPU). The S2 claim that LSA hurts does **not** hold on T4
+(LSA alone +0.06, SPT + LSA ahead of SPT), so "LSA makes no reliable difference here" is the safe
+conclusion.
+
+**Time on the T4:** every config trains in 2.4–8.7 s and predicts 700 images in under 0.15 s. On the
+GPU, model size barely changes the time (dim 64 is no faster than dim 128), so the CPU "fast"
+candidate (`s1_dim64`) has no speed advantage on the reporting hardware.
+
+**Selection (for the report seeds):**
+- **best = `s2_conv`** (flip + crop, conv tokenizer, class token): top on both runs, simpler than
+  conv_seq at equal accuracy.
+- **No separate fast config needed**: best trains in about 3 s on a T4, and the fastest config
+  (`s1_depth2`, 2.4 s) is 6 pp less accurate. For reference rows on the report seeds, also run
+  `s1_flip_crop` (plain ViT + augmentation) and `baseline` (testbed), so the report can show the
+  gain from each step on the same seeds.
+
+### 2026-11-20: report seeds 10–19 (T4), final numbers
+Configs fixed before this run (selection above). `hw=colab-t4`, notebook cell 8.
+
+| pair | baseline | flip + crop | **s2_conv** |
+|---|---|---|---|
+| 10 ship-bird | 78.4 | 82.9 | 85.6 |
+| 11 horse-ship | 79.9 | 85.3 | 87.4 |
+| 12 dog-ship | 85.9 | 85.3 | 88.0 |
+| 13 cat-dog | 51.9 | 54.3 | 58.9 |
+| 14 cat-truck | 72.4 | 72.7 | 81.3 |
+| 15 bird-frog | 67.6 | 66.3 | 71.4 |
+| 16 frog-bird | 61.4 | 62.9 | 71.9 |
+| 17 horse-bird | 65.0 | 66.9 | 74.3 |
+| 18 horse-truck | 69.6 | 71.1 | 83.1 |
+| 19 automobile-horse | 75.0 | 74.9 | 87.7 |
+| **mean ± std** | 70.70 ± 9.38 | 72.24 ± 9.68 | **78.96 ± 9.11** |
+| train / predict (s) | 2.95 / 0.026 | 3.07 / 0.026 | 3.32 / 0.037 |
+
+- **s2_conv beats the testbed baseline on all 10 report seeds: +8.26 pp** (Wilcoxon p = 0.002), and
+  beats plain augmentation on all 10: +6.71 pp (p = 0.002). The conv tokenizer's gain is much larger
+  here than on the tuning seeds (+2.9 pp), mostly on pairs of two animals or animal vs vehicle with
+  similar colours (horse-truck +12.0, automobile-horse +12.8 vs flip + crop).
+- The report seeds are harder than the tuning seeds (baseline 70.7 vs 73.8–77.3%): they include
+  cat-dog (58.9% at best, barely above chance), bird-frog and frog-bird.
+- Augmentation alone helps less here (+1.5 pp over the baseline) than on the tuning seeds.
+- For comparison, C1 classical (Massimo) on the same seeds: 85.09 ± 8.22%. The ViT closes about half
+  of the original gap (from 14.4 pp to 6.1 pp) but stays behind hand-crafted features.
+
 ## Source log
 
 | source | idea taken |

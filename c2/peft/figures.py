@@ -13,6 +13,7 @@ import matplotlib
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from c2.peft import configs  # noqa: E402
@@ -23,11 +24,11 @@ MODE_COLOR = {"head": plots.NEUTRAL, "bitfit": plots.SERIES[0], "lora": plots.SE
               "vpt": plots.SERIES[2]}
 
 
-def load(hw, path="results/ammar.csv"):
+def load(hw, path="results/ammar.csv", seeds=data.TUNE_SEEDS):
     df = pd.read_csv(path)
     df = df[(df.challenge == "c2") & (df.method == "peft")]
     df = df[df.notes.fillna("").map(lambda n: bool(re.search(rf"hw={re.escape(hw)}\b", n)))]
-    df = df[df.seed.isin(data.TUNE_SEEDS)].copy()
+    df = df[df.seed.isin(seeds)].copy()
     cfgs = configs.all_configs()
     df["mode"] = df.config_id.map(lambda c: cfgs[c]["mode"])
     return df
@@ -84,15 +85,43 @@ def fig_acc_vs_params_time(df):
     return fig
 
 
+REPORT_CONFIGS = [("head", "Head only (fast)", 386), ("lora_r2", "LoRA r2 (best)", 18818),
+                  ("vpt_shallow10_lr3e-3", "VPT shallow, 10 prompts", 2306)]
+
+
+def fig_report_pairs(df):
+    """Report seeds: accuracy per class pair for head, LoRA and VPT."""
+    acc = df.pivot_table(index=["seed", "class_pair"], columns="config_id", values="val_acc") * 100
+    acc = acc[[c for c, _, _ in REPORT_CONFIGS]].sort_values("lora_r2")
+    labels = [f"{p} ({s})" for s, p in acc.index]
+    colors = [plots.NEUTRAL, plots.SERIES[1], plots.SERIES[2]]
+    fig, ax = plt.subplots(figsize=(6.4, 4.4))
+    y = np.arange(len(acc))
+    ax.hlines(y, acc.min(axis=1), acc.max(axis=1), color=plots.GRID, linewidth=2, zorder=1)
+    # small vertical offsets + distinct markers so tied points stay visible
+    for (cid, name, n), col, dy, mk in zip(REPORT_CONFIGS, colors, (-0.18, 0, 0.18), "osD"):
+        ax.scatter(acc[cid], y + dy, color=col, marker=mk, zorder=3, s=34,
+                   label=f"{name}, {n:,} params: {acc[cid].mean():.2f} ± {acc[cid].std(ddof=0):.2f}%")
+    ax.set_yticks(y, labels)
+    ax.set_xlabel("Validation accuracy (%)")
+    ax.set_title("C2 PEFT on ViT-Tiny: report seeds 10–19 (Colab T4)")
+    ax.legend(loc="upper center", bbox_to_anchor=(0.4, -0.13), ncol=1)
+    return fig
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--hw", default="local-cpu")
     p.add_argument("--results", default="results/ammar.csv")
     a = p.parse_args(argv)
     plots.apply_style()
-    fig = fig_acc_vs_params_time(load(a.hw, a.results))
-    print(plots.save(fig, "c2_peft_acc_vs_params_time"))
-    plt.close(fig)
+    figs = [("c2_peft_acc_vs_params_time", fig_acc_vs_params_time(load(a.hw, a.results)))]
+    rep = load(a.hw, a.results, seeds=data.REPORT_SEEDS)
+    if set(c for c, _, _ in REPORT_CONFIGS) <= set(rep.config_id):
+        figs.append(("c2_peft_report_pairs", fig_report_pairs(rep)))
+    for name, fig in figs:
+        print(plots.save(fig, name))
+        plt.close(fig)
 
 
 if __name__ == "__main__":

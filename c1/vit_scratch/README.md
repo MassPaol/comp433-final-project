@@ -40,7 +40,14 @@ python -m c1.vit_scratch.figures --hw colab-t4
 ```
 
 ## Configs
+Report seeds 10–19, `hw=colab-t4` (Colab T4 GPU). Mean ± std across the 10 problem instances.
+
 | config_id | description | val acc (%) | train time | inference time (700 img) |
 |---|---|---|---|---|
-| best | TODO | | | |
-| fast | TODO | | | |
+| **s2_conv** (best) | testbed ViT + flip + random crop (pad 4) + CCT conv tokenizer (2 × conv3×3–ReLU–maxpool), 481,858 params | **78.96 ± 9.11** | 3.32 s | 0.037 s (0.05 ms/img) |
+| s1_flip_crop | testbed ViT + flip + random crop (reference) | 72.24 ± 9.68 | 3.07 s | 0.026 s (0.04 ms/img) |
+| baseline | course testbed ViT, unchanged (reference) | 70.70 ± 9.38 | 2.95 s | 0.026 s (0.04 ms/img) |
+
+Paired over the 10 report seeds: s2_conv − baseline = **+8.26 pp, wins 10/10** (Wilcoxon p = 0.002);
+s2_conv − s1_flip_crop = +6.71 pp, wins 10/10 (p = 0.002). No separate fast config: best already
+trains in about 3 s on a T4 (see [NOTES.md](NOTES.md), T4 re-run). Hardest pair: cat-dog, 58.9%.

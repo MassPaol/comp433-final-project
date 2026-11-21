@@ -25,11 +25,37 @@ STAGE_LABEL = {"s0": "S0 baseline", "s1": "S1 one knob", "s2": "S2 small-data Vi
 STAGE_COLOR = {"s0": plots.NEUTRAL, "s1": plots.SERIES[0], "s2": COLOR}
 
 
-def load(hw, path="results/ammar.csv"):
+def load(hw, path="results/ammar.csv", seeds=data.TUNE_SEEDS):
     df = pd.read_csv(path)
     df = df[(df.challenge == "c1") & (df.method == "vit_scratch")]
     df = df[df.notes.fillna("").map(lambda n: bool(re.search(rf"hw={re.escape(hw)}\b", n)))]
-    return df[df.seed.isin(data.TUNE_SEEDS)]
+    return df[df.seed.isin(seeds)]
+
+
+REPORT_CONFIGS = [("baseline", "Testbed baseline"), ("s1_flip_crop", "+ flip + crop"),
+                  ("s2_conv", "+ conv tokenizer (best)")]
+
+
+def fig_report_pairs(df):
+    """Report seeds: accuracy per class pair for baseline -> + augmentation -> best."""
+    acc = df.pivot_table(index=["seed", "class_pair"], columns="config_id", values="val_acc") * 100
+    acc = acc[[c for c, _ in REPORT_CONFIGS]].sort_values("s2_conv")
+    labels = [f"{p} ({s})" for s, p in acc.index]
+    colors = [plots.NEUTRAL, plots.SERIES[0], COLOR]
+    fig, ax = plt.subplots(figsize=(6.4, 4.4))
+    y = np.arange(len(acc))
+    ax.hlines(y, acc.min(axis=1), acc.max(axis=1), color=plots.GRID, linewidth=2, zorder=1)
+    # small vertical offsets + distinct markers so tied points stay visible
+    for (cid, name), col, dy, mk in zip(REPORT_CONFIGS, colors, (-0.18, 0, 0.18), "osD"):
+        ax.scatter(acc[cid], y + dy, color=col, marker=mk, zorder=3, s=34,
+                   label=f"{name}: {acc[cid].mean():.1f} ± {acc[cid].std(ddof=0):.1f}%")
+    ax.axvline(50, color=plots.TEXT_SECONDARY, linewidth=1, linestyle=":")
+    ax.text(50.5, len(acc) - 0.6, "chance", fontsize=8, color=plots.TEXT_SECONDARY)
+    ax.set_yticks(y, labels)
+    ax.set_xlabel("Validation accuracy (%)")
+    ax.set_title("C1 ViT from scratch: report seeds 10–19 (Colab T4)")
+    ax.legend(loc="upper center", bbox_to_anchor=(0.4, -0.13), ncol=1)
+    return fig
 
 
 def fig_paired_deltas(df):
@@ -86,8 +112,12 @@ def main(argv=None):
     a = p.parse_args(argv)
     plots.apply_style()
     df = load(a.hw, a.results)
-    for name, fig in [("c1_vit_paired_deltas", fig_paired_deltas(df)),
-                      ("c1_vit_acc_vs_time", fig_acc_vs_time(df))]:
+    figs = [("c1_vit_paired_deltas", fig_paired_deltas(df)),
+            ("c1_vit_acc_vs_time", fig_acc_vs_time(df))]
+    rep = load(a.hw, a.results, seeds=data.REPORT_SEEDS)
+    if set(c for c, _ in REPORT_CONFIGS) <= set(rep.config_id):
+        figs.append(("c1_vit_report_pairs", fig_report_pairs(rep)))
+    for name, fig in figs:
         print(plots.save(fig, name))
         plt.close(fig)
 
