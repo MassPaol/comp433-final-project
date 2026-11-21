@@ -16,6 +16,13 @@ def test_is_a_method():
     assert issubclass(PEFTMethod, Method)
 
 
+def test_final_configs_resolve():
+    from c2.peft import configs
+    for name in ("best", "fast"):
+        assert configs.get(name) == configs.get(configs.FINAL_SOURCE[name])
+        PEFTMethod(**configs.get(name))      # builds without error
+
+
 def test_unknown_mode_rejected():
     with pytest.raises(ValueError):
         PEFTMethod(mode="nope")

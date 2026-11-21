@@ -40,6 +40,12 @@ P1 = {
 
 STAGES = {"p0": P0, "p1": P1}
 
+# ---- FINAL: the submitted configs (chosen on the tuning seeds, see NOTES.md) ---
+# best = lora_r2: highest tuning mean, wins 5/5 vs head. fast = head: 2.2x faster
+# to train on a T4. Report seeds (T4): best 97.14 +/- 4.04 % (train 3.4 s),
+# fast 96.56 +/- 4.07 % (train 1.5 s); predict 1.7 s / 700 images for both.
+FINAL_SOURCE = {"best": "lora_r2", "fast": "head"}
+
 
 def all_configs():
     out = {}
@@ -48,5 +54,11 @@ def all_configs():
     return out
 
 
+FINAL = {name: all_configs()[cid] for name, cid in FINAL_SOURCE.items()}
+
+
 def get(config_id):
+    """kwargs for a config id; also accepts the FINAL names ("best", "fast")."""
+    if config_id in FINAL:
+        return FINAL[config_id]
     return all_configs()[config_id]

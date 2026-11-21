@@ -49,6 +49,12 @@ S2 = {
 
 STAGES = {"s0": S0, "s1": S1, "s2": S2}
 
+# ---- FINAL: the submitted configs (chosen on the tuning seeds, see NOTES.md) ---
+# best = s2_conv: top on both the CPU and the T4 tuning runs. No separate fast
+# config: best trains in about 3 s on a T4, and the fastest config is 6 pp worse.
+# Report seeds (T4): 78.96 +/- 9.11 %, train 3.3 s, predict 0.04 s / 700 images.
+FINAL_SOURCE = {"best": "s2_conv"}
+
 
 def all_configs():
     out = {}
@@ -57,5 +63,11 @@ def all_configs():
     return out
 
 
+FINAL = {name: all_configs()[cid] for name, cid in FINAL_SOURCE.items()}
+
+
 def get(config_id):
+    """kwargs for a config id; also accepts the FINAL names ("best")."""
+    if config_id in FINAL:
+        return FINAL[config_id]
     return all_configs()[config_id]

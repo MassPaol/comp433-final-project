@@ -63,6 +63,12 @@ def test_lsa_masks_self_attention():
     assert lsa.log_scale.requires_grad      # temperature is learned
 
 
+def test_final_configs_resolve():
+    from c1.vit_scratch import configs
+    assert configs.get("best") == configs.get(configs.FINAL_SOURCE["best"])
+    ViTScratch(**configs.get("best"))       # builds without error
+
+
 def test_bad_options_rejected():
     with pytest.raises(ValueError):
         ViTScratch(tokenizer="nope")
