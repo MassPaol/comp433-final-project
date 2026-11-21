@@ -1,7 +1,7 @@
 """C2 CLIP search. Every stage runs on tuning seeds 0-4.
 Set PROBE_BASE and TIP_BASE from the previous stage's best, and FINAL after selection."""
 STAGES = {}
-PROBE_BASE = {"lr": 0.001, "steps": 300}
+PROBE_BASE = {"lr": 0.001, "steps": 100}
 TIP_BASE = {"alpha": 0.5, "beta": 1.0}
 
 STAGES["zeroshot"] = {"c2_zeroshot": {}}
