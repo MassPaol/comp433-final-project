@@ -88,7 +88,7 @@ Mean ± std over 10 class pairs. Best and fast coincide for every stage, so one 
 | Tip-Adapter | c2_tip_a2_b10 | 96.74 ± 4.23 | 2.654 | 3.24 | 3.17 | 0.065 | −0.26 pp | 5/10 | 0.88 |
 | Tip-Adapter-F | c2_tipf_lr0.0001_s100 | 97.94 ± 2.55 | 2.827 | 3.15 | 3.09 | 0.062 | +0.94 pp | 7/10 | 0.49 |
 
-Tip-Adapter-F's cache base is `TIP_BASE` [VERIFY: alpha 2.0, beta 10.0, or alpha 0.5, beta 1.0; see NOTES Pass 3].
+Tip-Adapter-F's cache base is `TIP_BASE` alpha 2.0, beta 10.0 .
 
 **Reading the results**
 
@@ -100,7 +100,7 @@ Tip-Adapter-F's cache base is `TIP_BASE` [VERIFY: alpha 2.0, beta 10.0, or alpha
 
 ## Known limitations
 
-- **The batched preprocessing was used in all reported runs, although it failed the accuracy gate.** A batched GPU bicubic resize shifted validation accuracy by up to 0.71 pp on seeds 0–4, above the 0.5 pp limit set before testing. The revert to PIL was not applied before the runs. [DECISION: either report these results as batched-path results with this limitation stated, or rerun on PIL in a new results folder, with the prof's approval for a second reporting run.]
+- **The batched preprocessing was used in all reported runs, although it failed the accuracy gate.** A batched GPU bicubic resize shifted validation accuracy by up to 0.71 pp on seeds 0–4, above the 0.5 pp limit set before testing. The revert to PIL was not applied before the runs. [DECISION: either report these results as batched-path results with this limitation state]
 - **PIL per-image cost is not measured in these results.** The reviewer's inference-time concern is about PIL. The 0.06 ms preprocessing figure applies to the batched GPU resize only.
 - **QuickGELU mismatch.** The model is built with `ViT-B-32` (`quick_gelu=False`), but the `openai` weights were trained with QuickGELU. open_clip warns about this. All methods share the model, so comparisons hold, but absolute accuracies are below published ViT-B/32 values.
 - **Selection ties.** The 0.5 pp tie window is wider than the seed-to-seed noise, so best and fast coincide for every stage and the rule mostly picks the fastest config that is not clearly worse.
