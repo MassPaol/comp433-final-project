@@ -36,7 +36,7 @@ COLOR = plots.METHOD_COLORS["c1_cnn"]
 TUNE_LABEL = "tuning seeds 0–4"
 
 # Reference config for each ablation stage: the paired difference is (config - reference).
-ABLATION_REF = {"s2a": "s2a_ref", "s2b": None}   # s2b filled in when it is written
+ABLATION_REF = {"s2a": "s2a_ref", "s2b": "s2b_full"}
 
 
 def fig_dynamics(curves, hw, outdir, config_ids=("s0_noaug", "s0_flipcrop")):
@@ -107,8 +107,8 @@ def fig_ablation(df, seeds, hw, outdir):
         ax.set_yticks(y, [f"{c}  ({r['wins']}/{r['n']})" for c, r in res])
         ax.axvline(0, color=plots.TEXT_SECONDARY, linewidth=1)
         ax.set(xlabel=f"paired Δ accuracy vs {ref} (pp)", title=stage.upper())
-    fig.suptitle(f"C1 CNN augmentation / regularization ablation ({TUNE_LABEL}; "
-                 "bars: mean ± std of per-seed differences; wins/seeds in brackets)", fontsize=10)
+    fig.suptitle(f"C1 CNN augmentation / regularization ablation ({TUNE_LABEL})\n"
+                 "bars: mean ± std of per-seed differences; wins/seeds in brackets", fontsize=10)
     fig.tight_layout()
     return plots.save(fig, "c1_cnn_ablation", outdir)
 

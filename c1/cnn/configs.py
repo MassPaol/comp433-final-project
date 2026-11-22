@@ -51,9 +51,9 @@ STAGES = {
 
 
 # ---- S1: architecture screen on the S0 flip+crop recipe (200 epochs) -------
-# S0 result (local CPU, 2 reps): noaug 85.37, flipcrop 86.17 (+0.80 pp paired, 3/5 seeds).
-# Without augmentation the net memorizes the 100 images by ~epoch 40; flip+crop keeps
-# improving until ~epoch 140. -> keep flip+crop as the reference recipe and screen
+# S0 result (T4, 2 reps): noaug 85.80, flipcrop 86.64 (+0.84 pp paired, 4/5 seeds).
+# Without augmentation the net memorizes the 100 images by ~epoch 50; flip+crop keeps
+# improving until ~epoch 150. (Laptop first look agreed: 85.37 / 86.17.) -> keep flip+crop as the reference recipe and screen
 # backbones on it. ConvNet-6 w32 (= s0_flipcrop) is the reference, not re-run.
 # Rep noise (~1 pp between reps) is as large as the effects, so S1 uses 2 reps.
 FLIPCROP_BASE = cfg(BASE, aug=FLIPCROP)
@@ -78,10 +78,10 @@ STAGES["s1"] = {f"s1_{name}": {**cfg(FLIPCROP_BASE), "arch": {"norm": "bn", "dro
 
 
 # ---- S2a: augmentation / regularization, one change at a time --------------
-# S1 result (local CPU, 2 reps): ConvNet-3 w16 + BN best (87.59, 9.6 s), > ConvNet-6 w32
-# (+1.41 pp, 4/5), > ConvNet-3 w32 (+0.57, 5/5); ResNets worse at every size; GroupNorm
-# -3 to -6 pp vs BN (5/5). -> backbone ConvNet-3 w16 BN; width re-checked in S4.
-# Epochs 200 -> 300: S0 curves showed flip+crop still improving at ~140 epochs and
+# S1 result (T4, 2 reps): ConvNet-3 widths tie (w32 87.46, w16 86.99, w64 86.96, ~3.9 s);
+# the rule picks w16 (within 0.5 pp of the top, faster). ConvNet-6 and ResNets are worse,
+# GroupNorm -2.8 to -7.0 pp vs BN (5/5). -> backbone ConvNet-3 w16 BN; width re-checked in S4.
+# Epochs 200 -> 300: S0 curves showed flip+crop still improving at ~150 epochs and
 # stronger augmentation fits more slowly. s2a_ref re-runs flip+crop at 300 epochs so
 # every S2a difference is measured at the same length.
 S2_ARCH = {"type": "convnet", "width": 16, "convs": 1, "norm": "bn", "dropout": 0.0}
@@ -112,12 +112,40 @@ def _s2a():
 
 STAGES["s2a"] = _s2a()
 
+
+# ---- S2b: combine the S2a winners, then leave each component out ------------
+# S2a result (T4, 2 reps, paired vs s2a_ref): RandAugment N=2 +1.6/+2.1/+1.9 pp at M=5/9/14
+# (5/5 seeds each); mixup a=1 +1.37 (4/5), a=0.2 +1.03 (5/5); label smoothing 0.1 +0.61 (3/5,
+# inconclusive); Cutout, CutMix, weight decay 1e-4/5e-3 within +/-0.2 pp; dropout 0.3 -0.77 (0/5);
+# no augmentation -1.07 (0/5). Flip carries the flip+crop gain (flip-only +0.21, crop-only -0.41).
+# -> s2b_full = flip + crop + RandAugment(2, 9) + mixup(a=1) + label smoothing 0.1; each
+# s2b_no_<x> removes one component (the leave-one-out ablation, paired vs s2b_full), and two
+# variants swap in the runner-up setting of the two strong components. Cutout, CutMix, dropout
+# and the weight-decay changes are dropped. Same backbone, optimizer and 300 epochs as S2a.
+S2B_FULL = cfg(S2_REF, aug={"randaugment": {"n": 2, "m": 9}, "mixup": 1.0}, label_smoothing=0.1)
+
+
+def _s2b():
+    full = S2B_FULL
+    out = {"s2b_full": cfg(full)}
+    out["s2b_no_flip"] = cfg(full, aug={"flip": False})
+    out["s2b_no_crop"] = cfg(full, aug={"crop": 0})
+    out["s2b_no_ra"] = cfg(full, aug={"randaugment": None})
+    out["s2b_no_mixup"] = cfg(full, aug={"mixup": 0.0})
+    out["s2b_no_ls"] = cfg(full, label_smoothing=0.0)
+    out["s2b_mixup02"] = cfg(full, aug={"mixup": 0.2})
+    out["s2b_ra_m14"] = cfg(full, aug={"randaugment": {"n": 2, "m": 14}})
+    return out
+
+
+STAGES["s2b"] = _s2b()
+
 # ---- how each stage is run --------------------------------------------------
 # Reps (independent training runs per (config, seed)) for each stage; run.py uses
 # these when --reps is not given, so the notebook can run every stage the same way.
-STAGE_REPS = {"s0": 2, "s1": 2, "s2a": 2}
+STAGE_REPS = {"s0": 2, "s1": 2, "s2a": 2, "s2b": 2}
 # Configs whose per-epoch curves (curves.py, tuning seeds only) go in the report.
-CURVE_CONFIGS = ["s0_noaug", "s0_flipcrop", "s2a_noaug", "s2a_ref"]
+CURVE_CONFIGS = ["s0_noaug", "s0_flipcrop", "s2a_noaug", "s2a_ref", "s2b_full"]
 
 # ---- final configs (filled in after S4) ------------------------------------
 FINAL_SOURCE = {}   # {"best": "<stage config id>", "fast": "<stage config id>"}
