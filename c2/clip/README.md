@@ -88,6 +88,8 @@ Mean ± std over 10 class pairs. Best and fast coincide for every stage, so one 
 | Tip-Adapter | c2_tip_a2_b10 | 96.74 ± 4.23 | 2.654 | 3.24 | 3.17 | 0.065 | −0.26 pp | 5/10 | 0.88 |
 | Tip-Adapter-F | c2_tipf_lr0.0001_s100 | 97.94 ± 2.55 | 2.827 | 3.15 | 3.09 | 0.062 | +0.94 pp | 7/10 | 0.49 |
 
+Tip-Adapter-F's cache base is `TIP_BASE` [VERIFY: alpha 2.0, beta 10.0, or alpha 0.5, beta 1.0; see NOTES Pass 3].
+
 **Reading the results**
 
 - No method differs from zero-shot after Holm correction (smallest corrected p = 0.28).

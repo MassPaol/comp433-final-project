@@ -8,7 +8,7 @@ Raw rows: `results/alvin.csv` (challenge = c2). Timing split: `results/alvin_tim
 ## Setup decisions (fixed before any search)
 
 - Checkpoint: ViT-B-32, pretrained `openai`. Approved by the prof. Model card link: (add before reporting).
-- Preprocessing: open_clip's transform, not `timm.data.resolve_model_data_config`. The implementation was changed during review (see below), and the runs used the batched GPU resize.
+- Preprocessing: open_clip's transform (resize, normalize), not `timm.data.resolve_model_data_config`. The implementation was changed during review (see below). **All reported runs used the batched GPU resize.**
 - Zero-shot templates: 18 templates in `loadClip.py`. Frozen before any run.
 - Probe head: initialized from the text embeddings scaled by 100; AdamW (default `weight_decay=0.01`), full batch, fixed steps. No early stopping.
 - Selection rule (shared, `common/sweep.py::select`): best = highest mean tuning accuracy, unless a config within 0.5 pp is faster (train + inference). Fast = fastest config within 2 pp of best. Per stage, tuning seeds 0–4.
@@ -17,9 +17,9 @@ Raw rows: `results/alvin.csv` (challenge = c2). Timing split: `results/alvin_tim
 ## Reviewer changes
 
 - **Selection:** switched to the shared `select()`. See above.
-- **Train time:** CLIP is reloaded inside every `fit` (`fresh_clip()`), so every method pays the same loading cost. The earlier train times (0.282 s, 0.887 s) were from a cached model and are invalid.
+- **Train time:** CLIP is reloaded inside every `fit` (`fresh_clip()`), so every method pays the same loading cost. The earlier train times (0.282 s, 0.887 s) came from a cached model and are invalid.
 - **Inference:** a batched GPU bicubic resize was tested against PIL on seeds 0–4. It shifted validation accuracy by up to 0.71 pp, above the 0.5 pp limit, so it was **rejected**. However, the revert to PIL was not applied to `loadClip.py` before the runs, so **all reported passes, selections, and the reporting run used the batched path.** Earlier versions of these notes that said the PIL path was kept were wrong.
-- **Timing finding:** on the batched path, preprocessing is about 0.06 ms per image (about 2% of inference). The reviewer's 2.4–2.7 s PIL figure was not reproduced, and the PIL per-image cost has not been measured in these runs.
+- **Timing finding:** on the batched path, preprocessing is about 0.06 ms per image (about 2% of inference). The reviewer's 2.4–2.7 s figure was not reproduced on this path, and the PIL per-image cost has not been measured in these runs.
 
 ## Results from earlier runs
 
@@ -58,12 +58,12 @@ WiSE-FT was built on `PROBE_BASE` = `{lr: 0.001, steps: 100}`.
 
 **Decisions**
 - WiSE-FT: `wiseft_best` = `wiseft_fast` = `c2_wiseft_m0.75`. All three mixes are within the tie window.
-- Tip-Adapter: `tip_best` = `tip_fast` = `c2_tip_a2_b10`. Nine cache settings are within the tie window. The rule picks the fastest, which sits on the grid edge (alpha 2, beta 10).
+- Tip-Adapter: `tip_best` = `tip_fast` = `c2_tip_a2_b10`. All nine cache settings are within the tie window. The rule picks the fastest, which sits on the grid edge (alpha 2, beta 10).
 - **Decision → `TIP_BASE = {alpha: 2.0, beta: 10.0}`** for pass 3.
 
 ## Pass 3: Tip-Adapter-F (tuning seeds 0–4, batched path)
 
-**Base used:** `TIP_BASE` at the time of pass 3. [VERIFY: the value was alpha 2.0, beta 10.0 if the edit was saved before pass 3, as planned. If it was still alpha 0.5, beta 1.0, correct this line, the report table's pipeline text, and the README row.]
+**Base used:** `TIP_BASE` at the time of pass 3. [VERIFY: confirm from the `configs.py` edit history whether pass 3 ran with alpha 2.0, beta 10.0 (as planned) or the original alpha 0.5, beta 1.0. Replace this line with the confirmed value, and make the same correction in the README and the report table.]
 
 | config | acc. (%) | time (s) |
 |---|---|---|
@@ -98,8 +98,8 @@ No method differs from zero-shot after Holm correction. Paired tests are Wilcoxo
 ## Open items
 
 - [ ] Decide: report the batched-path results with the limitation stated, or rerun on PIL in a new results folder (needs the prof's approval for a second reporting run).
-- [ ] If reporting batched results, measure the PIL per-image preprocessing cost separately (tuning seeds only) so the reviewer's question is answered for PIL too.
-- [ ] Verify the tipf base (see Pass 3).
+- [ ] If reporting batched results, measure the PIL per-image preprocessing cost separately (tuning seeds only), so the reviewer's question is answered for PIL too.
+- [ ] Verify the tipf base (see Pass 3), then update the report table's Tip-Adapter-F row and the README to match.
 - [ ] Add the model card link.
 - [ ] State the QuickGELU mismatch in the report.
 - [ ] Send the reviewer reply, stating that the batched path was used and that its preprocessing share does not describe PIL.
