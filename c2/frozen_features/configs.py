@@ -112,12 +112,13 @@ STAGES["s4"] = _s4()
 
 
 # ---- FINAL: chosen by `python -m c2.frozen_features.select` (rule in select.py) ----
-# Over all 191 tuning configs (s1-s4), local run (hw=local-3070):
-# top:  s4_vitb_fp16   99.83 +/- 0.23  2.80 s
-# best: s4_vits_fp16   99.77 +/- 0.17  0.96 s  (within 0.5 pp of top, fastest of those;
+# Picked on the laptop run (hw=local-3070); the Colab T4 re-run (hw=colab-t4) picks the same two.
+# Over all 191 tuning configs (s1-s4), T4 times:
+# top:  s4_vitb_fp16   99.83 +/- 0.23  3.67 s
+# best: s4_vits_fp16   99.77 +/- 0.17  1.32 s  (within 0.5 pp of top, fastest of those;
 #                                               crop_pct 1.0 = deviates from the checkpoint's
 #                                               preprocessing, see README "Preprocessing deviation")
-# fast: s4_vitti_fp16  99.23 +/- 0.38  0.47 s  (fastest with acc >= best - 2 pp)
+# fast: s4_vitti_fp16  99.23 +/- 0.38  0.52 s  (fastest with acc >= best - 2 pp)
 # baseline: the testbed's C2 example (ViT-Tiny, CLS features, AdamW head, 10 epochs),
 # fixed before any results, so best and fast can be compared with it on the report seeds.
 FINAL_SOURCE = {"best": "s4_vits_fp16", "fast": "s4_vitti_fp16", "baseline": "s1_vitti_adamw"}

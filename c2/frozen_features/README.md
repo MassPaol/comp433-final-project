@@ -8,9 +8,9 @@ An ImageNet-pretrained backbone from timm is kept frozen and turns each image (u
 regression, linear/RBF SVM, nearest class mean, kNN, or the testbed's AdamW-trained linear layer) is fit
 on the 100 training images' features. With 100 images there is far too little data to train a network,
 but enough to fit a few hundred head parameters (385 in `best`, 193 in `fast`) on top of a
-representation learned from millions of images. It is also cheap: one forward pass per image; the
-selected `best`/`fast` configs train in under half a second (configs on the largest backbone, ViT-B,
-in 1.4–2.6 s). None of the
+representation learned from millions of images. It is also cheap: one forward pass per image; on a
+Colab T4 the selected `best`/`fast` configs train in 0.61 / 0.25 s (configs on the largest backbone,
+ViT-B, in 1.8–4.0 s). None of the
 checkpoints saw CIFAR-10 (C2 rule; pretraining data per checkpoint in [NOTES.md](NOTES.md)). The search
 covers 7 backbones, 7 heads, feature normalization, feature source (CLS / patch tokens / last-k blocks),
 crop, flip augmentation, fp16 and backbone concatenation: 191 configs in 4 stages, with the reasoning for
@@ -62,19 +62,20 @@ python -m c2.frozen_features.figures --hw colab-t4
 Re-running a command skips (config, seed) pairs that already have a row for that `hw` tag.
 
 ## Configs
-Report seeds 10–19, `hw=local-3070` (RTX 3070 Laptop). The Colab T4 numbers replace these once the
-notebook has run.
+Report seeds 10–19, `hw=colab-t4` (Colab T4).
 
 | config_id | description | val acc (%) | train time | inference time (700 img) |
 |---|---|---|---|---|
-| best | ViT-S/16 (AugReg, IN-21k → IN-1k), CLS token of the whole image (`crop_pct = 1.0` instead of the checkpoint's 0.9: a deviation from its preprocessing, see below), fp16 extraction → logistic regression (C = 1, raw features) | 98.69 ± 2.65 | 0.40 s (load 0.32 + extract 0.06) | 0.42 s (0.60 ms/img) |
-| fast | ViT-Ti/16 (the testbed checkpoint), CLS token, fp16 extraction → logistic regression (C = 0.01, z-scored features) | 97.33 ± 3.96 | 0.16 s (load 0.11 + extract 0.03) | 0.21 s (0.30 ms/img) |
-| baseline | the testbed's C2 example: ViT-Ti/16, CLS token → new linear layer trained with AdamW (lr 1e-3, wd 0.01, 10 epochs, batch 32) | 96.04 ± 5.02 | 0.24 s (load 0.11 + extract 0.07) | 0.45 s (0.65 ms/img) |
+| best | ViT-S/16 (AugReg, IN-21k → IN-1k), CLS token of the whole image (`crop_pct = 1.0` instead of the checkpoint's 0.9: a deviation from its preprocessing, see below), fp16 extraction → logistic regression (C = 1, raw features) | 98.69 ± 2.65 | 0.61 s (load 0.50 + extract 0.08) | 0.67 s (0.95 ms/img) |
+| fast | ViT-Ti/16 (the testbed checkpoint), CLS token, fp16 extraction → logistic regression (C = 0.01, z-scored features) | 97.33 ± 3.96 | 0.25 s (load 0.17 + extract 0.04) | 0.32 s (0.46 ms/img) |
+| baseline | the testbed's C2 example: ViT-Ti/16, CLS token → new linear layer trained with AdamW (lr 1e-3, wd 0.01, 10 epochs, batch 32) | 96.03 ± 5.01 | 0.33 s (load 0.14 + extract 0.11) | 0.85 s (1.22 ms/img) |
 
-Paired over the 10 report seeds: best − baseline = +2.64 pp (best wins 10/10, Wilcoxon p = 0.002);
+Paired over the 10 report seeds: best − baseline = +2.66 pp (best wins 10/10, Wilcoxon p = 0.002);
 best − fast = +1.36 pp (10/10, p = 0.002). The hardest pair, cat-dog, gives 90.9 / 86.0 / 81.9 %.
 `best` was chosen on the tuning seeds by the fixed selection rule: it is 0.06 pp below the most accurate
-config (ViT-B/16, 99.83 %) and 2.9× faster.
+config (ViT-B/16, 99.83 %) and 2.8× faster. The first run on an RTX 3070 Laptop (`hw=local-3070`, rows
+kept in the results file) picked the same two configs with the same accuracies; see [NOTES.md](NOTES.md)
+for how the two runs compare.
 
 **Preprocessing deviation in `best`.** The team rule and the project instructions say to use each
 checkpoint's own preprocessing. `best` keeps the checkpoint's resize interpolation, input size and
