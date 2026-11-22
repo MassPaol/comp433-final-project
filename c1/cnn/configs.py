@@ -3,7 +3,7 @@
 Each value is the kwargs for `CNNMethod` (minus `seed`, which run.py sets per rep).
 Stages run on the tuning seeds one after another: a stage is written only after
 the previous stage's results are in, and the comment above it records why its
-candidates were chosen (details in NOTES.md). `FINAL` holds the selected `best`
+candidates were chosen. `FINAL` holds the selected `best`
 and `fast` configs that run on the report seeds.
 """
 import copy
@@ -140,10 +140,45 @@ def _s2b():
 
 STAGES["s2b"] = _s2b()
 
+
+# ---- S3: optimization and training length, on the two S2b recipes ----------
+# S2b result (T4, 2 reps, paired vs s2b_full 88.94): the components don't add up.
+# Leave-one-out: no mixup +1.03 (4/5), no label smoothing +0.69 (5/5), no RandAugment -0.27
+# (2/5), no flip -0.50, no crop -0.29; mixup a=0.2 +0.36, RA M=14 -0.16. The full combination
+# is no better than RandAugment alone (-0.50 vs s2a_ra_n2_m9): RandAugment and mixup are
+# substitutes, and stacking them over-regularizes.
+# Two recipes go on, one per role (selection rule over S2b; RA costs ~28 s vs ~6 s):
+#   R ("best"): s2b_no_mixup = flip + crop + RandAugment(2, 9) + label smoothing 0.1, 89.97
+#   F ("fast"): s2b_no_ra    = flip + crop + mixup(a=1) + label smoothing 0.1,    88.67, 5.9 s
+# S3 changes one optimization setting at a time on R (paired vs s2b_no_mixup, not re-run),
+# and sweeps the epoch count on F (paired vs s2b_no_ra), since F is the candidate for `fast`.
+S3_R = cfg(S2B_FULL, aug={"mixup": 0.0})        # == s2b_no_mixup
+S3_F = cfg(S2B_FULL, aug={"randaugment": None})  # == s2b_no_ra
+
+
+def _s3():
+    r, f = S3_R, S3_F
+    out = {}
+    for lr, tag in ((0.025, "0025"), (0.1, "01")):
+        out[f"s3_r_lr{tag}"] = cfg(r, opt={"lr": lr})
+    for lr, tag in ((1e-3, "1e-3"), (3e-3, "3e-3")):
+        out[f"s3_r_adamw{tag}"] = cfg(r, opt={"name": "adamw", "lr": lr, "wd": 0.05})
+    out["s3_r_onecycle"] = cfg(r, sched={"name": "onecycle"})
+    for e in (150, 600):
+        out[f"s3_r_e{e}"] = cfg(r, epochs=e)
+    for bs in (16, 100):
+        out[f"s3_r_bs{bs}"] = cfg(r, batch_size=bs)
+    for e in (100, 150, 600):
+        out[f"s3_f_e{e}"] = cfg(f, epochs=e)
+    return out
+
+
+STAGES["s3"] = _s3()
+
 # ---- how each stage is run --------------------------------------------------
 # Reps (independent training runs per (config, seed)) for each stage; run.py uses
 # these when --reps is not given, so the notebook can run every stage the same way.
-STAGE_REPS = {"s0": 2, "s1": 2, "s2a": 2, "s2b": 2}
+STAGE_REPS = {"s0": 2, "s1": 2, "s2a": 2, "s2b": 2, "s3": 2}
 # Configs whose per-epoch curves (curves.py, tuning seeds only) go in the report.
 CURVE_CONFIGS = ["s0_noaug", "s0_flipcrop", "s2a_noaug", "s2a_ref", "s2b_full"]
 

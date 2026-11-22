@@ -10,8 +10,8 @@ knowledge when there are only 50 images per class. That's the contrast with the 
 scratch in `c1/vit_scratch`. With 100 images the network can memorize the training set within a few
 epochs, so the main lever is **augmentation and regularization**: crop, flip, Cutout, mixup, CutMix,
 RandAugment, label smoothing, weight decay, and dropout. The augmentation runs on the GPU from
-`common/augment.py`. The experiment log (results and the reason for every decision) and the sources
-are in [NOTES.md](NOTES.md).
+`common/augment.py`. The reason for each stage's candidates is in the comment above it in
+`configs.py`.
 
 ## Tuning stages
 Hyperparameters are searched in stages on the tuning seeds 0–4. Each stage is written only after the
@@ -38,7 +38,6 @@ previous one's results are in, and config ids are prefixed with their stage (e.g
 | `select.py` | ranks configs (averaging reps within each seed first), applies the team's best/fast rule, and does paired comparisons (`--pair A B`) |
 | `curves.py` | diagnostic loss and validation-accuracy curves, **tuning seeds only** (it refuses report seeds) |
 | `figures.py` | report figures → `report/figures/c1_cnn_*` |
-| `NOTES.md` | experiment log + source log |
 
 ## Setup (local, CPU is enough for tests and smoke runs)
 ```bash
@@ -74,7 +73,7 @@ python -m c1.cnn.figures --hw colab-t4                                  # figure
 a first look and a pipeline check. `select.py` and `figures.py` read both locations by default and
 filter on `--hw`, so the T4-vs-laptop check runs locally:
 `python -m c1.cnn.select --hw colab-t4 --stage s1 --compare-hw local-cpu`. If a laptop decision doesn't
-hold on the T4, the T4 result wins, and the flip is recorded in NOTES.md.
+hold on the T4, the T4 result wins.
 
 ## Reproduce the reported numbers
 ```bash
