@@ -73,7 +73,11 @@ STAGES = {"s0": S0, "s1": S1, "s2": S2, "s3": S3}
 # Team rule (common/sweep.py select) on the T4 tuning rows: best = top mean
 # accuracy, unless a faster config is within 0.5 pp; fast = fastest config within
 # 2 pp of best. tests/test_vit_scratch.py checks this matches results/ammar.csv.
-FINAL_SOURCE = {"best": "s2_conv_seq", "fast": "s2_conv"}
+# Over S0-S3: top is s3_convseq_ep200 (83.71%), but s3_convseq_wd0.05 (83.23%) is
+# within 0.5 pp and twice as fast, so it is best; fast = s2_conv (82.20%, 3.3 s).
+# Report seeds (T4): best 77.89 +/- 9.98 %, fast 78.96 +/- 9.11 % (best - fast =
+# -1.07 pp, p = 0.26: a tie); train 3.8 / 3.3 s, predict 0.04 s / 700 images.
+FINAL_SOURCE = {"best": "s3_convseq_wd0.05", "fast": "s2_conv"}
 
 
 def all_configs():

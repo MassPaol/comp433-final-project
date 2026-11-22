@@ -96,21 +96,33 @@ def fig_acc_vs_time(df):
                                     t=("train_time_s", "mean"))
     s[["acc", "sd"]] *= 100
     front = plots.pareto_front(s.t, s.acc)
-    fig, ax = plt.subplots(figsize=(6.4, 4.0))
+    fig, ax = plt.subplots(figsize=(6.4, 4.6))
     for st in STAGE_LABEL:
         m = s.index.map(lambda c: STAGE_OF.get(c) == st)
         ax.scatter(s.t[m], s.acc[m], color=STAGE_COLOR[st], label=STAGE_LABEL[st], zorder=3)
-    for cid, r in s[front].iterrows():
-        ax.annotate(cid, (r.t, r.acc), textcoords="offset points", xytext=(5, 4), fontsize=8)
+    # label only the configs the text talks about (labelling the whole front overlaps)
+    final = configs.FINAL_SOURCE
+    labels = {"baseline": ("testbed baseline", (6, -10)),
+              "s1_flip_crop": ("+ flip + crop", (-72, 2)),
+              final["fast"]: (f"fast: {final['fast']}", (-78, 4)),
+              final["best"]: (f"best: {final['best']}", (-20, 12)),
+              s.acc.idxmax(): (f"top: {s.acc.idxmax()}", (-40, 10))}
+    for cid, (text, off) in labels.items():
+        if cid in s.index:
+            ax.annotate(text, (s.t[cid], s.acc[cid]), textcoords="offset points", xytext=off,
+                        fontsize=8, arrowprops={"arrowstyle": "-", "color": plots.TEXT_SECONDARY,
+                                                "linewidth": 0.6})
     pf = s[front].sort_values("t")
     ax.plot(pf.t, pf.acc, color=plots.TEXT_SECONDARY, linewidth=1, linestyle="--", zorder=1,
             label="Pareto front")
     ax.set_xscale("log")
+    ticks = [t for t in (2.5, 3, 4, 5, 6, 8, 10, 12) if s.t.min() * 0.9 <= t <= s.t.max() * 1.1]
+    ax.set_xticks(ticks, [f"{t:g}" for t in ticks])
+    ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
     ax.set_xlabel("Training time per instance (s, log scale)")
     ax.set_ylabel("Mean validation accuracy (%)")
     ax.set_title("C1 ViT from scratch: accuracy vs training time (tuning seeds 0–4)")
-    ax.xaxis.set_major_formatter(matplotlib.ticker.ScalarFormatter())
-    ax.legend(loc="upper left")
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=3)
     return fig
 
 

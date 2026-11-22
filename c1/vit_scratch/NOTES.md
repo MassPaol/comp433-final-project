@@ -207,7 +207,55 @@ of each other (the order flips on the CPU run), but the rule is fixed in advance
 T4 only (notebook cell 6). Then the rule is applied again over S0–S3 and the picks run on the report
 seeds (cell 8).
 
-S3 results: pending the T4 run.
+S3 results (T4, tuning seeds, paired vs the S2 config it changes):
+
+| config | acc (%) | Δ vs base (wins / 5) | T4 train + predict (s) |
+|---|---|---|---|
+| s3_convseq_ep200 | 83.71 | +0.97 (4/5) | 7.2 |
+| s3_convseq_ep300 | 83.54 | +0.80 (3/5) | 11.0 |
+| **s3_convseq_wd0.05** | 83.23 | +0.49 (3/5) | 3.7 |
+| s3_convseq_lr1e-4 | 83.17 | +0.43 (4/5) | 3.6 |
+| s3_conv_ep300 | 82.97 | +0.77 (2/5) | 10.6 |
+| s3_conv_ep200 | 82.86 | +0.66 (2/5) | 7.0 |
+| s3_convseq_wd0.1 | 82.86 | +0.11 (4/5) | 3.6 |
+| s3_convseq_lr1e-3 | 81.94 | −0.80 (3/5) | 3.7 |
+| s3_conv_lr1e-4 / lr1e-3 | 81.46 / 81.37 | −0.74 / −0.83 (2/5) | 4.1 / 3.5 |
+| s3_conv_wd0.1 / wd0.05 | 80.43 / 80.31 | −1.77 / −1.89 (1/5) | 3.7 / 3.5 |
+
+- **Longer training now helps a little** (+0.7 to +1.0 pp with 200–300 epochs), unlike in S1 without
+  augmentation (where it did nothing), but it costs 2–3× the time.
+- **Learning rate and weight decay:** the testbed values (3e-4, 0.01) are already about right. No
+  change gains more than +0.5 pp, and lr 1e-3 or larger weight decay on the class-token model hurt.
+- Every S3 difference is below 1 pp, inside the ~2 pp run-to-run noise measured above.
+
+**Selection over S0–S3 (team rule):** top = `s3_convseq_ep200` (83.71%); `s3_convseq_wd0.05`
+(83.23%) is within 0.5 pp and twice as fast, so **best = `s3_convseq_wd0.05`**. **fast = `s2_conv`**
+(82.20%, fastest config within 2 pp of best). Both were run on the report seeds (notebook cell 8).
+
+### 2026-11-21: report seeds 10–19 (T4) for the new picks
+Picks fixed by the rule before this run. `s2_conv` rows are the ones from 2026-11-20.
+
+| pair | baseline | flip + crop | **fast: s2_conv** | **best: s3_convseq_wd0.05** |
+|---|---|---|---|---|
+| 10 ship-bird | 78.4 | 82.9 | 85.6 | 80.6 |
+| 11 horse-ship | 79.9 | 85.3 | 87.4 | 89.7 |
+| 12 dog-ship | 85.9 | 85.3 | 88.0 | 88.4 |
+| 13 cat-dog | 51.9 | 54.3 | 58.9 | 57.0 |
+| 14 cat-truck | 72.4 | 72.7 | 81.3 | 83.3 |
+| 15 bird-frog | 67.6 | 66.3 | 71.4 | 67.4 |
+| 16 frog-bird | 61.4 | 62.9 | 71.9 | 70.0 |
+| 17 horse-bird | 65.0 | 66.9 | 74.3 | 73.9 |
+| 18 horse-truck | 69.6 | 71.1 | 83.1 | 83.1 |
+| 19 automobile-horse | 75.0 | 74.9 | 87.7 | 85.4 |
+| **mean ± std** | 70.70 ± 9.38 | 72.24 ± 9.68 | **78.96 ± 9.11** | **77.89 ± 9.98** |
+| train / predict (s) | 2.95 / 0.026 | 3.07 / 0.026 | 3.32 / 0.037 | 3.82 / 0.035 |
+
+- **best vs fast: −1.07 pp, 3 wins / 1 tie / 6 losses, p = 0.26.** A tie: the 0.5 pp tuning-seed
+  lead of best did not carry over, as expected for a difference that small (see the noise above).
+- **Both beat the testbed clearly:** best +7.19 pp (9/10, p = 0.004), fast +8.26 pp (10/10, p = 0.002);
+  best vs flip + crop +5.64 pp (9/10, p = 0.006).
+- So the conv tokenizer is what matters. Sequence pooling, weight decay and the other S3 changes are
+  all within noise.
 
 ## Source log
 

@@ -34,7 +34,8 @@ stage, then the final configs on the report seeds, and downloads the results).
 
 Step by step (`--hw` tags the rows; re-running skips pairs already logged for that tag):
 ```bash
-python -m c1.vit_scratch.run --stage s0 --seeds tune --hw colab-t4      # then s1, s2
+python -m c1.vit_scratch.run --stage s0 --seeds tune --hw colab-t4      # then s1, s2, s3
+python -m c1.vit_scratch.select --hw colab-t4                            # team rule -> best, fast
 python -m c1.vit_scratch.run --config <best> <fast> --seeds report --hw colab-t4
 python -m c1.vit_scratch.figures --hw colab-t4
 ```
@@ -44,10 +45,12 @@ Report seeds 10–19, `hw=colab-t4` (Colab T4 GPU). Mean ± std across the 10 pr
 
 | config_id | description | val acc (%) | train time | inference time (700 img) |
 |---|---|---|---|---|
-| **s2_conv** (best) | testbed ViT + flip + random crop (pad 4) + CCT conv tokenizer (2 × conv3×3–ReLU–maxpool), 481,858 params | **78.96 ± 9.11** | 3.32 s | 0.037 s (0.05 ms/img) |
+| **s3_convseq_wd0.05** (best) | testbed ViT + flip + random crop (pad 4) + CCT conv tokenizer + sequence pooling, weight decay 0.05, 481,731 params | **77.89 ± 9.98** | 3.82 s | 0.035 s (0.05 ms/img) |
+| **s2_conv** (fast) | testbed ViT + flip + random crop (pad 4) + CCT conv tokenizer (2 × conv3×3–ReLU–maxpool), 481,858 params | **78.96 ± 9.11** | 3.32 s | 0.037 s (0.05 ms/img) |
 | s1_flip_crop | testbed ViT + flip + random crop (reference) | 72.24 ± 9.68 | 3.07 s | 0.026 s (0.04 ms/img) |
 | baseline | course testbed ViT, unchanged (reference) | 70.70 ± 9.38 | 2.95 s | 0.026 s (0.04 ms/img) |
 
-Paired over the 10 report seeds: s2_conv − baseline = **+8.26 pp, wins 10/10** (Wilcoxon p = 0.002);
-s2_conv − s1_flip_crop = +6.71 pp, wins 10/10 (p = 0.002). No separate fast config: best already
-trains in about 3 s on a T4 (see [NOTES.md](NOTES.md), T4 re-run). Hardest pair: cat-dog, 58.9%.
+Picked with the team rule on the tuning seeds (`python -m c1.vit_scratch.select`, rule in
+`common/sweep.py`); see [NOTES.md](NOTES.md). Paired over the 10 report seeds: best − baseline =
+**+7.19 pp, wins 9/10** (Wilcoxon p = 0.004); fast − baseline = +8.26 pp, 10/10 (p = 0.002);
+best − fast = −1.07 pp (p = 0.26), a tie. Hardest pair: cat-dog (57.0% best, 58.9% fast).
