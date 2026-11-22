@@ -8,7 +8,7 @@ grids (a fixed epoch count chosen on tuning seeds is ordinary hyperparameter
 selection) and for the training-dynamics figure. It is never used to stop a run
 early: `fit` itself never sees validation data, and report seeds are refused.
 
-Rows go to results/ryan_curves.csv:
+Rows go to results/ryan_curves.csv for --hw colab-t4, else results/local/ryan_curves.csv:
     config_id, seed, class_pair, epoch, train_loss, val_acc, hw
 (val_acc is empty on epochs where it was not measured).
 """
@@ -21,6 +21,7 @@ import torch
 
 from c1.cnn import configs
 from c1.cnn.method import CNNMethod
+from c1.cnn.run import DEFAULT_HW, PERSON, default_results_dir
 from common import data
 
 COLUMNS = ["config_id", "seed", "class_pair", "epoch", "train_loss", "val_acc", "hw"]
@@ -57,9 +58,11 @@ def main(argv=None):
                    help="default: configs.CURVE_CONFIGS")
     p.add_argument("--seeds", nargs="+", type=int, default=data.TUNE_SEEDS)
     p.add_argument("--every", type=int, default=10)
-    p.add_argument("--hw", default="local-cpu")
-    p.add_argument("--out", default="results/ryan_curves.csv")
+    p.add_argument("--hw", default=DEFAULT_HW)
+    p.add_argument("--out", default=None,
+                   help="default: <results dir for --hw>/ryan_curves.csv (see run.default_results_dir)")
     a = p.parse_args(argv)
+    a.out = a.out or os.path.join(default_results_dir(a.hw), f"{PERSON}_curves.csv")
 
     os.makedirs(os.path.dirname(a.out) or ".", exist_ok=True)
     new = not os.path.exists(a.out) or os.path.getsize(a.out) == 0

@@ -3,7 +3,9 @@
     python -m c1.cnn.run --stage s0 --seeds tune --reps 2 --hw colab-t4
     python -m c1.cnn.run --config best fast --seeds report --hw colab-t4
 
-Rows go to results/ryan.csv with notes "hw=<tag> rep=<k>". A rep is an
+Rows go to results/ryan.csv with notes "hw=<tag> rep=<k>" when --hw is colab-t4 (the
+rows the report uses, committed), and to results/local/ryan.csv for any other
+hardware tag (laptop rows: a first look only, git-ignored, never committed). A rep is an
 independent training run (method seed k) on the same problem instance: neural
 nets add training noise on top of the class-pair variance, so close comparisons
 average a few reps. Only (config, seed, hw, rep) combinations without a row yet
@@ -25,7 +27,15 @@ PERSON = "ryan"
 CHALLENGE = "c1"
 METHOD = "cnn"
 DEFAULT_HW = "local-cpu"
+REPORT_HW = "colab-t4"
+RESULTS_DIR = "results"              # report rows (hw=colab-t4), committed
+LOCAL_RESULTS_DIR = "results/local"  # every other hw tag, git-ignored (.git/info/exclude)
 SEED_SETS = {"tune": data.TUNE_SEEDS, "report": data.REPORT_SEEDS}
+
+
+def default_results_dir(hw):
+    """Where rows for hardware tag `hw` go when --results-dir isn't given."""
+    return RESULTS_DIR if hw == REPORT_HW else LOCAL_RESULTS_DIR
 
 
 def rep_of(notes):
@@ -82,14 +92,16 @@ def main(argv=None):
     p.add_argument("--reps", type=int, default=None,
                    help="default: configs.STAGE_REPS for --stage, 1 for --config")
     p.add_argument("--hw", default=DEFAULT_HW)
-    p.add_argument("--results-dir", default="results")
+    p.add_argument("--results-dir", default=None,
+                   help=f"default: {RESULTS_DIR} for --hw {REPORT_HW}, else {LOCAL_RESULTS_DIR}")
     p.add_argument("--smoke-epochs", type=int, default=None,
                    help="override epochs (smoke tests only; use a separate --hw and --results-dir)")
     a = p.parse_args(argv)
     ids = list(configs.STAGES[a.stage]) if a.stage else a.config
     reps = a.reps or (configs.STAGE_REPS.get(a.stage, 1) if a.stage else 1)
     overrides = {"epochs": a.smoke_epochs} if a.smoke_epochs else None
-    run_configs(ids, SEED_SETS[a.seeds], a.hw, reps, a.results_dir, overrides)
+    results_dir = a.results_dir or default_results_dir(a.hw)
+    run_configs(ids, SEED_SETS[a.seeds], a.hw, reps, results_dir, overrides)
 
 
 if __name__ == "__main__":

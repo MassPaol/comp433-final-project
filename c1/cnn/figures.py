@@ -3,6 +3,9 @@
     python -m c1.cnn.figures --hw colab-t4
     python -m c1.cnn.figures --hw local-cpu --outdir <scratch dir>   # preview from laptop rows
 
+--results / --curves take one or more CSVs; by default the committed results/ files
+and the git-ignored results/local/ ones, whichever exist (rows are filtered by --hw).
+
 Writes report/figures/c1_cnn_*.{pdf,png}. Each figure is drawn only when the
 rows it needs exist, so this can be re-run after every stage:
   c1_cnn_dynamics      training loss + validation accuracy vs epoch (curves.py rows)
@@ -22,8 +25,11 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from c1.cnn import configs  # noqa: E402
-from c1.cnn.run import DEFAULT_HW, PERSON, SEED_SETS  # noqa: E402
-from c1.cnn.select import paired, select, summarize_configs  # noqa: E402
+from c1.cnn.run import DEFAULT_HW, LOCAL_RESULTS_DIR, PERSON, RESULTS_DIR, SEED_SETS  # noqa: E402
+from c1.cnn.select import (DEFAULT_RESULTS, load_results, paired, select,  # noqa: E402
+                           summarize_configs)
+
+DEFAULT_CURVES = [f"{RESULTS_DIR}/{PERSON}_curves.csv", f"{LOCAL_RESULTS_DIR}/{PERSON}_curves.csv"]
 from common import plots  # noqa: E402
 
 COLOR = plots.METHOD_COLORS["c1_cnn"]
@@ -133,19 +139,20 @@ def fig_acc_vs_time(summary, outdir):
 def main(argv=None):
     p = argparse.ArgumentParser(description="Draw the C1 CNN report figures.")
     p.add_argument("--hw", default=DEFAULT_HW)
-    p.add_argument("--results", default=f"results/{PERSON}.csv")
-    p.add_argument("--curves", default=f"results/{PERSON}_curves.csv")
+    p.add_argument("--results", nargs="+", default=DEFAULT_RESULTS)
+    p.add_argument("--curves", nargs="+", default=DEFAULT_CURVES)
     p.add_argument("--outdir", default="report/figures")
     a = p.parse_args(argv)
 
     plots.apply_style()
-    df = pd.read_csv(a.results)
+    df = load_results(a.results)
     seeds = SEED_SETS["tune"]
     summary = summarize_configs(df, seeds, a.hw)
     summary = summary[summary.index.isin([c for s in configs.STAGES.values() for c in s])]
     made = []
-    if os.path.exists(a.curves):
-        made.append(fig_dynamics(pd.read_csv(a.curves), a.hw, a.outdir))
+    curves = [c for c in a.curves if os.path.exists(c)]
+    if curves:
+        made.append(fig_dynamics(pd.concat([pd.read_csv(c) for c in curves]), a.hw, a.outdir))
     made += [fig_stages(summary, a.outdir), fig_ablation(df, seeds, a.hw, a.outdir),
              fig_acc_vs_time(summary, a.outdir)]
     for paths in made:

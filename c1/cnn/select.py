@@ -3,6 +3,11 @@
     python -m c1.cnn.select --hw colab-t4                  # all stages
     python -m c1.cnn.select --hw colab-t4 --stage s2       # one stage
     python -m c1.cnn.select --hw colab-t4 --pair s0_noaug s0_flipcrop
+    python -m c1.cnn.select --hw colab-t4 --stage s1 --compare-hw local-cpu   # T4 vs laptop
+
+--results takes one or more CSVs (default: results/ryan.csv and the git-ignored
+results/local/ryan.csv, whichever exist), so T4 and laptop rows can be compared
+without the laptop rows ever being committed.
 
 Accuracy per (config, seed) is first averaged over reps (training noise), then
 mean/std are taken over seeds (std = spread across class pairs).
@@ -15,6 +20,7 @@ CNN results were seen:
          >= best - 2 pp.
 """
 import argparse
+import os
 
 import numpy as np
 import pandas as pd
@@ -22,7 +28,18 @@ from scipy.stats import wilcoxon
 
 from c1.classical.select import select  # noqa: F401  (same rule as the rest of the team)
 from c1.cnn import configs
-from c1.cnn.run import DEFAULT_HW, PERSON, SEED_SETS, hw_of, own_rows, rep_of
+from c1.cnn.run import (DEFAULT_HW, LOCAL_RESULTS_DIR, PERSON, RESULTS_DIR, SEED_SETS, hw_of,
+                        own_rows, rep_of)
+
+DEFAULT_RESULTS = [f"{RESULTS_DIR}/{PERSON}.csv", f"{LOCAL_RESULTS_DIR}/{PERSON}.csv"]
+
+
+def load_results(paths):
+    """Concatenate the results CSVs in `paths` that exist (rows are told apart by their hw tag)."""
+    found = [p for p in paths if os.path.exists(p)]
+    if not found:
+        raise SystemExit(f"none of these results files exist: {paths}")
+    return pd.concat([pd.read_csv(p) for p in found], ignore_index=True)
 
 
 def per_seed(df, seeds, hw):
@@ -88,14 +105,15 @@ def main(argv=None):
     p.add_argument("--stage", choices=sorted(configs.STAGES))
     p.add_argument("--hw", default=DEFAULT_HW)
     p.add_argument("--seeds", choices=sorted(SEED_SETS), default="tune")
-    p.add_argument("--results", default=f"results/{PERSON}.csv")
+    p.add_argument("--results", nargs="+", default=DEFAULT_RESULTS,
+                   help="one or more results CSVs (missing ones are skipped)")
     p.add_argument("--top", type=int, default=20)
     p.add_argument("--pair", nargs=2, metavar=("A", "B"))
     p.add_argument("--compare-hw", metavar="OTHER_HW",
                    help="show each config's accuracy and rank on --hw next to OTHER_HW")
     a = p.parse_args(argv)
 
-    df = pd.read_csv(a.results)
+    df = load_results(a.results)
     seeds = SEED_SETS[a.seeds]
     if a.compare_hw:
         ids = list(configs.STAGES[a.stage]) if a.stage else None

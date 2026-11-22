@@ -64,14 +64,17 @@ python -m c1.cnn.figures --hw colab-t4                                  # figure
 1. Runs a GPU smoke test.
 2. Runs every stage written in `configs.py`.
 3. Records the training curves.
-4. Prints each stage's summary, plus a T4-vs-laptop check
-   (`python -m c1.cnn.select --stage s1 --hw colab-t4 --compare-hw local-cpu`).
+4. Prints each stage's summary.
 5. Runs `best` and `fast` on the report seeds once they're chosen.
 6. Draws the figures.
 
-Rows tagged `hw=local-cpu` are laptop runs. They're used for a first look and for checking that the
-pipeline works. If a laptop decision doesn't hold on the T4, the T4 result wins, and the flip is
-recorded in NOTES.md.
+**Where rows go.** `run.py` and `curves.py` write `hw=colab-t4` rows to `results/ryan.csv` and
+`results/ryan_curves.csv`, which are committed. Rows with any other hardware tag (laptop runs,
+`hw=local-cpu`) go to `results/local/`, which is git-ignored and never committed. Laptop runs are only
+a first look and a pipeline check. `select.py` and `figures.py` read both locations by default and
+filter on `--hw`, so the T4-vs-laptop check runs locally:
+`python -m c1.cnn.select --hw colab-t4 --stage s1 --compare-hw local-cpu`. If a laptop decision doesn't
+hold on the T4, the T4 result wins, and the flip is recorded in NOTES.md.
 
 ## Reproduce the reported numbers
 ```bash

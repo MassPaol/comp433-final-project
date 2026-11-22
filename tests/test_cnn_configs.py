@@ -97,3 +97,21 @@ def test_run_is_resumable_and_select_reads_it(tmp_path, monkeypatch):
                   "--outdir", str(tmp_path / "fig")])
     assert (tmp_path / "fig" / "c1_cnn_stages.png").exists()
     assert (tmp_path / "fig" / "c1_cnn_acc_vs_time.png").exists()
+
+
+def test_rows_route_by_hw_tag():
+    from c1.cnn.run import LOCAL_RESULTS_DIR, RESULTS_DIR, default_results_dir
+    assert default_results_dir("colab-t4") == RESULTS_DIR
+    assert default_results_dir("local-cpu") == LOCAL_RESULTS_DIR
+
+
+def test_load_results_concatenates_existing_files(tmp_path):
+    from c1.cnn.select import load_results
+    cols = "challenge,person,method,config_id,seed,class_pair,val_acc,train_time_s,infer_time_s,n_trainable_params,notes\n"
+    a, b = tmp_path / "t4.csv", tmp_path / "cpu.csv"
+    a.write_text(cols + "c1,ryan,cnn,x,0,p,0.9,1,0,10,hw=colab-t4 rep=0\n")
+    b.write_text(cols + "c1,ryan,cnn,x,0,p,0.8,5,0,10,hw=local-cpu rep=0\n")
+    df = load_results([str(a), str(b), str(tmp_path / "missing.csv")])
+    assert len(df) == 2
+    with pytest.raises(SystemExit):
+        load_results([str(tmp_path / "missing.csv")])
