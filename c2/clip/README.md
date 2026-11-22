@@ -19,12 +19,13 @@ No validation images are used in any `fit`, and no early stopping is used anywhe
 - **Tuning seeds 0–4** decide every search choice. Each stage runs on the full grid below.
 - **Reporting seeds 10–19** run once, on the frozen `FINAL` configs only.
 - **Selection rule** (shared, `common/sweep.py::select`): best is the highest mean tuning accuracy, unless a config within 0.5 pp is faster (train + inference), in which case that config is best. Fast is the fastest config within 2 pp of best. Applied per stage.
-- **Stage order:** `probe` sets `PROBE_BASE` for `wiseft`; `tip` sets `TIP_BASE` for `tipf`. Each stage was run only after the base it depends on was fixed.
+- **Stage order:** `probe` sets `PROBE_BASE` for `wiseft`; `tip` sets `TIP_BASE` for `tipf`. Each stage runs only after the base it depends on is fixed.
 
 ## Timing
 
 - Every method's `fit` calls `fresh_clip()`, so train time includes the CLIP model load on every seed. Zero-shot's train time is therefore mostly model loading, not training.
-- Inference is split into **preprocessing** (PIL resize and normalize on the CPU, open_clip's transform) and **encode** (the CLIP forward pass). The split is in `results/alvin_timing.csv`.
+- Inference is split into **preprocessing** (resize and normalize) and **encode** (the CLIP forward pass). The split is in `results/alvin_timing.csv`.
+- **The reported runs used the batched GPU resize for preprocessing.** The PIL per-image path is not timed in these results. See Known limitations.
 - Per-image inference time includes preprocessing.
 - Hardware: Colab T4 (`hw=colab-t4`).
 
@@ -32,7 +33,7 @@ No validation images are used in any `fit`, and no early stopping is used anywhe
 
 | file | what it does |
 |---|---|
-| `loadClip.py` | loads CLIP; `fresh_clip()` reloads it; prompt-ensembled class embeddings; batched image embeddings with the timing split (PIL path) |
+| `loadClip.py` | loads CLIP; `fresh_clip()` reloads it; prompt-ensembled class embeddings; image embeddings with the timing split. Current code uses the batched GPU resize (see Known limitations). |
 | `zeroshot.py` | `ZeroShotMethod` |
 | `linearProbe.py` | `LinearProbe` (initialized from text embeddings) |
 | `wiseft.py` | `WiSEFT`: probe with a mix weight, inherits `fit` |
@@ -75,7 +76,7 @@ python c2/clip/c2_report_table_local.py --best <best_id> --fast <fast_id>
 
 Stages must run in this order, because each base comes from the previous stage's selection.
 
-## Results (reporting seeds 10–19, single run)
+## Results (reporting seeds 10–19, single run, batched GPU preprocessing)
 
 Mean ± std over 10 class pairs. Best and fast coincide for every stage, so one config per method is shown.
 
@@ -92,16 +93,17 @@ Mean ± std over 10 class pairs. Best and fast coincide for every stage, so one 
 - No method differs from zero-shot after Holm correction (smallest corrected p = 0.28).
 - Standard deviations across class pairs (2.5–4.2 pp) are much larger than the method differences, so most of the variance comes from which pair is drawn.
 - Zero-shot is already at 97%, which leaves little room for few-shot gains on these pairs.
-- Preprocessing is about 0.06 ms per image for every method, roughly 2% of inference. Encode accounts for the differences in inference time.
+- On the batched path, preprocessing is about 0.06 ms per image, roughly 2% of inference. Encode accounts for the differences in inference time. This does not describe the PIL path.
 - Tip-Adapter's selected setting (alpha 2, beta 10) is at the edge of its grid, so stronger cache settings were not tested.
 
 ## Known limitations
 
+- **The batched preprocessing was used in all reported runs, although it failed the accuracy gate.** A batched GPU bicubic resize shifted validation accuracy by up to 0.71 pp on seeds 0–4, above the 0.5 pp limit set before testing. The revert to PIL was not applied before the runs. [DECISION: either report these results as batched-path results with this limitation stated, or rerun on PIL in a new results folder, with the prof's approval for a second reporting run.]
+- **PIL per-image cost is not measured in these results.** The reviewer's inference-time concern is about PIL. The 0.06 ms preprocessing figure applies to the batched GPU resize only.
 - **QuickGELU mismatch.** The model is built with `ViT-B-32` (`quick_gelu=False`), but the `openai` weights were trained with QuickGELU. open_clip warns about this. All methods share the model, so comparisons hold, but absolute accuracies are below published ViT-B/32 values.
-- **Batched preprocessing was tested and rejected.** A batched GPU bicubic resize shifted validation accuracy by up to 0.71 pp on seeds 0–4, above the 0.5 pp limit set before testing. The PIL path was kept.
 - **Selection ties.** The 0.5 pp tie window is wider than the seed-to-seed noise, so best and fast coincide for every stage and the rule mostly picks the fastest config that is not clearly worse.
 - **Small reporting run.** Ten reporting seeds, one run. The reporting results cannot rank the methods.
 
 ## Preprocessing deviation
 
-The plan asks for each checkpoint's preprocessing through `timm.data.resolve_model_data_config`. This project uses open_clip's preprocessing instead, because CLIP's text encoder comes from open_clip, which timm does not provide.
+The plan asks for each checkpoint's preprocessing through `timm.data.resolve_model_data_config`. This project uses open_clip's transform instead, because CLIP's text encoder comes from open_clip, which timm does not provide.
