@@ -12,6 +12,14 @@ RESULTS_COLUMNS = [
 ]
 
 
+def _row_notes(notes, model):
+    """`notes` plus the method's own per-run values (Method.extra_notes) as key=value."""
+    extra = model.extra_notes() if hasattr(model, "extra_notes") else {}
+    parts = [notes] + [f"{k}={v:.4g}" if isinstance(v, float) else f"{k}={v}"
+                       for k, v in extra.items()]
+    return " ".join(p for p in parts if p)
+
+
 def run(method_factory, seeds, *, challenge, person, method_name, config_id,
         notes="", results_dir="results"):
     """
@@ -66,11 +74,11 @@ def run(method_factory, seeds, *, challenge, person, method_name, config_id,
         class_pair = f"{data.CLASS_NAMES[classes[0]]}-{data.CLASS_NAMES[classes[1]]}"
 
         row = {
-            "challenge": challenge, "person": person, "method": method_name, 
+            "challenge": challenge, "person": person, "method": method_name,
             "config_id": config_id, "seed": seed, "class_pair": class_pair,
-            "val_acc": val_acc, "train_time_s": train_time_s, 
+            "val_acc": val_acc, "train_time_s": train_time_s,
             "infer_time_s": infer_time_s, "n_trainable_params": n_trainable_params,
-            "notes": notes}
+            "notes": _row_notes(notes, model)}
 
         with open(path, "a", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=RESULTS_COLUMNS)
