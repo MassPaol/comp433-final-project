@@ -212,8 +212,19 @@ STAGE_REPS = {"s0": 2, "s1": 2, "s2a": 2, "s2b": 2, "s3": 2, "s4": 2}
 # Configs whose per-epoch curves (curves.py, tuning seeds only) go in the report.
 CURVE_CONFIGS = ["s0_noaug", "s0_flipcrop", "s2a_noaug", "s2a_ref", "s2b_full"]
 
-# ---- final configs (filled in after S4) ------------------------------------
-FINAL_SOURCE = {}   # {"best": "<stage config id>", "fast": "<stage config id>"}
+
+# ---- final configs: chosen by `python -m c1.cnn.select --hw colab-t4` -------
+# S4 result (T4, 2 reps): nothing added at this stage helps. On R (paired vs s2b_no_mixup
+# 89.97): width 32 -0.23, width 64 -0.69 (0/5), flip TTA -0.13, ensembles of 3 / 5 +0.09 / +0.04
+# (2/5), 5 members + TTA +0.09 at ~130 s. On F: TTA -0.24 at 300 epochs and -0.19 at 100,
+# 3 x 100 epochs ties 1 x 100 (+0.03); 200 epochs 88.14 in 3.7 s (-0.53 vs 300, +0.41 vs 150).
+# Selection rule over all T4 tuning rows (stages S0-S4): top mean s4_r_ens3 90.06;
+#   best = s4_r_tta (89.84, 25.5 s): within 0.5 pp of the top and the fastest such config.
+#          It trains exactly like s2b_no_mixup; it is faster only because S4 ran in a faster
+#          session, so the pick between the two is a tie either way.
+#   fast = s4_f_e200 (88.14, 3.7 s): the fastest config within 2 pp of best
+#          (flip + crop + mixup + label smoothing, 200 epochs).
+FINAL_SOURCE = {"best": "s4_r_tta", "fast": "s4_f_e200"}
 FINAL = {name: None for name in FINAL_SOURCE}
 
 
