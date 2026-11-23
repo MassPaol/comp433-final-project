@@ -175,10 +175,40 @@ def _s3():
 
 STAGES["s3"] = _s3()
 
+
+# ---- S4: width, flip TTA and ensembles -> the best / fast candidates --------
+# S3 result (T4, 2 reps): no optimization change beats the S0 settings. On R (paired vs
+# s2b_no_mixup 89.97): lr 0.025 -0.54, lr 0.1 -0.43, AdamW 3e-3 -0.31 (3/5), AdamW 1e-3 -1.41,
+# one-cycle -0.41, batch 16 -0.51, full batch -1.01, 150 epochs -1.36 (0/5), 600 epochs -0.17
+# (3/5, twice the time). On F (paired vs s2b_no_ra 88.67): 100 epochs -0.96 (1/5, 2.0 s),
+# 150 -0.94 (0/5), 600 +0.17 (4/5, 12 s).
+# -> keep SGD lr 0.05, cosine, batch 32, 300 epochs. S4 changes one thing at a time on R
+# (paired vs s2b_no_mixup): width 32 / 64; flip TTA; ensembles of 3 and 5 (member 0 is the
+# single model, so each ensemble contains its reference); and 5 members + TTA as the combined
+# candidate. On F (paired vs s2b_no_ra / s3_f_e100): TTA at 300 and 100 epochs, 200 epochs, and
+# 3 x 100 epochs (same compute as one 300-epoch run: ensemble vs longer training).
+def _s4():
+    r, f = S3_R, S3_F
+    out = {}
+    for w in (32, 64):
+        out[f"s4_r_w{w}"] = cfg(r, arch={"width": w})
+    out["s4_r_tta"] = cfg(r, tta_flip=True)
+    for k in (3, 5):
+        out[f"s4_r_ens{k}"] = cfg(r, ensemble=k)
+    out["s4_r_ens5_tta"] = cfg(r, ensemble=5, tta_flip=True)
+    out["s4_f_tta"] = cfg(f, tta_flip=True)
+    out["s4_f_e100_tta"] = cfg(f, epochs=100, tta_flip=True)
+    out["s4_f_e200"] = cfg(f, epochs=200)
+    out["s4_f_e100_ens3"] = cfg(f, epochs=100, ensemble=3)
+    return out
+
+
+STAGES["s4"] = _s4()
+
 # ---- how each stage is run --------------------------------------------------
 # Reps (independent training runs per (config, seed)) for each stage; run.py uses
 # these when --reps is not given, so the notebook can run every stage the same way.
-STAGE_REPS = {"s0": 2, "s1": 2, "s2a": 2, "s2b": 2, "s3": 2}
+STAGE_REPS = {"s0": 2, "s1": 2, "s2a": 2, "s2b": 2, "s3": 2, "s4": 2}
 # Configs whose per-epoch curves (curves.py, tuning seeds only) go in the report.
 CURVE_CONFIGS = ["s0_noaug", "s0_flipcrop", "s2a_noaug", "s2a_ref", "s2b_full"]
 
