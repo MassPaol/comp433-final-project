@@ -96,5 +96,18 @@ def build_model(arch=None, num_classes=2):
     raise ValueError(f"unknown arch type {a['type']!r}; expected 'convnet' or 'resnet'")
 
 
+FINAL_ARCH = {"type": "convnet", "width": 16, "convs": 1, "norm": "bn", "dropout": 0.0}
+
+
+def build_backbone(arch=None):
+    """The network without its classifier: images (N, 3, H, W) -> features (N, C).
+
+    For methods that put their own head on the CNN (e.g. c1/ssl SimSiam's `backbone_fn`).
+    Default `arch` is the C1 CNN's selected backbone (ConvNet-3 w16 + BN, 64-d features).
+    """
+    m = build_model(arch or FINAL_ARCH)
+    return nn.Sequential(m.features, nn.AdaptiveAvgPool2d(1), nn.Flatten())
+
+
 def count_params(model):
     return sum(p.numel() for p in model.parameters() if p.requires_grad)

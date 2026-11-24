@@ -105,3 +105,12 @@ def test_callback_sees_every_epoch_of_every_member():
     CNNMethod(arch=SMALL, epochs=3, batch_size=20, ensemble=2, device="cpu").fit(
         X, y, callback=lambda m, e, model: seen.append((m, e)))
     assert seen == [(m, e) for m in range(2) for e in range(3)]
+
+
+def test_build_backbone_is_the_final_arch_without_its_head():
+    from c1.cnn import configs
+    from c1.cnn.models import FINAL_ARCH, build_backbone
+    assert FINAL_ARCH == configs.get("best")["arch"] == configs.get("fast")["arch"]
+    for arch in (None, {"type": "resnet", "width": 16, "n": 1}):
+        f = build_backbone(arch)(torch.zeros(4, 3, 32, 32))
+        assert f.shape == (4, 64)
