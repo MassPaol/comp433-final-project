@@ -81,7 +81,14 @@ python -m c1.cnn.run --config best fast --seeds report --hw colab-t4
 ```
 
 ## Configs
+Chosen by the team rule (`python -m c1.cnn.select --hw colab-t4`) over every tuning config, then
+run once on report seeds 10–19 on a Colab T4. Accuracy is mean ± std over the 10 class pairs; times
+are per problem instance.
+
 | config_id | description | accuracy (report seeds) | train time | inference time |
 |---|---|---|---|---|
-| best | TBD after S4 | | | |
-| fast | TBD after S4 | | | |
+| best (`s4_r_tta`) | ConvNet-3 w16 + BN (24k params); flip + crop + RandAugment (N=2, M=9) + label smoothing 0.1; SGD + Nesterov lr 0.05, wd 5e-4, cosine with 5 warmup epochs, batch 32, 300 epochs; flip TTA | 86.0 ± 10.5% | 26.0 s | 0.02 s |
+| fast (`s4_f_e200`) | same network and optimizer; flip + crop + mixup (α=1) + label smoothing 0.1; 200 epochs | 84.4 ± 9.4% | 3.7 s | 0.01 s |
+
+Paired on the report seeds: best − fast +1.6 pp (best wins 9/10); best − classical best +0.9 pp
+(7/10); fast − classical fast +0.6 pp (5/10).
