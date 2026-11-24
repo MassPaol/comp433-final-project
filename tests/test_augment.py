@@ -129,3 +129,59 @@ def test_augmenter_eval_is_plain_normalization():
     x = batch(2)
     assert torch.allclose(aug.eval(x), A.to_float(x, (0.4,) * 3, (0.2,) * 3))
     assert np.isclose(aug.eval(torch.full((1, 3, 2, 2), 102, dtype=torch.uint8)).mean().item(), 0.0, atol=1e-6)
+
+
+# ---- already-normalized float input (methods that normalize once, timm preprocessing) ----
+MEAN, STD = (0.4914, 0.4822, 0.4465), (0.247, 0.243, 0.261)
+
+
+def test_to_uint8_inverts_to_float():
+    x = batch(4)
+    assert torch.equal(A.to_uint8(A.to_float(x, MEAN, STD), MEAN, STD), x)
+
+
+def test_float_input_gives_the_same_result_as_uint8_input():
+    cfg = {"crop": 4, "flip": True, "cutout": 8, "mixup": 1.0, "cutmix": 1.0}
+    x, y = batch(8), torch.tensor([0, 1] * 4)
+    a1, b1 = A.Augmenter(cfg, MEAN, STD, seed=3)(x, y)
+    a2, b2 = A.Augmenter(cfg, MEAN, STD, seed=3)(A.to_float(x, MEAN, STD), y)
+    assert torch.allclose(a1, a2, atol=1e-6) and torch.equal(b1, b2)
+
+
+def test_float_input_with_randaugment_is_rejected():
+    aug = A.Augmenter({"randaugment": {"n": 2, "m": 9}}, MEAN, STD)
+    with pytest.raises(ValueError, match="to_uint8"):
+        aug(A.to_float(batch(2), MEAN, STD), torch.tensor([0, 1]))
+
+
+def test_integer_non_uint8_input_is_rejected():
+    with pytest.raises(TypeError):
+        A.Augmenter({"flip": True})(batch(2).long(), torch.tensor([0, 1]))
+
+
+def test_full_pipeline_at_224_on_normalized_floats():
+    """The fine-tuning case: timm-preprocessed 224 px images, mean = std = 0.5."""
+    m, s = (0.5,) * 3, (0.5,) * 3
+    x = A.to_float(batch(4, 224, 224), m, s)
+    y = torch.tensor([0, 1, 1, 0])
+    cfg = {"crop": 28, "flip": True, "cutout": 56, "mixup": 0.2, "cutmix": 1.0}
+    out, ys = A.Augmenter(cfg, m, s, seed=0)(x, y)
+    assert out.shape == (4, 3, 224, 224) and out.dtype == torch.float32
+    assert torch.allclose(ys.sum(1), torch.ones(4))
+
+
+def test_randaugment_at_224_via_to_uint8():
+    m, s = (0.5,) * 3, (0.5,) * 3
+    x = A.to_float(batch(2, 224, 224), m, s)
+    torch.manual_seed(0)
+    out, _ = A.Augmenter({"randaugment": {"n": 2, "m": 9}, "flip": True}, m, s)(
+        A.to_uint8(x, m, s), torch.tensor([0, 1]))
+    assert out.shape == (2, 3, 224, 224) and out.dtype == torch.float32
+
+
+def test_soft_targets_work_with_cross_entropy_and_label_smoothing():
+    logits = torch.randn(8, 2, requires_grad=True)
+    _, ys = A.Augmenter({"mixup": 1.0}, seed=0)(batch(8), torch.tensor([0, 1] * 4))
+    loss = torch.nn.functional.cross_entropy(logits, ys, label_smoothing=0.1)
+    loss.backward()
+    assert torch.isfinite(loss) and logits.grad is not None
