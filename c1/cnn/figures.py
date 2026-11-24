@@ -26,7 +26,8 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from c1.cnn import configs  # noqa: E402
-from c1.cnn.run import DEFAULT_HW, LOCAL_RESULTS_DIR, PERSON, RESULTS_DIR, SEED_SETS  # noqa: E402
+from c1.cnn.run import (DEFAULT_HW, LOCAL_RESULTS_DIR, PERSON, RESULTS_DIR,  # noqa: E402
+                        SEED_SETS, own_rows)
 from c1.cnn.select import (DEFAULT_RESULTS, load_results, paired, select,  # noqa: E402
                            summarize_configs)
 
@@ -164,6 +165,7 @@ def fig_report_pairs(df, hw, outdir, reference=REFERENCE):
     seeds = SEED_SETS.get("report")
     if not seeds:
         return None
+    df = own_rows(df)  # results/ryan.csv will also hold the C2 method's best / fast
     d = df[df["seed"].isin(seeds) & df["config_id"].isin(["best", "fast"])
            & df["notes"].str.contains(f"hw={hw}", regex=False)]
     wide = d.pivot_table(index=["seed", "class_pair"], columns="config_id", values="val_acc")

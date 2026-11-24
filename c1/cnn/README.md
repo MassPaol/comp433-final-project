@@ -77,8 +77,12 @@ hold on the T4, the T4 result wins.
 
 ## Reproduce the reported numbers
 ```bash
-python -m c1.cnn.run --config best fast --seeds report --hw colab-t4
+python -m c1.cnn.run --config best fast --seeds report --hw colab-t4 --results-dir <empty folder>
+python -m c1.cnn.select --hw colab-t4 --seeds report --results <empty folder>/ryan.csv --pair best fast
 ```
+Runs already in the results file are skipped, so point `--results-dir` at an empty folder to re-run
+them (about 5 minutes on a T4). Accuracy should match to within run-to-run noise (~1 pp per pair):
+GPU training is not bit-reproducible.
 
 ## Configs
 Chosen by the team rule (`python -m c1.cnn.select --hw colab-t4`) over every tuning config, then
