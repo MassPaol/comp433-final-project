@@ -83,10 +83,10 @@ STAGES["ss6"] = {
 # FINAL: PROVISIONAL until `python -m c1.ssl.select --hw colab-t4` has run over ALL stages.
 # Copy its four picks here (the notebook refuses to continue if they disagree).
 FINAL_SOURCE = {
-    "kmeans_best": "k2_eps0.1",
-    "kmeans_fast": "k1_k100_p6",
-    "simsiam_best": "ss6_joint_ra",
-    "simsiam_fast": "ss6_fast_svm",
+    "kmeans_best": "k2_wzca1",
+    "kmeans_fast": "k2_wzca1",
+    "simsiam_best": "ss6_ft_ra",
+    "simsiam_fast": "ss5_ft150",
 }
 
 
