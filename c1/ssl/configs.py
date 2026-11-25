@@ -34,7 +34,7 @@ STAGES["k2"] = {
 # Method defaults (method_simsiam.py): 200 epochs, ConvNet-3 w16 (64-d features), proj 64,
 # batch 32 (4 balanced batches of 25), SGD lr 0.05, RRC min_scale 0.3, pad-crop 4 + flip,
 # no RandAugment, no labels during pretraining, frozen features + linear SVM.
-SS_BASE = {}   # EDIT after SS1: {"epochs": <winner>}; keep other keys at their defaults
+SS_BASE = {"epochs": 100}   # EDIT after SS1: {"epochs": <winner>}; keep other keys at their defaults
 
 # SS1: pretraining length (epochs=0 is the random-init backbone baseline)
 STAGES["ss1"] = {f"ss1_e{e}": {**SS_BASE, "epochs": e} for e in [0, 50, 100, 200, 400]}
