@@ -64,12 +64,28 @@ python -m c1.ssl.figures --hw colab-t4
 Re-running a command skips (config, seed) pairs that already have a row for that `hw` tag. All reported
 numbers come from a Colab T4 (`notebooks/alvin/c1_ssl.ipynb` runs everything above).
 
-## Configs
-Fill in after the report-seed run (seeds 10–19).
+## Results
+Chosen by the shared rule over the tuning seeds (`python -m c1.ssl.select --hw colab-t4`), then run once on
+report seeds 10–19 on a Colab T4. Accuracy is mean ± std over the 10 class pairs; times are per problem instance.
 
 | config_id | description | val acc (%) | train time | inference time (700 img) |
 |---|---|---|---|---|
-| kmeans_best | | | | |
-| kmeans_fast | | | | |
-| simsiam_best | | | | |
-| simsiam_fast | | | | |
+| kmeans_best (`k2_wzca1`) | Coates pipeline: K = 10, patch 4, stride 1, 20,000 random patches, contrast ε 0.1, ZCA ε 1.0, triangle encoding, quadrant sum pooling, linear SVM (C by 5-fold CV from 0.01–10) | 75.97 ± 10.32 | 1.9 s | 0.63 s |
+| kmeans_fast (`k2_wzca1`) | same config: no faster k-means config is within 2 pp of best | 75.97 ± 10.32 | 1.9 s | 0.64 s |
+| simsiam_best (`ss6_ft_ra`) | ConvNet-3 w16 + BN (Ryan's backbone). SimSiam pretraining 100 epochs (projector 64 / hidden 256, predictor hidden 32, batch 32, SGD lr 0.05, wd 5e-4, momentum 0.9, 5 warmup epochs + cosine; views: RandAugment N=2 M=9, pad-crop 4, flip, random resized crop min scale 0.3), then supervised fine-tuning of backbone + linear head for 150 epochs (SGD Nesterov, lr 0.01) | 83.56 ± 9.99 | 33.7 s | 0.016 s |
+| simsiam_fast (`ss5_ft150`) | same, without RandAugment | 81.40 ± 9.43 | 7.0 s | 0.014 s |
+
+Paired on the report seeds: simsiam_best − simsiam_fast +2.16 pp (best wins 8/10, p = 0.014);
+simsiam_best − kmeans_best +7.59 pp (10/10, p = 0.002).
+
+## What the sweep showed
+- **k-means:** small dictionaries and small patches win (K = 10–25, patch 4). Stronger ZCA regularization
+  (ε 0.1–1.0 instead of 1e-3) gives about +1 pp; contrast ε does not matter.
+- **SimSiam with a frozen backbone does not beat random init** (81.9 % for a random backbone + SVM vs
+  at most 80.7 % for any pretrained setting). Pretraining length, augmentation strength, projector size
+  and optimizer settings moved the result by about ±1 pp.
+- **Using the 100 labels is what helps:** joint SimSiam + cross-entropy gives about +5.6 pp, fine-tuning
+  gives +7.8 pp, and RandAugment views add a further +0.8 pp (at 5× the time). The control with a
+  fine-tune from random init was not run, so the share due to SimSiam pretraining is not isolated.
+- Report-seed accuracies are 3.7–5.1 pp below the tuning-seed ones: configs were selected on the tuning seeds.
+  Details, the per-stage tables and the caveats are in [NOTES.md](NOTES.md).

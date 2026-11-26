@@ -104,3 +104,21 @@ def get(config_id):
         if cid in stage:
             return method_of(cid), dict(stage[cid])
     raise KeyError(config_id)
+
+BEST = {
+    "method": "simsiam",
+    "config_id": "ss6_ft_ra",
+    "params": {
+        "epochs": 100, "width": 16, "convs": 1,
+        "proj_dim": 64, "proj_hidden": 256, "pred_hidden": 32,
+        "batch_size": 32, "lr": 0.05, "weight_decay": 0.0005, "momentum": 0.9, "warmup_epochs": 5,
+        "min_scale": 0.3, "ra_n": 2, "ra_m": 9, "crop": 4, "flip": True, "cutout": 0,
+        "sup_weight": 0.0, "ft_epochs": 150, "ft_lr": 0.01,
+        "C_grid": (0.01, 0.1, 1.0, 10.0), "svm_max_iter": 5000, "seed": 0,
+    },
+}
+FAST = {
+    "method": "simsiam",
+    "config_id": "ss5_ft150",
+    "params": {**BEST["params"], "ra_n": 0},
+}

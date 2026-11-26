@@ -24,3 +24,14 @@ FINAL = {
     "tipf_best": "c2_tipf_lr0.0001_s100",
     "tipf_fast": "c2_tipf_lr0.0001_s100",
 }
+
+BEST = {
+    "method": "linear_probe",
+    "config_id": "c2_probe_lr0.001_s100",
+    "params": {"lr": 0.001, "steps": 100, "mix": 1.0, "seed": 0},
+}
+FAST = {
+    "method": "zeroshot",                # ZeroShotMethod
+    "config_id": "c2_zeroshot",
+    "params": {"seed": 0, "batch_size": 256},
+}
