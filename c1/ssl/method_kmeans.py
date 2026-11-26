@@ -13,6 +13,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import LinearSVC
 
 from common.method import Method
+from common.timing import Timer
 
 
 class KMeansMethod(Method):
@@ -83,24 +84,31 @@ class KMeansMethod(Method):
         return patches.reshape(len(X) * self.patches_per_image, -1)
 
     def encode(self, X):
-        feats = []
-        for i in range(0, len(X), self.batch_size):
-            xb = X[i:i + self.batch_size]
-            p = self.normalization(self.extract_patches(xb), self.epsilon)
-            p = self.whitening(torch.from_numpy(p), self.whitening_epsilon, fit=False)
-            v = self.triangle_encoding(p).reshape(len(xb), self.grid_size, self.grid_size,
-                                                  self.n_clusters)
-            feats.append(self.pooling(v))
-        return np.concatenate(feats)
+        """Patches -> whitening -> triangle encoding -> pooling. Its time is logged as extract_s."""
+        with Timer() as t:
+            feats = []
+            for i in range(0, len(X), self.batch_size):
+                xb = X[i:i + self.batch_size]
+                p = self.normalization(self.extract_patches(xb), self.epsilon)
+                p = self.whitening(torch.from_numpy(p), self.whitening_epsilon, fit=False)
+                v = self.triangle_encoding(p).reshape(len(xb), self.grid_size, self.grid_size,
+                                                      self.n_clusters)
+                feats.append(self.pooling(v))
+            out = np.concatenate(feats)
+        self.extract_s_ += t.seconds
+        return out
 
     def fit(self, X, y):
         y = np.asarray(y)
         self.rng = np.random.default_rng(self.seed)
-        patches = self.normalization(self.random_patches(X), self.epsilon)
-        patches = self.whitening(torch.from_numpy(patches), self.whitening_epsilon, fit=True)
-        km = KMeans(n_clusters=self.n_clusters, init="k-means++", n_init=self.n_init,
-                    max_iter=self.kmeans_max_iter, random_state=self.seed).fit(patches.numpy())
-        self.centroids = torch.tensor(km.cluster_centers_, dtype=torch.float32)
+        self.extract_s_ = 0.0
+        with Timer() as t:   # dictionary learning: random patches -> whitening -> k-means
+            patches = self.normalization(self.random_patches(X), self.epsilon)
+            patches = self.whitening(torch.from_numpy(patches), self.whitening_epsilon, fit=True)
+            km = KMeans(n_clusters=self.n_clusters, init="k-means++", n_init=self.n_init,
+                        max_iter=self.kmeans_max_iter, random_state=self.seed).fit(patches.numpy())
+            self.centroids = torch.tensor(km.cluster_centers_, dtype=torch.float32)
+        self.dict_s_ = t.seconds
 
         F_tr = self.encode(X)
         self.scaler = StandardScaler().fit(F_tr)
@@ -117,3 +125,7 @@ class KMeansMethod(Method):
     def n_trainable_params(self):
         return int(self.centroids.numel() + self.classifier.coef_.size
                    + self.classifier.intercept_.size)
+
+    def extra_notes(self):
+        """Logged in the notes column: dictionary time, feature-extraction time (train + val), best C."""
+        return {"dict_s": self.dict_s_, "extract_s": self.extract_s_, "best_C": self.best_C}

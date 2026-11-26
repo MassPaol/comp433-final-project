@@ -154,3 +154,343 @@ c2,alvin,tip_adapter_f_clip,c2_tipf_lr0.0001_s100,16,frog-bird,0.96,2.5846111589
 c2,alvin,tip_adapter_f_clip,c2_tipf_lr0.0001_s100,17,horse-bird,0.9771428571428571,2.5404543590002504,2.2056229890004033,51200,hw=colab-t4
 c2,alvin,tip_adapter_f_clip,c2_tipf_lr0.0001_s100,18,horse-truck,0.9942857142857143,3.363439490000019,2.198864014000719,51200,hw=colab-t4
 c2,alvin,tip_adapter_f_clip,c2_tipf_lr0.0001_s100,19,automobile-horse,1.0,2.5787951989996145,2.2217960500001936,51200,hw=colab-t4
+c1,alvin,kmeans,k1_k5_p4,0,bird-ship,0.7942857142857143,1.5069672289999971,0.49024104300008275,261,hw=colab-t4 dict_s=1.394 extract_s=0.553 best_C=0.01
+c1,alvin,kmeans,k1_k5_p4,1,bird-truck,0.7442857142857143,1.489850643000068,0.48256129200001396,261,hw=colab-t4 dict_s=1.365 extract_s=0.5511 best_C=1
+c1,alvin,kmeans,k1_k5_p4,2,deer-automobile,0.7842857142857143,1.6162856939999983,0.6598371349999752,261,hw=colab-t4 dict_s=1.448 extract_s=0.7467 best_C=0.01
+c1,alvin,kmeans,k1_k5_p4,3,dog-deer,0.6557142857142857,2.0179806240000744,0.7625699789999771,261,hw=colab-t4 dict_s=1.85 extract_s=0.8434 best_C=0.1
+c1,alvin,kmeans,k1_k5_p4,4,cat-ship,0.8785714285714286,1.9301572379999925,0.546399383999983,261,hw=colab-t4 dict_s=1.807 extract_s=0.6184 best_C=0.01
+c1,alvin,kmeans,k1_k5_p6,0,bird-ship,0.8071428571428572,2.9164691500000117,1.404162197000005,561,hw=colab-t4 dict_s=2.713 extract_s=1.554 best_C=0.01
+c1,alvin,kmeans,k1_k5_p6,1,bird-truck,0.7385714285714285,2.8003202840000085,1.402397264000001,561,hw=colab-t4 dict_s=2.6 extract_s=1.548 best_C=0.01
+c1,alvin,kmeans,k1_k5_p6,2,deer-automobile,0.7728571428571429,3.8767128880000428,1.9356375859999844,561,hw=colab-t4 dict_s=3.588 extract_s=2.147 best_C=0.01
+c1,alvin,kmeans,k1_k5_p6,3,dog-deer,0.7057142857142857,2.7833203440000034,1.4038210690000597,561,hw=colab-t4 dict_s=2.572 extract_s=1.559 best_C=0.01
+c1,alvin,kmeans,k1_k5_p6,4,cat-ship,0.8557142857142858,2.672041677999914,1.3960073770000463,561,hw=colab-t4 dict_s=2.467 extract_s=1.546 best_C=0.01
+c1,alvin,kmeans,k1_k5_p8,0,bird-ship,0.8057142857142857,7.227902515999972,2.2034728319999886,981,hw=colab-t4 dict_s=6.777 extract_s=2.567 best_C=0.01
+c1,alvin,kmeans,k1_k5_p8,1,bird-truck,0.6528571428571428,5.065144282999995,2.233040341999981,981,hw=colab-t4 dict_s=4.745 extract_s=2.491 best_C=1
+c1,alvin,kmeans,k1_k5_p8,2,deer-automobile,0.7814285714285715,7.620280643000001,2.2373250729999654,981,hw=colab-t4 dict_s=7.318 extract_s=2.48 best_C=0.01
+c1,alvin,kmeans,k1_k5_p8,3,dog-deer,0.6828571428571428,4.838145725999993,2.4171519120000085,981,hw=colab-t4 dict_s=4.538 extract_s=2.658 best_C=0.01
+c1,alvin,kmeans,k1_k5_p8,4,cat-ship,0.8514285714285714,7.409669382000061,2.219440378999934,981,hw=colab-t4 dict_s=7.099 extract_s=2.47 best_C=0.01
+c1,alvin,kmeans,k1_k10_p4,0,bird-ship,0.8228571428571428,2.070087533999981,0.5570895749999636,521,hw=colab-t4 dict_s=1.927 extract_s=0.6244 best_C=0.01
+c1,alvin,kmeans,k1_k10_p4,1,bird-truck,0.76,1.8765671129999646,0.5540126919999011,521,hw=colab-t4 dict_s=1.737 extract_s=0.6263 best_C=0.01
+c1,alvin,kmeans,k1_k10_p4,2,deer-automobile,0.82,2.854009409000014,0.784028287999945,521,hw=colab-t4 dict_s=2.65 extract_s=0.8888 best_C=0.01
+c1,alvin,kmeans,k1_k10_p4,3,dog-deer,0.7057142857142857,2.637922849000006,0.5723925270000336,521,hw=colab-t4 dict_s=2.497 extract_s=0.6482 best_C=0.01
+c1,alvin,kmeans,k1_k10_p4,4,cat-ship,0.88,1.9809102440000288,0.5691854109999213,521,hw=colab-t4 dict_s=1.831 extract_s=0.6405 best_C=0.01
+c1,alvin,kmeans,k1_k10_p6,0,bird-ship,0.7485714285714286,3.383052154999973,1.4669683009999517,1121,hw=colab-t4 dict_s=3.165 extract_s=1.615 best_C=0.01
+c1,alvin,kmeans,k1_k10_p6,1,bird-truck,0.83,4.58740499999999,2.018816878999928,1121,hw=colab-t4 dict_s=4.287 extract_s=2.213 best_C=0.1
+c1,alvin,kmeans,k1_k10_p6,2,deer-automobile,0.83,3.589620130999947,1.4650961809999217,1121,hw=colab-t4 dict_s=3.371 extract_s=1.615 best_C=0.01
+c1,alvin,kmeans,k1_k10_p6,3,dog-deer,0.7071428571428572,3.3837577629999487,1.453689230000009,1121,hw=colab-t4 dict_s=3.165 extract_s=1.6 best_C=0.01
+c1,alvin,kmeans,k1_k10_p6,4,cat-ship,0.8128571428571428,5.0983780859999115,1.693331388000047,1121,hw=colab-t4 dict_s=4.758 extract_s=1.902 best_C=1
+c1,alvin,kmeans,k1_k10_p8,0,bird-ship,0.7628571428571429,6.1746987400000535,2.301207180999995,1961,hw=colab-t4 dict_s=5.86 extract_s=2.545 best_C=0.01
+c1,alvin,kmeans,k1_k10_p8,1,bird-truck,0.7557142857142857,9.654818135000028,2.2733096680000244,1961,hw=colab-t4 dict_s=9.337 extract_s=2.519 best_C=0.01
+c1,alvin,kmeans,k1_k10_p8,2,deer-automobile,0.7942857142857143,7.723004491999973,2.894559572999924,1961,hw=colab-t4 dict_s=7.292 extract_s=3.238 best_C=0.01
+c1,alvin,kmeans,k1_k10_p8,3,dog-deer,0.7128571428571429,6.468284140000037,2.304862613999944,1961,hw=colab-t4 dict_s=6.156 extract_s=2.547 best_C=0.01
+c1,alvin,kmeans,k1_k10_p8,4,cat-ship,0.8214285714285714,9.639956162999965,2.2715596210000513,1961,hw=colab-t4 dict_s=9.318 extract_s=2.518 best_C=0.01
+c1,alvin,kmeans,k1_k15_p4,0,bird-ship,0.82,2.6347264710000218,0.5284622550000222,781,hw=colab-t4 dict_s=2.468 extract_s=0.5991 best_C=0.01
+c1,alvin,kmeans,k1_k15_p4,1,bird-truck,0.7985714285714286,3.5490996500000165,0.7292996109999876,781,hw=colab-t4 dict_s=3.271 extract_s=0.8391 best_C=0.01
+c1,alvin,kmeans,k1_k15_p4,2,deer-automobile,0.8357142857142857,3.268651401999932,0.5291939440000988,781,hw=colab-t4 dict_s=3.092 extract_s=0.6054 best_C=0.01
+c1,alvin,kmeans,k1_k15_p4,3,dog-deer,0.6485714285714286,2.6273732629999813,0.5230174360000319,781,hw=colab-t4 dict_s=2.461 extract_s=0.5978 best_C=0.1
+c1,alvin,kmeans,k1_k15_p4,4,cat-ship,0.8585714285714285,2.5527170949999345,0.5242955439999832,781,hw=colab-t4 dict_s=2.392 extract_s=0.6036 best_C=0.01
+c1,alvin,kmeans,k1_k15_p6,0,bird-ship,0.8314285714285714,6.330170751999958,1.852490935999981,1681,hw=colab-t4 dict_s=5.993 extract_s=2.048 best_C=0.01
+c1,alvin,kmeans,k1_k15_p6,1,bird-truck,0.7342857142857143,4.9408355809999875,1.4798832290000519,1681,hw=colab-t4 dict_s=4.666 extract_s=1.626 best_C=0.1
+c1,alvin,kmeans,k1_k15_p6,2,deer-automobile,0.84,5.70722850300001,2.0505259190000515,1681,hw=colab-t4 dict_s=5.367 extract_s=2.245 best_C=0.01
+c1,alvin,kmeans,k1_k15_p6,3,dog-deer,0.6985714285714286,4.9065502230000675,1.4503199170000016,1681,hw=colab-t4 dict_s=4.666 extract_s=1.608 best_C=0.01
+c1,alvin,kmeans,k1_k15_p6,4,cat-ship,0.8,5.198683540999923,2.022180482000067,1681,hw=colab-t4 dict_s=4.877 extract_s=2.226 best_C=0.01
+c1,alvin,kmeans,k1_k15_p8,0,bird-ship,0.7285714285714285,9.698951402000148,2.2509220370000094,2941,hw=colab-t4 dict_s=9.325 extract_s=2.503 best_C=1
+c1,alvin,kmeans,k1_k15_p8,1,bird-truck,0.7228571428571429,11.331195540999943,2.2447672159999,2941,hw=colab-t4 dict_s=10.94 extract_s=2.495 best_C=0.01
+c1,alvin,kmeans,k1_k15_p8,2,deer-automobile,0.7657142857142857,11.449972834999926,2.280025675999923,2941,hw=colab-t4 dict_s=11.09 extract_s=2.526 best_C=0.1
+c1,alvin,kmeans,k1_k15_p8,3,dog-deer,0.6985714285714286,11.998996887000203,2.2894167219999417,2941,hw=colab-t4 dict_s=11.65 extract_s=2.556 best_C=0.01
+c1,alvin,kmeans,k1_k15_p8,4,cat-ship,0.8157142857142857,11.131775344000062,2.4594963980000557,2941,hw=colab-t4 dict_s=10.69 extract_s=2.793 best_C=0.1
+c1,alvin,kmeans,k1_k25_p4,0,bird-ship,0.7814285714285715,3.1223933070000385,0.5473500609998609,1301,hw=colab-t4 dict_s=2.943 extract_s=0.6288 best_C=0.1
+c1,alvin,kmeans,k1_k25_p4,1,bird-truck,0.8114285714285714,3.3171700870000222,0.5749765400000797,1301,hw=colab-t4 dict_s=3.153 extract_s=0.6519 best_C=0.1
+c1,alvin,kmeans,k1_k25_p4,2,deer-automobile,0.8714285714285714,4.818138908000037,0.7772284010000021,1301,hw=colab-t4 dict_s=4.603 extract_s=0.8797 best_C=0.01
+c1,alvin,kmeans,k1_k25_p4,3,dog-deer,0.7185714285714285,3.5627105420001044,0.5697804080000424,1301,hw=colab-t4 dict_s=3.416 extract_s=0.6444 best_C=0.1
+c1,alvin,kmeans,k1_k25_p4,4,cat-ship,0.8242857142857143,3.185690465999869,0.5530502330000218,1301,hw=colab-t4 dict_s=3.027 extract_s=0.6299 best_C=0.1
+c1,alvin,kmeans,k1_k25_p6,0,bird-ship,0.8142857142857143,10.415535329000022,1.48926333899999,2801,hw=colab-t4 dict_s=10.19 extract_s=1.64 best_C=0.01
+c1,alvin,kmeans,k1_k25_p6,1,bird-truck,0.6771428571428572,7.000391118000152,2.0458268160000443,2801,hw=colab-t4 dict_s=6.396 extract_s=2.261 best_C=0.01
+c1,alvin,kmeans,k1_k25_p6,2,deer-automobile,0.8657142857142858,8.339980651999895,1.4967869019999398,2801,hw=colab-t4 dict_s=8.071 extract_s=1.669 best_C=0.01
+c1,alvin,kmeans,k1_k25_p6,3,dog-deer,0.6942857142857143,10.301176727999973,1.490547332999995,2801,hw=colab-t4 dict_s=9.96 extract_s=1.654 best_C=0.01
+c1,alvin,kmeans,k1_k25_p6,4,cat-ship,0.7985714285714286,7.790403565000133,2.067487895999875,2801,hw=colab-t4 dict_s=7.254 extract_s=2.267 best_C=0.01
+c1,alvin,kmeans,k1_k25_p8,0,bird-ship,0.7642857142857142,10.92985753400012,2.9365267430000586,4901,hw=colab-t4 dict_s=10.32 extract_s=3.185 best_C=0.01
+c1,alvin,kmeans,k1_k25_p8,1,bird-truck,0.7128571428571429,12.270717571999967,2.7873191050000514,4901,hw=colab-t4 dict_s=11.52 extract_s=3.061 best_C=0.1
+c1,alvin,kmeans,k1_k25_p8,2,deer-automobile,0.7757142857142857,13.371399519000079,3.1417807269999685,4901,hw=colab-t4 dict_s=12.54 extract_s=3.393 best_C=1
+c1,alvin,kmeans,k1_k25_p8,3,dog-deer,0.7028571428571428,12.360044944000038,3.2467048290000093,4901,hw=colab-t4 dict_s=11.7 extract_s=3.492 best_C=0.01
+c1,alvin,kmeans,k1_k25_p8,4,cat-ship,0.7928571428571428,11.316541575999963,3.0651641880001534,4901,hw=colab-t4 dict_s=10.83 extract_s=3.323 best_C=0.01
+c1,alvin,kmeans,k1_k50_p4,0,bird-ship,0.7785714285714286,5.692944470999919,0.8334760729999289,2601,hw=colab-t4 dict_s=5.449 extract_s=0.9322 best_C=0.1
+c1,alvin,kmeans,k1_k50_p4,1,bird-truck,0.7671428571428571,4.873789208000062,0.8199935019999884,2601,hw=colab-t4 dict_s=4.649 extract_s=0.917 best_C=0.01
+c1,alvin,kmeans,k1_k50_p4,2,deer-automobile,0.8285714285714286,7.298080397000149,0.8004564640000353,2601,hw=colab-t4 dict_s=7.093 extract_s=0.8971 best_C=10
+c1,alvin,kmeans,k1_k50_p4,3,dog-deer,0.6771428571428572,5.910957647000032,0.8234068870001465,2601,hw=colab-t4 dict_s=5.683 extract_s=0.9215 best_C=0.01
+c1,alvin,kmeans,k1_k50_p4,4,cat-ship,0.8085714285714286,6.790445628000043,0.9349504369999977,2601,hw=colab-t4 dict_s=6.516 extract_s=1.07 best_C=1
+c1,alvin,kmeans,k1_k50_p6,0,bird-ship,0.7757142857142857,12.001094348999914,2.165495480000118,5601,hw=colab-t4 dict_s=11.48 extract_s=2.396 best_C=0.1
+c1,alvin,kmeans,k1_k50_p6,1,bird-truck,0.6557142857142857,10.55783000700012,2.117914911000071,5601,hw=colab-t4 dict_s=10.16 extract_s=2.273 best_C=0.01
+c1,alvin,kmeans,k1_k50_p6,2,deer-automobile,0.7971428571428572,12.623848919000011,2.0314611640001203,5601,hw=colab-t4 dict_s=12.02 extract_s=2.192 best_C=0.01
+c1,alvin,kmeans,k1_k50_p6,3,dog-deer,0.6885714285714286,12.878013238999984,1.9399124690000917,5601,hw=colab-t4 dict_s=12.49 extract_s=2.095 best_C=0.01
+c1,alvin,kmeans,k1_k50_p6,4,cat-ship,0.7757142857142857,13.107073749999927,1.871303209999951,5601,hw=colab-t4 dict_s=12.7 extract_s=2.023 best_C=0.01
+c1,alvin,kmeans,k1_k50_p8,0,bird-ship,0.7428571428571429,21.74559163699996,2.2221935140000824,9801,hw=colab-t4 dict_s=21.07 extract_s=2.493 best_C=0.01
+c1,alvin,kmeans,k1_k50_p8,1,bird-truck,0.67,19.438313499999822,2.2555752020000455,9801,hw=colab-t4 dict_s=18.74 extract_s=2.511 best_C=0.1
+c1,alvin,kmeans,k1_k50_p8,2,deer-automobile,0.7485714285714286,23.45029822299989,2.2432013739999093,9801,hw=colab-t4 dict_s=22.13 extract_s=2.501 best_C=10
+c1,alvin,kmeans,k1_k50_p8,3,dog-deer,0.7042857142857143,19.233404386000075,2.242842673000041,9801,hw=colab-t4 dict_s=18.25 extract_s=2.516 best_C=0.01
+c1,alvin,kmeans,k1_k50_p8,4,cat-ship,0.7271428571428571,21.638937408999936,2.283343011999932,9801,hw=colab-t4 dict_s=20.81 extract_s=2.64 best_C=0.01
+c1,alvin,kmeans,k1_k100_p4,0,bird-ship,0.8128571428571428,9.362411149000081,1.6112582440000551,5201,hw=colab-t4 dict_s=8.863 extract_s=1.812 best_C=0.01
+c1,alvin,kmeans,k1_k100_p4,1,bird-truck,0.7428571428571429,9.874202678999836,1.131041865000043,5201,hw=colab-t4 dict_s=9.509 extract_s=1.269 best_C=0.01
+c1,alvin,kmeans,k1_k100_p4,2,deer-automobile,0.8328571428571429,10.506848348999938,1.1408960450000905,5201,hw=colab-t4 dict_s=10.19 extract_s=1.276 best_C=0.01
+c1,alvin,kmeans,k1_k100_p4,3,dog-deer,0.6414285714285715,12.26345047100017,1.1691399119999915,5201,hw=colab-t4 dict_s=11.9 extract_s=1.321 best_C=0.1
+c1,alvin,kmeans,k1_k100_p4,4,cat-ship,0.8085714285714286,10.132875602000013,1.6143296779998764,5201,hw=colab-t4 dict_s=9.64 extract_s=1.812 best_C=0.01
+c1,alvin,kmeans,k1_k100_p6,0,bird-ship,0.7757142857142857,22.514685580999867,2.031499518999908,11201,hw=colab-t4 dict_s=21.96 extract_s=2.22 best_C=0.01
+c1,alvin,kmeans,k1_k100_p6,1,bird-truck,0.68,24.150981597000055,2.1988719319999745,11201,hw=colab-t4 dict_s=23.47 extract_s=2.462 best_C=1
+c1,alvin,kmeans,k1_k100_p6,2,deer-automobile,0.7985714285714286,21.404684478000036,2.053516436000109,11201,hw=colab-t4 dict_s=20.6 extract_s=2.25 best_C=0.01
+c1,alvin,kmeans,k1_k100_p6,3,dog-deer,0.6857142857142857,26.455481075999842,2.0134732670001085,11201,hw=colab-t4 dict_s=25.84 extract_s=2.198 best_C=0.01
+c1,alvin,kmeans,k1_k100_p6,4,cat-ship,0.79,26.101520184000037,2.0190368999999464,11201,hw=colab-t4 dict_s=25.36 extract_s=2.309 best_C=0.01
+c1,alvin,kmeans,k1_k100_p8,0,bird-ship,0.75,35.54220697400001,2.7987298119999195,19601,hw=colab-t4 dict_s=34.25 extract_s=3.099 best_C=0.01
+c1,alvin,kmeans,k1_k100_p8,1,bird-truck,0.7185714285714285,40.0420631049999,2.805963823999946,19601,hw=colab-t4 dict_s=39.01 extract_s=3.108 best_C=0.1
+c1,alvin,kmeans,k1_k100_p8,2,deer-automobile,0.7857142857142857,36.60272527300003,3.479601295000066,19601,hw=colab-t4 dict_s=34.88 extract_s=3.775 best_C=1
+c1,alvin,kmeans,k1_k100_p8,3,dog-deer,0.6885714285714286,38.706081907,2.8780405909999445,19601,hw=colab-t4 dict_s=37.85 extract_s=3.195 best_C=1
+c1,alvin,kmeans,k1_k100_p8,4,cat-ship,0.7685714285714286,37.830774162000125,3.495114428000079,19601,hw=colab-t4 dict_s=36.65 extract_s=3.892 best_C=0.1
+c1,alvin,simsiam,ss1_e0,0,bird-ship,0.8142857142857143,0.5481978709999566,0.0341509390000283,23761,hw=colab-t4 pretrain_s=3.946e-05 collapse_std=0.03279 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e0,1,bird-truck,0.8414285714285714,0.11321372399993379,0.025818808999929388,23761,hw=colab-t4 pretrain_s=1.812e-05 collapse_std=0.02929 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e0,2,deer-automobile,0.88,0.11214000200016017,0.02452069300011317,23761,hw=colab-t4 pretrain_s=1.844e-05 collapse_std=0.03062 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e0,3,dog-deer,0.7057142857142857,0.1370827079999799,0.023004592000006596,23761,hw=colab-t4 pretrain_s=2.245e-05 collapse_std=0.0299 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e0,4,cat-ship,0.8514285714285714,0.1380032070001107,0.02439341899980718,23761,hw=colab-t4 pretrain_s=1.855e-05 collapse_std=0.03022 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e50,0,bird-ship,0.7785714285714286,3.1803310389998387,0.015806965000138007,23761,hw=colab-t4 pretrain_s=3.079 collapse_std=0.1235 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e50,1,bird-truck,0.8114285714285714,2.2426305629999206,0.014293341999973563,23761,hw=colab-t4 pretrain_s=2.158 collapse_std=0.1233 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e50,2,deer-automobile,0.8185714285714286,2.247081044999959,0.013835733000178152,23761,hw=colab-t4 pretrain_s=2.154 collapse_std=0.1229 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e50,3,dog-deer,0.65,2.2578459530000146,0.013165793000098347,23761,hw=colab-t4 pretrain_s=2.178 collapse_std=0.1229 best_C=10 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e50,4,cat-ship,0.8271428571428572,2.2354040620000433,0.013875093000024208,23761,hw=colab-t4 pretrain_s=2.162 collapse_std=0.1235 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e100,0,bird-ship,0.7871428571428571,5.3542291799999475,0.013941569000053278,23761,hw=colab-t4 pretrain_s=5.266 collapse_std=0.1243 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e100,1,bird-truck,0.7828571428571428,4.447560500999998,0.013976236999951652,23761,hw=colab-t4 pretrain_s=4.354 collapse_std=0.122 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e100,2,deer-automobile,0.8442857142857143,4.48342459100013,0.022623643999850174,23761,hw=colab-t4 pretrain_s=4.351 collapse_std=0.1218 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e100,3,dog-deer,0.7114285714285714,5.259761097999899,0.014215304000117612,23761,hw=colab-t4 pretrain_s=5.176 collapse_std=0.1234 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e100,4,cat-ship,0.8085714285714286,4.4283713699999225,0.015109284999880401,23761,hw=colab-t4 pretrain_s=4.358 collapse_std=0.1232 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e200,0,bird-ship,0.77,9.735733199999913,0.01397436800016294,23761,hw=colab-t4 pretrain_s=9.654 collapse_std=0.1226 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e200,1,bird-truck,0.77,9.040180409999948,0.021706368999957704,23761,hw=colab-t4 pretrain_s=8.935 collapse_std=0.1232 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e200,2,deer-automobile,0.8314285714285714,9.556971619000024,0.014088531999959741,23761,hw=colab-t4 pretrain_s=9.467 collapse_std=0.1211 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e200,3,dog-deer,0.6985714285714286,9.796480034999831,0.013769602000138548,23761,hw=colab-t4 pretrain_s=9.711 collapse_std=0.1238 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e200,4,cat-ship,0.8042857142857143,9.078526609999926,0.02300965300014468,23761,hw=colab-t4 pretrain_s=8.981 collapse_std=0.1196 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e400,0,bird-ship,0.7971428571428572,19.209108001999994,0.014333472000089387,23761,hw=colab-t4 pretrain_s=19.11 collapse_std=0.1177 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e400,1,bird-truck,0.7857142857142857,18.408725842999957,0.013622032000057516,23761,hw=colab-t4 pretrain_s=18.31 collapse_std=0.1202 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e400,2,deer-automobile,0.8257142857142857,18.873075941000025,0.02343476600003669,23761,hw=colab-t4 pretrain_s=18.75 collapse_std=0.1138 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e400,3,dog-deer,0.6928571428571428,18.93034191300012,0.013586998000164385,23761,hw=colab-t4 pretrain_s=18.83 collapse_std=0.1229 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss1_e400,4,cat-ship,0.81,18.356450142000085,0.014205102000005354,23761,hw=colab-t4 pretrain_s=18.28 collapse_std=0.1165 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_joint_ra,0,bird-ship,0.8771428571428571,42.10082720599985,0.016741669999646547,23761,hw=colab-t4 pretrain_s=41.99 collapse_std=0.125 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_joint_ra,1,bird-truck,0.8857142857142857,40.89811250299999,0.015136219000396522,23761,hw=colab-t4 pretrain_s=40.82 collapse_std=0.1242 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_joint_ra,2,deer-automobile,0.9114285714285715,41.102165412999966,0.01466728500008685,23761,hw=colab-t4 pretrain_s=41.03 collapse_std=0.1243 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_joint_ra,3,dog-deer,0.7314285714285714,41.20374856699982,0.01477779999959239,23761,hw=colab-t4 pretrain_s=41.13 collapse_std=0.1248 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_joint_ra,4,cat-ship,0.8971428571428571,41.16856344200005,0.014781756000047608,23761,hw=colab-t4 pretrain_s=41.1 collapse_std=0.1248 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_ft_ra,0,bird-ship,0.8814285714285715,33.416792116000124,0.013471226000092429,23826,hw=colab-t4 pretrain_s=19.76 collapse_std=0.1248 finetune_s=13.65 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_ft_ra,1,bird-truck,0.9114285714285715,34.03975660499964,0.02030804000014541,23826,hw=colab-t4 pretrain_s=20.32 collapse_std=0.1217 finetune_s=13.72 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_ft_ra,2,deer-automobile,0.9257142857142857,33.90582165200021,0.013084600000183855,23826,hw=colab-t4 pretrain_s=20.17 collapse_std=0.124 finetune_s=13.72 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_ft_ra,3,dog-deer,0.73,33.21986942100011,0.013271579999582173,23826,hw=colab-t4 pretrain_s=19.71 collapse_std=0.1236 finetune_s=13.5 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_ft_ra,4,cat-ship,0.9142857142857143,34.14298856900041,0.013269362999835721,23826,hw=colab-t4 pretrain_s=20.55 collapse_std=0.1249 finetune_s=13.58 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_svm,0,bird-ship,0.7742857142857142,1.3720252829998572,0.014454805000241322,23761,hw=colab-t4 pretrain_s=1.293 collapse_std=0.1245 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_svm,1,bird-truck,0.7985714285714286,1.1887517499999376,0.013450669999656384,23761,hw=colab-t4 pretrain_s=1.104 collapse_std=0.1222 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_svm,2,deer-automobile,0.82,1.1974153619999015,0.014289677000306256,23761,hw=colab-t4 pretrain_s=1.114 collapse_std=0.124 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_svm,3,dog-deer,0.6857142857142857,1.196859711000343,0.013844007999978203,23761,hw=colab-t4 pretrain_s=1.113 collapse_std=0.1249 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_svm,4,cat-ship,0.8028571428571428,1.1694569660003253,0.01301119000027029,23761,hw=colab-t4 pretrain_s=1.099 collapse_std=0.1232 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_joint,0,bird-ship,0.8542857142857143,5.68341214100019,0.01475450699990688,23761,hw=colab-t4 pretrain_s=5.62 collapse_std=0.1247 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_joint,1,bird-truck,0.8671428571428571,4.74197911300007,0.013994731999900978,23761,hw=colab-t4 pretrain_s=4.675 collapse_std=0.1222 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_joint,2,deer-automobile,0.9014285714285715,4.772682537000037,0.013897317000100884,23761,hw=colab-t4 pretrain_s=4.707 collapse_std=0.1243 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_joint,3,dog-deer,0.7414285714285714,6.000360360999821,0.013809885999762628,23761,hw=colab-t4 pretrain_s=5.929 collapse_std=0.1238 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss6_fast_joint,4,cat-ship,0.8685714285714285,4.829233270999794,0.014327915999729157,23761,hw=colab-t4 pretrain_s=4.763 collapse_std=0.1231 best_C=0.01 gpu=Tesla-T4
+c1,alvin,kmeans,k2_eps0.01,0,bird-ship,0.8071428571428572,1.8033396750001884,0.5661770289998458,521,hw=colab-t4 dict_s=1.677 extract_s=0.6288 best_C=0.01
+c1,alvin,kmeans,k2_eps0.01,1,bird-truck,0.7457142857142857,2.003898043999925,0.5599556800002574,521,hw=colab-t4 dict_s=1.875 extract_s=0.6252 best_C=1
+c1,alvin,kmeans,k2_eps0.01,2,deer-automobile,0.8457142857142858,2.0161381719999554,0.5385434439999699,521,hw=colab-t4 dict_s=1.89 extract_s=0.6008 best_C=0.01
+c1,alvin,kmeans,k2_eps0.01,3,dog-deer,0.7071428571428572,2.480940792000183,0.7923978039998474,521,hw=colab-t4 dict_s=2.288 extract_s=0.879 best_C=0.01
+c1,alvin,kmeans,k2_eps0.01,4,cat-ship,0.8771428571428571,2.72911631199986,0.7394648929998766,521,hw=colab-t4 dict_s=2.522 extract_s=0.8503 best_C=0.01
+c1,alvin,kmeans,k2_eps0.1,0,bird-ship,0.8228571428571428,2.098925216000225,0.5702929980002409,521,hw=colab-t4 dict_s=1.946 extract_s=0.644 best_C=0.01
+c1,alvin,kmeans,k2_eps0.1,1,bird-truck,0.76,1.8624291070000254,0.56133588900002,521,hw=colab-t4 dict_s=1.719 extract_s=0.6345 best_C=0.01
+c1,alvin,kmeans,k2_eps0.1,2,deer-automobile,0.82,1.9498338959997454,0.5791899420000846,521,hw=colab-t4 dict_s=1.808 extract_s=0.652 best_C=0.01
+c1,alvin,kmeans,k2_eps0.1,3,dog-deer,0.7057142857142857,1.9512597490002008,0.6995332420001432,521,hw=colab-t4 dict_s=1.81 extract_s=0.7723 best_C=0.01
+c1,alvin,kmeans,k2_eps0.1,4,cat-ship,0.88,3.0900331650000226,0.8024350919999961,521,hw=colab-t4 dict_s=2.891 extract_s=0.9111 best_C=0.01
+c1,alvin,kmeans,k2_eps1,0,bird-ship,0.8171428571428572,2.5424621100000877,0.5762804299997697,521,hw=colab-t4 dict_s=2.387 extract_s=0.6609 best_C=0.01
+c1,alvin,kmeans,k2_eps1,1,bird-truck,0.7957142857142857,1.932242646999839,0.5694729490001009,521,hw=colab-t4 dict_s=1.784 extract_s=0.6431 best_C=0.01
+c1,alvin,kmeans,k2_eps1,2,deer-automobile,0.8185714285714286,1.9029520079998292,0.5489435980002781,521,hw=colab-t4 dict_s=1.763 extract_s=0.6202 best_C=0.01
+c1,alvin,kmeans,k2_eps1,3,dog-deer,0.5557142857142857,2.011694400000124,0.5765315639996516,521,hw=colab-t4 dict_s=1.87 extract_s=0.6526 best_C=10
+c1,alvin,kmeans,k2_eps1,4,cat-ship,0.8928571428571429,2.6286031660001754,0.8193533009998646,521,hw=colab-t4 dict_s=2.426 extract_s=0.922 best_C=0.01
+c1,alvin,kmeans,k2_eps10,0,bird-ship,0.8314285714285714,3.0671261699999377,0.5520180749999781,521,hw=colab-t4 dict_s=2.93 extract_s=0.6251 best_C=0.01
+c1,alvin,kmeans,k2_eps10,1,bird-truck,0.7571428571428571,2.0150381400003425,0.5778154370000266,521,hw=colab-t4 dict_s=1.873 extract_s=0.6522 best_C=0.01
+c1,alvin,kmeans,k2_eps10,2,deer-automobile,0.8314285714285714,1.9368271170001208,0.5653674770001089,521,hw=colab-t4 dict_s=1.788 extract_s=0.6523 best_C=0.01
+c1,alvin,kmeans,k2_eps10,3,dog-deer,0.63,2.1320946060000097,0.5699573299998519,521,hw=colab-t4 dict_s=1.993 extract_s=0.641 best_C=0.1
+c1,alvin,kmeans,k2_eps10,4,cat-ship,0.9042857142857142,2.3885696889997234,0.7965029540000614,521,hw=colab-t4 dict_s=2.198 extract_s=0.9013 best_C=0.01
+c1,alvin,kmeans,k2_wzca1e-05,0,bird-ship,0.8242857142857143,2.7714550460000282,0.7931637229999069,521,hw=colab-t4 dict_s=2.569 extract_s=0.9039 best_C=0.01
+c1,alvin,kmeans,k2_wzca1e-05,1,bird-truck,0.7542857142857143,2.0100545780001084,0.5634335480003756,521,hw=colab-t4 dict_s=1.866 extract_s=0.6365 best_C=0.01
+c1,alvin,kmeans,k2_wzca1e-05,2,deer-automobile,0.8314285714285714,2.0176442080000925,0.5694343269997262,521,hw=colab-t4 dict_s=1.874 extract_s=0.6447 best_C=0.01
+c1,alvin,kmeans,k2_wzca1e-05,3,dog-deer,0.6585714285714286,1.995132840000224,0.5634051560000444,521,hw=colab-t4 dict_s=1.85 extract_s=0.6383 best_C=0.1
+c1,alvin,kmeans,k2_wzca1e-05,4,cat-ship,0.7757142857142857,1.9374927430003481,0.7075443869998708,521,hw=colab-t4 dict_s=1.801 extract_s=0.7774 best_C=1
+c1,alvin,kmeans,k2_wzca0.001,0,bird-ship,0.8228571428571428,3.2201507979998496,0.8197128829997382,521,hw=colab-t4 dict_s=3.022 extract_s=0.9224 best_C=0.01
+c1,alvin,kmeans,k2_wzca0.001,1,bird-truck,0.76,2.3060920960001567,0.5687314710003193,521,hw=colab-t4 dict_s=2.147 extract_s=0.6481 best_C=0.01
+c1,alvin,kmeans,k2_wzca0.001,2,deer-automobile,0.82,1.9442013859998042,0.556191219000084,521,hw=colab-t4 dict_s=1.797 extract_s=0.6317 best_C=0.01
+c1,alvin,kmeans,k2_wzca0.001,3,dog-deer,0.7057142857142857,1.945229344999916,0.5673896630000854,521,hw=colab-t4 dict_s=1.795 extract_s=0.6453 best_C=0.01
+c1,alvin,kmeans,k2_wzca0.001,4,cat-ship,0.88,1.9813764420000552,0.5648320479999711,521,hw=colab-t4 dict_s=1.844 extract_s=0.6393 best_C=0.01
+c1,alvin,kmeans,k2_wzca0.1,0,bird-ship,0.8242857142857143,2.6470201469996937,0.8025773399999707,521,hw=colab-t4 dict_s=2.432 extract_s=0.9116 best_C=0.01
+c1,alvin,kmeans,k2_wzca0.1,1,bird-truck,0.77,2.8370154499998534,0.6231370830000742,521,hw=colab-t4 dict_s=2.619 extract_s=0.7315 best_C=1
+c1,alvin,kmeans,k2_wzca0.1,2,deer-automobile,0.8371428571428572,1.9957348660000207,0.5646123349997652,521,hw=colab-t4 dict_s=1.84 extract_s=0.639 best_C=0.01
+c1,alvin,kmeans,k2_wzca0.1,3,dog-deer,0.7057142857142857,1.842820275000122,0.5758189550001589,521,hw=colab-t4 dict_s=1.702 extract_s=0.6478 best_C=0.01
+c1,alvin,kmeans,k2_wzca0.1,4,cat-ship,0.9128571428571428,1.791864761999932,0.5812729249996664,521,hw=colab-t4 dict_s=1.66 extract_s=0.6543 best_C=0.01
+c1,alvin,kmeans,k2_wzca1,0,bird-ship,0.81,1.6267150510002466,0.6438322899998639,521,hw=colab-t4 dict_s=1.49 extract_s=0.7143 best_C=0.01
+c1,alvin,kmeans,k2_wzca1,1,bird-truck,0.7928571428571428,2.4489415759999247,0.8042923890002385,521,hw=colab-t4 dict_s=2.252 extract_s=0.9062 best_C=0.01
+c1,alvin,kmeans,k2_wzca1,2,deer-automobile,0.8071428571428572,2.672128993000115,0.5922258809996492,521,hw=colab-t4 dict_s=2.519 extract_s=0.6731 best_C=0.01
+c1,alvin,kmeans,k2_wzca1,3,dog-deer,0.7028571428571428,1.6277448069999991,0.5994848450000063,521,hw=colab-t4 dict_s=1.478 extract_s=0.6777 best_C=0.01
+c1,alvin,kmeans,k2_wzca1,4,cat-ship,0.9128571428571428,1.7693369760004316,0.5615148940000836,521,hw=colab-t4 dict_s=1.62 extract_s=0.651 best_C=0.01
+c1,alvin,simsiam,ss2_scale0.15,0,bird-ship,0.7928571428571428,5.3865856110001005,0.02150523099999191,23761,hw=colab-t4 pretrain_s=5.258 collapse_std=0.1234 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale0.15,1,bird-truck,0.7728571428571429,4.427117230000022,0.015069421000134753,23761,hw=colab-t4 pretrain_s=4.323 collapse_std=0.123 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale0.15,2,deer-automobile,0.8228571428571428,5.327348487000108,0.02328950699984489,23761,hw=colab-t4 pretrain_s=5.211 collapse_std=0.1228 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale0.15,3,dog-deer,0.7028571428571428,4.490114937000271,0.013409092000074452,23761,hw=colab-t4 pretrain_s=4.401 collapse_std=0.124 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale0.15,4,cat-ship,0.8228571428571428,4.511881791000178,0.014032384000074671,23761,hw=colab-t4 pretrain_s=4.439 collapse_std=0.1232 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale0.6,0,bird-ship,0.8028571428571428,5.43725034299996,0.014118297000095481,23761,hw=colab-t4 pretrain_s=5.353 collapse_std=0.1244 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale0.6,1,bird-truck,0.7571428571428571,4.445625289999953,0.014246617000026163,23761,hw=colab-t4 pretrain_s=4.361 collapse_std=0.1208 best_C=10 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale0.6,2,deer-automobile,0.8328571428571429,4.479008952000186,0.014113841999915167,23761,hw=colab-t4 pretrain_s=4.397 collapse_std=0.1217 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale0.6,3,dog-deer,0.6557142857142857,5.515304629000184,0.01676105899969116,23761,hw=colab-t4 pretrain_s=5.429 collapse_std=0.1239 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale0.6,4,cat-ship,0.8028571428571428,4.467340115999832,0.014393034000022453,23761,hw=colab-t4 pretrain_s=4.391 collapse_std=0.1203 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale1,0,bird-ship,0.7985714285714286,3.8535196870002437,0.0136654989996714,23761,hw=colab-t4 pretrain_s=3.773 collapse_std=0.1245 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale1,1,bird-truck,0.8142857142857143,4.815406821000124,0.014299752000169974,23761,hw=colab-t4 pretrain_s=4.72 collapse_std=0.1236 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale1,2,deer-automobile,0.8428571428571429,3.8237847059999694,0.013719738999952824,23761,hw=colab-t4 pretrain_s=3.738 collapse_std=0.1233 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale1,3,dog-deer,0.6914285714285714,3.7908019820001755,0.013744060000135505,23761,hw=colab-t4 pretrain_s=3.706 collapse_std=0.1233 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_scale1,4,cat-ship,0.8085714285714286,4.299617074000253,0.0216963200000464,23761,hw=colab-t4 pretrain_s=4.205 collapse_std=0.1237 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra1_m9,0,bird-ship,0.78,12.807752301000164,0.025288355000157026,23761,hw=colab-t4 pretrain_s=12.7 collapse_std=0.1248 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra1_m9,1,bird-truck,0.78,12.757233380000343,0.01482348199988337,23761,hw=colab-t4 pretrain_s=12.66 collapse_std=0.1225 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra1_m9,2,deer-automobile,0.8271428571428572,12.996035858000141,0.01550654199991186,23761,hw=colab-t4 pretrain_s=12.9 collapse_std=0.1215 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra1_m9,3,dog-deer,0.7042857142857143,12.9711531439998,0.013992596000207413,23761,hw=colab-t4 pretrain_s=12.89 collapse_std=0.1243 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra1_m9,4,cat-ship,0.8442857142857143,13.167968227000074,0.014373958999840397,23761,hw=colab-t4 pretrain_s=13.09 collapse_std=0.1241 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m9,0,bird-ship,0.7928571428571428,20.011367878999863,0.023459819000436255,23761,hw=colab-t4 pretrain_s=19.9 collapse_std=0.1247 best_C=10 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m9,1,bird-truck,0.7457142857142857,19.689379905999886,0.014762699000129942,23761,hw=colab-t4 pretrain_s=19.6 collapse_std=0.1233 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m9,2,deer-automobile,0.8728571428571429,19.433683240999926,0.022863941000196064,23761,hw=colab-t4 pretrain_s=19.32 collapse_std=0.1243 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m9,3,dog-deer,0.6885714285714286,20.300082957000086,0.014822406999883242,23761,hw=colab-t4 pretrain_s=20.2 collapse_std=0.1225 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m9,4,cat-ship,0.86,19.43641389000004,0.014273047000187944,23761,hw=colab-t4 pretrain_s=19.36 collapse_std=0.1248 best_C=10 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m14,0,bird-ship,0.7942857142857143,20.153558117000102,0.014193278999755421,23761,hw=colab-t4 pretrain_s=20.07 collapse_std=0.1229 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m14,1,bird-truck,0.75,19.285582377000082,0.01458121099994969,23761,hw=colab-t4 pretrain_s=19.2 collapse_std=0.1217 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m14,2,deer-automobile,0.7971428571428572,19.681789926999954,0.03224149700008638,23761,hw=colab-t4 pretrain_s=19.55 collapse_std=0.1234 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m14,3,dog-deer,0.7028571428571428,20.03972886299971,0.013978803000100015,23761,hw=colab-t4 pretrain_s=19.94 collapse_std=0.1245 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_ra2_m14,4,cat-ship,0.8471428571428572,19.401549569000053,0.022585770999739907,23761,hw=colab-t4 pretrain_s=19.32 collapse_std=0.1236 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_cutout8,0,bird-ship,0.7885714285714286,5.904702290999921,0.014064913999845885,23761,hw=colab-t4 pretrain_s=5.822 collapse_std=0.1244 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_cutout8,1,bird-truck,0.7842857142857143,4.785647085999699,0.014660951000223577,23761,hw=colab-t4 pretrain_s=4.69 collapse_std=0.1214 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_cutout8,2,deer-automobile,0.8385714285714285,5.075197781000043,0.025669112999821664,23761,hw=colab-t4 pretrain_s=4.945 collapse_std=0.1214 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_cutout8,3,dog-deer,0.69,5.5243555980000565,0.014250172000174643,23761,hw=colab-t4 pretrain_s=5.435 collapse_std=0.1243 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_cutout8,4,cat-ship,0.8557142857142858,4.780455056000392,0.01377708200016059,23761,hw=colab-t4 pretrain_s=4.703 collapse_std=0.1243 best_C=10 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_nocrop,0,bird-ship,0.7742857142857142,4.638594652999927,0.02174474499997814,23761,hw=colab-t4 pretrain_s=4.538 collapse_std=0.1225 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_nocrop,1,bird-truck,0.7828571428571428,4.691376233000028,0.013657521000368433,23761,hw=colab-t4 pretrain_s=4.592 collapse_std=0.1225 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_nocrop,2,deer-automobile,0.8085714285714286,4.215047565999612,0.013442988999941008,23761,hw=colab-t4 pretrain_s=4.13 collapse_std=0.1226 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_nocrop,3,dog-deer,0.6928571428571428,4.4458982860001015,0.022396547999960603,23761,hw=colab-t4 pretrain_s=4.325 collapse_std=0.1243 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss2_nocrop,4,cat-ship,0.8,4.864674143000229,0.014373674000125902,23761,hw=colab-t4 pretrain_s=4.786 collapse_std=0.1236 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w32,0,bird-ship,0.8071428571428572,6.419351478000408,0.023752520000016375,93601,hw=colab-t4 pretrain_s=6.019 collapse_std=0.1246 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w32,1,bird-truck,0.8242857142857143,4.48137883399977,0.017636996999954135,93601,hw=colab-t4 pretrain_s=4.24 collapse_std=0.1236 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w32,2,deer-automobile,0.8457142857142858,4.7404698870000175,0.025740846999724454,93601,hw=colab-t4 pretrain_s=4.361 collapse_std=0.1236 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w32,3,dog-deer,0.7128571428571429,5.8806399600002806,0.017003702000238263,93601,hw=colab-t4 pretrain_s=5.084 collapse_std=0.1245 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w32,4,cat-ship,0.8357142857142857,4.4164231360000485,0.017578717000105826,93601,hw=colab-t4 pretrain_s=4.264 collapse_std=0.1241 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w64,0,bird-ship,0.8028571428571428,5.535842935999881,0.038833458999761206,371521,hw=colab-t4 pretrain_s=4.738 collapse_std=0.1243 best_C=10 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w64,1,bird-truck,0.8442857142857143,5.254960303000189,0.026231628999994427,371521,hw=colab-t4 pretrain_s=4.73 collapse_std=0.124 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w64,2,deer-automobile,0.8657142857142858,4.988546250000127,0.028366303999973752,371521,hw=colab-t4 pretrain_s=4.317 collapse_std=0.1228 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w64,3,dog-deer,0.6857142857142857,5.904531037000197,0.027716099000372196,371521,hw=colab-t4 pretrain_s=5.198 collapse_std=0.1243 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_w64,4,cat-ship,0.8342857142857143,4.524292562000028,0.026572706000024482,371521,hw=colab-t4 pretrain_s=4.301 collapse_std=0.1242 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_c2,0,bird-ship,0.7971428571428572,5.4292512559995885,0.028875199000140128,72369,hw=colab-t4 pretrain_s=5.32 collapse_std=0.1221 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_c2,1,bird-truck,0.7071428571428572,6.143704758999775,0.017930850999618997,72369,hw=colab-t4 pretrain_s=6.041 collapse_std=0.1131 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_c2,2,deer-automobile,0.8171428571428572,5.281591029000083,0.017738938000093185,72369,hw=colab-t4 pretrain_s=5.186 collapse_std=0.111 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_c2,3,dog-deer,0.6728571428571428,6.313997114999893,0.018518873000175518,72369,hw=colab-t4 pretrain_s=6.205 collapse_std=0.1219 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_c2,4,cat-ship,0.8328571428571429,5.221505099999831,0.01745638600004895,72369,hw=colab-t4 pretrain_s=5.138 collapse_std=0.1233 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj32,0,bird-ship,0.7828571428571428,4.448765510999692,0.019557695999992575,23761,hw=colab-t4 pretrain_s=4.348 collapse_std=0.1765 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj32,1,bird-truck,0.7957142857142857,5.232975805000024,0.014154040999983408,23761,hw=colab-t4 pretrain_s=5.142 collapse_std=0.1753 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj32,2,deer-automobile,0.8242857142857143,4.372372063000057,0.014073841000026732,23761,hw=colab-t4 pretrain_s=4.283 collapse_std=0.1747 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj32,3,dog-deer,0.7,4.549985915999969,0.021527402000174334,23761,hw=colab-t4 pretrain_s=4.436 collapse_std=0.174 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj32,4,cat-ship,0.8085714285714286,5.127094059000228,0.013826882000103069,23761,hw=colab-t4 pretrain_s=5.044 collapse_std=0.1744 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj128,0,bird-ship,0.7685714285714286,4.34675088799986,0.014070455999899423,23761,hw=colab-t4 pretrain_s=4.271 collapse_std=0.08751 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj128,1,bird-truck,0.7971428571428572,4.529466778999904,0.020995648000280198,23761,hw=colab-t4 pretrain_s=4.42 collapse_std=0.08661 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj128,2,deer-automobile,0.83,5.199267233000228,0.013743635000082577,23761,hw=colab-t4 pretrain_s=5.113 collapse_std=0.08746 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj128,3,dog-deer,0.6914285714285714,4.375096323999969,0.013517482999759522,23761,hw=colab-t4 pretrain_s=4.296 collapse_std=0.08768 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj128,4,cat-ship,0.8014285714285714,4.608863395999833,0.023282371999812312,23761,hw=colab-t4 pretrain_s=4.506 collapse_std=0.08749 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj256,0,bird-ship,0.7757142857142857,5.16189888100007,0.013625906000015675,23761,hw=colab-t4 pretrain_s=5.08 collapse_std=0.06188 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj256,1,bird-truck,0.7842857142857143,4.371133280999857,0.013823890999901778,23761,hw=colab-t4 pretrain_s=4.28 collapse_std=0.06021 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj256,2,deer-automobile,0.8314285714285714,4.595630891000383,0.022555974000169954,23761,hw=colab-t4 pretrain_s=4.497 collapse_std=0.05935 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj256,3,dog-deer,0.7057142857142857,5.078565510000317,0.013886534999983269,23761,hw=colab-t4 pretrain_s=4.994 collapse_std=0.06219 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss3_proj256,4,cat-ship,0.8242857142857143,4.330116157000248,0.01323311999976795,23761,hw=colab-t4 pretrain_s=4.259 collapse_std=0.06211 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.01,0,bird-ship,0.7714285714285715,5.386842123999941,0.022281796999777725,23761,hw=colab-t4 pretrain_s=5.236 collapse_std=0.1245 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.01,1,bird-truck,0.7928571428571428,4.514445110999986,0.015453573999820946,23761,hw=colab-t4 pretrain_s=4.428 collapse_std=0.1226 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.01,2,deer-automobile,0.8485714285714285,5.436409272000219,0.015195148000202607,23761,hw=colab-t4 pretrain_s=5.356 collapse_std=0.1222 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.01,3,dog-deer,0.6857142857142857,4.449109182000029,0.014877749000334006,23761,hw=colab-t4 pretrain_s=4.366 collapse_std=0.1239 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.01,4,cat-ship,0.8171428571428572,4.556907630999831,0.02216742599966892,23761,hw=colab-t4 pretrain_s=4.459 collapse_std=0.1243 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.2,0,bird-ship,0.7785714285714286,5.354451198999868,0.01407322099976227,23761,hw=colab-t4 pretrain_s=5.27 collapse_std=0.1223 best_C=1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.2,1,bird-truck,0.78,4.459965467000075,0.01439671099979023,23761,hw=colab-t4 pretrain_s=4.368 collapse_std=0.1203 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.2,2,deer-automobile,0.8157142857142857,4.68790636499989,0.02412496499982808,23761,hw=colab-t4 pretrain_s=4.581 collapse_std=0.1207 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.2,3,dog-deer,0.6928571428571428,5.270861946999958,0.01435631000003923,23761,hw=colab-t4 pretrain_s=5.169 collapse_std=0.1234 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_lr0.2,4,cat-ship,0.8242857142857143,4.475045993000094,0.0163290790001156,23761,hw=colab-t4 pretrain_s=4.402 collapse_std=0.1201 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0,0,bird-ship,0.7857142857142857,4.724807626999791,0.023380135000024893,23761,hw=colab-t4 pretrain_s=4.613 collapse_std=0.124 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0,1,bird-truck,0.8085714285714286,5.201604836000115,0.014270260000103008,23761,hw=colab-t4 pretrain_s=5.107 collapse_std=0.1221 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0,2,deer-automobile,0.8242857142857143,4.561382829000195,0.014555183000084071,23761,hw=colab-t4 pretrain_s=4.476 collapse_std=0.1229 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0,3,dog-deer,0.6757142857142857,4.991272520000166,0.030116900999928475,23761,hw=colab-t4 pretrain_s=4.884 collapse_std=0.1229 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0,4,cat-ship,0.8,4.906948125999861,0.014019510000252922,23761,hw=colab-t4 pretrain_s=4.83 collapse_std=0.122 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0.005,0,bird-ship,0.8114285714285714,4.362974265000048,0.01334937199999331,23761,hw=colab-t4 pretrain_s=4.288 collapse_std=0.124 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0.005,1,bird-truck,0.8071428571428572,4.99793839799986,0.021297768999829714,23761,hw=colab-t4 pretrain_s=4.887 collapse_std=0.1222 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0.005,2,deer-automobile,0.8314285714285714,4.85082867400024,0.01463538999996672,23761,hw=colab-t4 pretrain_s=4.758 collapse_std=0.1221 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0.005,3,dog-deer,0.6628571428571428,4.452964572000383,0.013797555000110151,23761,hw=colab-t4 pretrain_s=4.362 collapse_std=0.1223 best_C=10 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_wd0.005,4,cat-ship,0.8214285714285714,5.075742141999854,0.02702580000004673,23761,hw=colab-t4 pretrain_s=4.978 collapse_std=0.1241 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs50,0,bird-ship,0.7728571428571429,2.6499455640000633,0.014331828999729623,23761,hw=colab-t4 pretrain_s=2.569 collapse_std=0.1248 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs50,1,bird-truck,0.8171428571428572,2.2937691729998733,0.01346394899974257,23761,hw=colab-t4 pretrain_s=2.212 collapse_std=0.1215 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs50,2,deer-automobile,0.8428571428571429,2.259465339000144,0.015467308000097546,23761,hw=colab-t4 pretrain_s=2.175 collapse_std=0.1225 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs50,3,dog-deer,0.6957142857142857,2.2457829170002697,0.012944510000124865,23761,hw=colab-t4 pretrain_s=2.172 collapse_std=0.1245 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs50,4,cat-ship,0.8285714285714286,2.3955408550000357,0.020583047999934934,23761,hw=colab-t4 pretrain_s=2.303 collapse_std=0.1231 best_C=10 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs100,0,bird-ship,0.7871428571428571,1.5367391619997761,0.020249143999990338,23761,hw=colab-t4 pretrain_s=1.441 collapse_std=0.125 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs100,1,bird-truck,0.7828571428571428,1.4852765279997584,0.02140076300020155,23761,hw=colab-t4 pretrain_s=1.37 collapse_std=0.1225 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs100,2,deer-automobile,0.8528571428571429,1.3065642729998217,0.012162723999608716,23761,hw=colab-t4 pretrain_s=1.215 collapse_std=0.1238 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs100,3,dog-deer,0.7042857142857143,1.167026848000205,0.012537188999885984,23761,hw=colab-t4 pretrain_s=1.086 collapse_std=0.1236 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss4_bs100,4,cat-ship,0.8142857142857143,1.1389058780000596,0.012336957000115945,23761,hw=colab-t4 pretrain_s=1.071 collapse_std=0.1223 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint0.3,0,bird-ship,0.8571428571428571,6.212808687999768,0.02170760799981508,23761,hw=colab-t4 pretrain_s=6.115 collapse_std=0.1243 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint0.3,1,bird-truck,0.8642857142857143,4.659725141000308,0.015178410999851621,23761,hw=colab-t4 pretrain_s=4.591 collapse_std=0.1219 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint0.3,2,deer-automobile,0.8914285714285715,5.140071871000146,0.022643497999979445,23761,hw=colab-t4 pretrain_s=5.054 collapse_std=0.1232 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint0.3,3,dog-deer,0.7228571428571429,5.212025831000119,0.01400417299964829,23761,hw=colab-t4 pretrain_s=5.133 collapse_std=0.1236 best_C=10 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint0.3,4,cat-ship,0.88,4.675138030999733,0.013941395000074408,23761,hw=colab-t4 pretrain_s=4.608 collapse_std=0.1246 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint1,0,bird-ship,0.8528571428571429,5.453573505999884,0.02145291700026064,23761,hw=colab-t4 pretrain_s=5.365 collapse_std=0.1248 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint1,1,bird-truck,0.8514285714285714,4.9183720609999,0.014577459000065573,23761,hw=colab-t4 pretrain_s=4.848 collapse_std=0.1223 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint1,2,deer-automobile,0.9,4.670564602000013,0.015216882000004261,23761,hw=colab-t4 pretrain_s=4.605 collapse_std=0.1242 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint1,3,dog-deer,0.7371428571428571,5.743399279999721,0.014756208000108018,23761,hw=colab-t4 pretrain_s=5.654 collapse_std=0.124 best_C=0.1 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint1,4,cat-ship,0.8714285714285714,4.671235625999998,0.01448172499976863,23761,hw=colab-t4 pretrain_s=4.605 collapse_std=0.1235 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint3,0,bird-ship,0.8557142857142858,4.644593571999849,0.02317634300015925,23761,hw=colab-t4 pretrain_s=4.536 collapse_std=0.1228 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint3,1,bird-truck,0.8571428571428571,5.550957348000338,0.0134886490000099,23761,hw=colab-t4 pretrain_s=5.48 collapse_std=0.1232 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint3,2,deer-automobile,0.8942857142857142,4.583499974999995,0.013704595000035624,23761,hw=colab-t4 pretrain_s=4.52 collapse_std=0.1217 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint3,3,dog-deer,0.74,4.846424838000075,0.026101954999830923,23761,hw=colab-t4 pretrain_s=4.753 collapse_std=0.1235 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_joint3,4,cat-ship,0.8642857142857143,5.2780684870003824,0.014349374000175885,23761,hw=colab-t4 pretrain_s=5.202 collapse_std=0.1231 best_C=0.01 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft50,0,bird-ship,0.8428571428571429,5.0364036649998525,0.01693016599983821,23826,hw=colab-t4 pretrain_s=4.339 collapse_std=0.124 finetune_s=0.6878 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft50,1,bird-truck,0.8642857142857143,5.6628537000001415,0.020210098000006838,23826,hw=colab-t4 pretrain_s=4.848 collapse_std=0.1217 finetune_s=0.8058 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft50,2,deer-automobile,0.91,5.151503680000133,0.01301406099992164,23826,hw=colab-t4 pretrain_s=4.421 collapse_std=0.1209 finetune_s=0.7145 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft50,3,dog-deer,0.7271428571428571,4.957780253999772,0.013453418999688438,23826,hw=colab-t4 pretrain_s=4.254 collapse_std=0.1229 finetune_s=0.695 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft50,4,cat-ship,0.8771428571428571,5.938680457000373,0.012500736000220058,23826,hw=colab-t4 pretrain_s=5.26 collapse_std=0.1234 finetune_s=0.6687 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft150,0,bird-ship,0.8571428571428571,6.430629011999827,0.013540851000016119,23826,hw=colab-t4 pretrain_s=4.281 collapse_std=0.1228 finetune_s=2.14 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft150,1,bird-truck,0.9,7.130328366999947,0.013030102000357147,23826,hw=colab-t4 pretrain_s=4.878 collapse_std=0.122 finetune_s=2.242 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft150,2,deer-automobile,0.9157142857142857,6.335664319999978,0.014541827000357443,23826,hw=colab-t4 pretrain_s=4.256 collapse_std=0.1216 finetune_s=2.071 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft150,3,dog-deer,0.7557142857142857,7.185031536000224,0.012737395999920409,23826,hw=colab-t4 pretrain_s=4.821 collapse_std=0.1235 finetune_s=2.353 gpu=Tesla-T4
+c1,alvin,simsiam,ss5_ft150,4,cat-ship,0.8957142857142857,6.3021057159999145,0.0131309099997452,23826,hw=colab-t4 pretrain_s=4.25 collapse_std=0.1231 finetune_s=2.043 gpu=Tesla-T4
+c1,alvin,kmeans,kmeans_best,10,ship-bird,0.8385714285714285,2.309962483000163,0.7426149630000509,521,hw=colab-t4 dict_s=2.122 extract_s=0.8293 best_C=0.1
+c1,alvin,kmeans,kmeans_best,11,horse-ship,0.86,1.6202034679999997,0.5331886119993214,521,hw=colab-t4 dict_s=1.496 extract_s=0.5963 best_C=0.1
+c1,alvin,kmeans,kmeans_best,12,dog-ship,0.9157142857142857,1.8852718379994258,0.5650250310000047,521,hw=colab-t4 dict_s=1.757 extract_s=0.6298 best_C=0.1
+c1,alvin,kmeans,kmeans_best,13,cat-dog,0.5742857142857143,1.6996138639997298,0.5661383229999046,521,hw=colab-t4 dict_s=1.552 extract_s=0.6378 best_C=0.1
+c1,alvin,kmeans,kmeans_best,14,cat-truck,0.8228571428571428,1.6269130170003336,0.5738594740005283,521,hw=colab-t4 dict_s=1.483 extract_s=0.6502 best_C=0.01
+c1,alvin,kmeans,kmeans_best,15,bird-frog,0.6657142857142857,2.098350818000654,0.7796636980001495,521,hw=colab-t4 dict_s=1.905 extract_s=0.8802 best_C=1
+c1,alvin,kmeans,kmeans_best,16,frog-bird,0.6542857142857142,2.5736488599995937,0.8052419189998545,521,hw=colab-t4 dict_s=2.381 extract_s=0.9031 best_C=10
+c1,alvin,kmeans,kmeans_best,17,horse-bird,0.69,1.8031973770002878,0.5588346290005575,521,hw=colab-t4 dict_s=1.658 extract_s=0.6315 best_C=0.01
+c1,alvin,kmeans,kmeans_best,18,horse-truck,0.7642857142857142,1.530440561999967,0.5545684099997743,521,hw=colab-t4 dict_s=1.388 extract_s=0.629 best_C=0.1
+c1,alvin,kmeans,kmeans_best,19,automobile-horse,0.8114285714285714,1.6020146830005615,0.5785229769999205,521,hw=colab-t4 dict_s=1.461 extract_s=0.6489 best_C=0.01
+c1,alvin,kmeans,kmeans_fast,10,ship-bird,0.8385714285714285,1.534718561999398,0.5685936499994568,521,hw=colab-t4 dict_s=1.4 extract_s=0.6413 best_C=0.1
+c1,alvin,kmeans,kmeans_fast,11,horse-ship,0.86,1.4300753459992848,0.6843146319997686,521,hw=colab-t4 dict_s=1.293 extract_s=0.7549 best_C=0.1
+c1,alvin,kmeans,kmeans_fast,12,dog-ship,0.9157142857142857,2.7985741000002236,0.7726141500006634,521,hw=colab-t4 dict_s=2.603 extract_s=0.8783 best_C=0.1
+c1,alvin,kmeans,kmeans_fast,13,cat-dog,0.5742857142857143,2.1465493220002827,0.5613116800004718,521,hw=colab-t4 dict_s=2.005 extract_s=0.6315 best_C=0.1
+c1,alvin,kmeans,kmeans_fast,14,cat-truck,0.8228571428571428,1.6193135160001475,0.5626516820002507,521,hw=colab-t4 dict_s=1.486 extract_s=0.633 best_C=0.01
+c1,alvin,kmeans,kmeans_fast,15,bird-frog,0.6657142857142857,1.8827772320000804,0.5587773429997469,521,hw=colab-t4 dict_s=1.731 extract_s=0.6417 best_C=1
+c1,alvin,kmeans,kmeans_fast,16,frog-bird,0.6542857142857142,1.7413731149999876,0.5660963899999842,521,hw=colab-t4 dict_s=1.599 extract_s=0.6388 best_C=10
+c1,alvin,kmeans,kmeans_fast,17,horse-bird,0.69,1.6272854809994897,0.750968415000898,521,hw=colab-t4 dict_s=1.485 extract_s=0.8205 best_C=0.01
+c1,alvin,kmeans,kmeans_fast,18,horse-truck,0.7642857142857142,2.2945832450004673,0.7873749720001797,521,hw=colab-t4 dict_s=2.095 extract_s=0.8918 best_C=0.1
+c1,alvin,kmeans,kmeans_fast,19,automobile-horse,0.8114285714285714,2.0593925140001375,0.5788732119999622,521,hw=colab-t4 dict_s=1.92 extract_s=0.6513 best_C=0.01
+c1,alvin,simsiam,simsiam_best,10,ship-bird,0.8885714285714286,34.114649377000205,0.016740511000534752,23826,hw=colab-t4 pretrain_s=20.39 collapse_std=0.1247 finetune_s=13.66 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_best,11,horse-ship,0.9157142857142857,33.733758483999736,0.021896795000429847,23826,hw=colab-t4 pretrain_s=20.33 collapse_std=0.1221 finetune_s=13.4 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_best,12,dog-ship,0.9442857142857143,33.946913226000106,0.014244527000300877,23826,hw=colab-t4 pretrain_s=20.08 collapse_std=0.1242 finetune_s=13.86 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_best,13,cat-dog,0.5857142857142857,33.09403963400018,0.019485578000058013,23826,hw=colab-t4 pretrain_s=19.69 collapse_std=0.1231 finetune_s=13.4 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_best,14,cat-truck,0.9028571428571428,34.06515715999922,0.013492807999682555,23826,hw=colab-t4 pretrain_s=20.45 collapse_std=0.1188 finetune_s=13.6 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_best,15,bird-frog,0.7771428571428571,33.49064634499973,0.013405081999735557,23826,hw=colab-t4 pretrain_s=19.89 collapse_std=0.1213 finetune_s=13.59 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_best,16,frog-bird,0.7828571428571428,34.371205333000034,0.013368700999308203,23826,hw=colab-t4 pretrain_s=20.75 collapse_std=0.1241 finetune_s=13.61 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_best,17,horse-bird,0.8071428571428572,33.096270103999814,0.013512945000002219,23826,hw=colab-t4 pretrain_s=19.56 collapse_std=0.1238 finetune_s=13.53 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_best,18,horse-truck,0.8471428571428572,33.234575769,0.021630508999805897,23826,hw=colab-t4 pretrain_s=19.95 collapse_std=0.1235 finetune_s=13.27 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_best,19,automobile-horse,0.9042857142857142,33.475067084999864,0.013786743999844475,23826,hw=colab-t4 pretrain_s=19.93 collapse_std=0.1226 finetune_s=13.53 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,10,ship-bird,0.88,6.545305566999559,0.012831022999307606,23826,hw=colab-t4 pretrain_s=4.421 collapse_std=0.1247 finetune_s=2.115 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,11,horse-ship,0.9,7.473351845999787,0.014807165000092937,23826,hw=colab-t4 pretrain_s=5.348 collapse_std=0.1226 finetune_s=2.116 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,12,dog-ship,0.8957142857142857,6.4966719490003015,0.01280023999970581,23826,hw=colab-t4 pretrain_s=4.386 collapse_std=0.1224 finetune_s=2.099 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,13,cat-dog,0.59,7.375621443999989,0.019888060000084806,23826,hw=colab-t4 pretrain_s=5.263 collapse_std=0.1217 finetune_s=2.103 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,14,cat-truck,0.8657142857142858,6.531815349000681,0.012859417999607103,23826,hw=colab-t4 pretrain_s=4.339 collapse_std=0.1189 finetune_s=2.182 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,15,bird-frog,0.74,7.516537102999791,0.01256731800003763,23826,hw=colab-t4 pretrain_s=5.391 collapse_std=0.1236 finetune_s=2.116 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,16,frog-bird,0.7457142857142857,6.505368905999603,0.013050121000560466,23826,hw=colab-t4 pretrain_s=4.388 collapse_std=0.1224 finetune_s=2.107 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,17,horse-bird,0.7828571428571428,7.437557894000747,0.012485909000133688,23826,hw=colab-t4 pretrain_s=5.327 collapse_std=0.1218 finetune_s=2.101 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,18,horse-truck,0.8585714285714285,6.522388772999875,0.013243871999293333,23826,hw=colab-t4 pretrain_s=4.394 collapse_std=0.1212 finetune_s=2.118 gpu=Tesla-T4
+c1,alvin,simsiam,simsiam_fast,19,automobile-horse,0.8814285714285715,7.48679272299978,0.012976355999853695,23826,hw=colab-t4 pretrain_s=5.342 collapse_std=0.1214 finetune_s=2.136 gpu=Tesla-T4
